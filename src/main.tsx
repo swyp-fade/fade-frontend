@@ -1,17 +1,20 @@
 import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
 import './index.css';
 
-export async function enableMocking() {
-  if (import.meta.env.PROD) {
+export async function enableMocking(enabled: boolean = true) {
+  if (import.meta.env.PROD || !enabled) {
     return;
   }
 
   const { worker } = await import('./__mock__/instance.ts');
 
-  return worker.start();
+  return worker.start({
+    onUnhandledRequest: 'bypass',
+  });
 }
 
 enableMocking().then(() => {
-  ReactDOM.createRoot(document.getElementById('root')!).render(<App />);
+  import('./App.tsx').then((App) => {
+    ReactDOM.createRoot(document.getElementById('root')!).render(<App.default />);
+  });
 });
