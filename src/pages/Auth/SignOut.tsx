@@ -1,5 +1,6 @@
 import { useAuthActions } from '@Hooks/auth';
 import { requestSignOut } from '@Services/authAPI';
+import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 
 export async function loader() {
@@ -9,7 +10,9 @@ export async function loader() {
 export default function SignOut() {
   const { signOut } = useAuthActions();
 
-  signOut();
+  useEffect(() => {
+    signOut();
+  }, []);
 
   return <Navigate to="/" replace />;
 }

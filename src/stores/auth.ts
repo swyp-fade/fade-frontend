@@ -1,4 +1,4 @@
-import { User } from '@/types/User';
+import { User } from '@Types/User';
 import { getPayloadFromJWT } from '@Utils/index';
 import { create } from 'zustand';
 

@@ -4,3 +4,8 @@ export interface User {
   accountId: string;
   gender?: string;
 }
+
+export type AuthTokens = {
+  accessToken: string;
+  csrfToken: string;
+};

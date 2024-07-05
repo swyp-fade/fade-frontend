@@ -1,40 +1,44 @@
-import { useAuthStore } from '@/stores/auth';
+import { LoaderResponseStatus } from '@Types/loaderResponse';
 import { useAuthActions } from '@Hooks/auth';
-import { SignUpType, requestSignUp } from '@Services/authAPI';
+import { requestSignInWithCode } from '@Services/authAPI';
+import { createErrorLoaderResponse, createSuccessLoaderResponse, tryCatcher } from '@Utils/index';
 import { useEffect } from 'react';
-import { LoaderFunctionArgs, useLoaderData, useNavigate } from 'react-router-dom';
+import { LoaderFunctionArgs, useLoaderData, useNavigate, useSearchParams } from 'react-router-dom';
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { searchParams } = new URL(request.url);
   const authorizationCode = searchParams.get('code');
 
   if (authorizationCode === null) {
-    return null;
+    return createErrorLoaderResponse({ errorCode: 'custom_error_code_1' });
   }
 
-  return await requestSignUp({
-    signUpType: SignUpType.KAKAO,
-    authorizationCode,
-  });
+  const [response, errorCode] = await tryCatcher(() => requestSignInWithCode({ authorizationCode }));
+
+  if (response) {
+    return createSuccessLoaderResponse(response.data);
+  }
+
+  return createErrorLoaderResponse({ errorCode });
 }
 
 export default function KakaoCallback() {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const tokens = useLoaderData() as Awaited<ReturnType<typeof loader>>;
+  const { status, payload } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
   const { signIn } = useAuthActions();
 
   useEffect(() => {
-    /** loader에서 받고 오기 때문에 tokens의 값은 결정되어 있음 */
-    const hasTokens = tokens !== null;
-    const isValidAccess = hasTokens;
+    const isValidAccess = status === LoaderResponseStatus.SUCCESS;
 
     if (isValidAccess) {
-      signIn(tokens);
+      signIn(payload);
+      return navigate('/', { replace: true });
     }
 
-    return navigate('/', { replace: true });
-  }, [tokens]);
+    return navigate(`/initialize-account?code=${searchParams.get('code')}`, { replace: true });
+  }, [status, payload]);
 
-  return <>카카오 로그인 중~_~</>;
+  return <></>;
 }
