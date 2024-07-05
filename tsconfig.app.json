@@ -29,10 +29,13 @@
       "@Assets/*": ["src/assets/*"],
       "@Components/*": ["src/components/*"],
       "@Hooks/*": ["src/hooks/*"],
+      "@Layouts/*": ["src/layouts/*"],
       "@Libs/*": ["src/libs/*"],
       "@Pages/*": ["src/pages/*"],
       "@Routes/*": ["src/routes/*"],
       "@Services/*": ["src/services/*"],
+      "@Stores/*": ["src/stores/*"],
+      "@Types/*": ["src/types/*"],
       "@Utils/*": ["src/utils/*"],
       "@/*": ["src/*"]
     }
