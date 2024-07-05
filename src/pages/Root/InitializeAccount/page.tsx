@@ -2,31 +2,47 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { FadeLogo } from '@Components/FadeLogo';
 import { Input } from '@Components/ui/Input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuthActions, useUser } from '@Hooks/auth';
+import { useAuthActions } from '@Hooks/auth';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
-import { requestInitializeAccount } from '@Services/authAPI';
+import { requestSignUp, SignUpType } from '@Services/authAPI';
+import { tryCatcher } from '@Utils/index';
 import { useTransition } from 'react';
 import { Control, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 
-export function InitializeAccountView() {
+export default function Page() {
   const navigate = useNavigate();
-  const user = useUser();
 
-  if (!user) {
-    throw new Error('never but for typeguard in InitializeAccountView');
+  const { signIn } = useAuthActions();
+
+  const [searchParams] = useSearchParams();
+  const authorizationCode = searchParams.get('code');
+
+  if (authorizationCode === null || authorizationCode === '') {
+    return <Navigate to="/login" />;
   }
 
   const handleSubmit = async (values: InitializeAccountFormSchema) => {
-    const doneInitialized = await requestInitializeAccount({
-      ...values,
-      userId: user.id,
-    });
+    const [response, errorCode] = await tryCatcher(() =>
+      requestSignUp({
+        ...values,
+        signUpType: SignUpType.KAKAO,
+        authorizationCode,
+      })
+    );
 
-    //
-    if (doneInitialized) {
-      navigate('/', { replace: true });
+    if (response) {
+      signIn(response.data);
+      return navigate('/', { replace: true });
+    }
+
+    if (errorCode) {
+      if (errorCode === 'account_already_exists') {
+        return alert('토스트 예정: 이미 있는 계정 ID에용!');
+      }
+
+      throw new Error(errorCode);
     }
   };
 
