@@ -1,6 +1,21 @@
 import { FadeLogo } from '@Components/FadeLogo';
+import { useAuthActions } from '@Hooks/auth';
+import { requestSignUp, SignUpType } from '@Services/authAPI';
+import { clearSearchParams, tryCatcher } from '@Utils/index';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
-export function InitializeAccountView() {
+export default function Page() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const authorizationCode = searchParams.get('code');
+  const { signIn } = useAuthActions();
+
+  if (authorizationCode === null) {
+    return <Navigate to="/" replace />;
+  }
+
+  clearSearchParams();
+
   return (
     <section>
       <header className="border-b border-b-gray-200 px-5 py-4">
@@ -26,6 +41,19 @@ export function InitializeAccountView() {
               <button>여자</button>
             </fieldset>
           </fieldset>
+
+          <button
+            type="button"
+            onClick={async () => {
+              const [response, error] = await tryCatcher(() => requestSignUp({ authorizationCode, accountId: 'juhen', sex: 'men', signUpType: SignUpType.KAKAO }));
+
+              if (response) {
+                signIn(response.data);
+                navigate('/?norefreshtoken', { replace: true });
+              }
+            }}>
+            가입하기
+          </button>
         </form>
       </section>
     </section>
