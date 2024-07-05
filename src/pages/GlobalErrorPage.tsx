@@ -8,6 +8,6 @@ export default function GlobalErrorPage() {
       {error.status} {error.statusText}
     </h1>
   ) : (
-    <h1>{error.message || error}</h1>
+    <h1>{(error as Error).message || String(error)}</h1>
   );
 }

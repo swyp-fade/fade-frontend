@@ -45,7 +45,7 @@ export default function Page() {
           <button
             type="button"
             onClick={async () => {
-              const [response, error] = await tryCatcher(() => requestSignUp({ authorizationCode, accountId: 'juhen', sex: 'men', signUpType: SignUpType.KAKAO }));
+              const [response] = await tryCatcher(() => requestSignUp({ authorizationCode, accountId: 'juhen', sex: 'men', signUpType: SignUpType.KAKAO }));
 
               if (response) {
                 signIn(response.data);

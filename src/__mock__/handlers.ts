@@ -48,7 +48,7 @@ export const handlers = [
     );
   }),
 
-  http.get(`${BASE_URL}/auth/signout`, async ({ cookies, params }) => {
+  http.get(`${BASE_URL}/auth/signout`, async () => {
     return new HttpResponse(null, {
       headers: {
         'Set-Cookie': `refreshToken=; Path=/; expires=${new Date(0).toUTCString()}, csrfToken=; Path=/; expires=${new Date(0).toUTCString()};`,
@@ -56,7 +56,7 @@ export const handlers = [
     });
   }),
 
-  http.post(`${BASE_URL}/auth/signup`, async ({ cookies, params }) => {
+  http.post(`${BASE_URL}/auth/signup`, async () => {
     return new HttpResponse(
       JSON.stringify({
         accessToken: createAccessToken(userData),
@@ -70,7 +70,7 @@ export const handlers = [
       }
     );
   }),
-  http.post(`${BASE_URL}/auth/check`, async ({ cookies, params }) => {
+  http.post(`${BASE_URL}/auth/check`, async () => {
     const isSignedUpUser = false;
 
     if (isSignedUpUser) {
