@@ -1,4 +1,5 @@
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '@Stores/auth';
+import { AuthTokens } from '@Types/User';
 import { useCallback, useMemo } from 'react';
 
 export const useUser = () => useAuthStore((state) => state.user);
@@ -17,7 +18,7 @@ export const useAuthActions = () => {
   const resetAuth = useAuthStore((state) => state.resetAuth);
 
   const signIn = useCallback(
-    ({ accessToken, csrfToken }: { accessToken: string; csrfToken: string }) => {
+    ({ accessToken, csrfToken }: AuthTokens) => {
       setTokens({ accessToken, csrfToken });
       setAuthFromToken({ accessToken });
     },
