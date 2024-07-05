@@ -1,5 +1,6 @@
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { SERVICE_ERROR_MESSAGE, ServiceErrorCode, ServiceErrorResponse } from '@Types/serviceError';
+import { LoaderResponse, LoaderResponseStatus } from '@Types/loaderResponse';
+import { AxiosError, isAxiosError } from 'axios';
 
 export function getPayloadFromJWT(jwt: string) {
   return JSON.parse(atob(jwt.split('.')[1]).replaceAll('\\', '')) as {
@@ -9,8 +10,4 @@ export function getPayloadFromJWT(jwt: string) {
     exp: Date;
     iat: Date;
   };
-}
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
 }

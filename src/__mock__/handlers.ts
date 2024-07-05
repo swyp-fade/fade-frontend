@@ -1,14 +1,15 @@
 import { addDays } from 'date-fns';
 import { HttpResponse, http } from 'msw';
 import { createAccessToken, createRefreshToken } from './utils';
+import { HttpStatusCode } from 'axios';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const userData = {
   id: 'c7b3d8e0-5e0b-4b0f-8b3a-3b9f4b3d3b3d',
   email: 'test_email@fadeapp.site',
-  accountId: '',
-  // accountId: 'test_accountId',
+  // accountId: '',
+  accountId: 'test_accountId',
 };
 
 export const handlers = [
@@ -24,7 +25,7 @@ export const handlers = [
      * : 서비스를 처음 들어온 경우
      * */
     if (refreshToken === undefined) {
-      return new HttpResponse(null);
+      return new HttpResponse(JSON.stringify({ errorCode: 'no_refresh_token' }), { status: HttpStatusCode.Unauthorized });
     }
 
     /**
@@ -47,7 +48,7 @@ export const handlers = [
     );
   }),
 
-  http.get(`${BASE_URL}/auth/signout`, async ({ cookies, params }) => {
+  http.get(`${BASE_URL}/auth/signout`, async () => {
     return new HttpResponse(null, {
       headers: {
         'Set-Cookie': `refreshToken=; Path=/; expires=${new Date(0).toUTCString()}, csrfToken=; Path=/; expires=${new Date(0).toUTCString()};`,
@@ -55,9 +56,7 @@ export const handlers = [
     });
   }),
 
-  http.post(`${BASE_URL}/oauth/:authorizationCode`, async ({ cookies, params }) => {
-    const { authorizationCode } = params;
-
+  http.post(`${BASE_URL}/auth/signup`, async () => {
     return new HttpResponse(
       JSON.stringify({
         accessToken: createAccessToken(userData),
@@ -68,6 +67,31 @@ export const handlers = [
           'Content-Type': 'application/json',
           'Set-Cookie': `refreshToken=${createRefreshToken(userData)}; Path=/; expires=${addDays(new Date(), 14).toUTCString()}, csrfToken=ctct; Path=/;`,
         },
+      }
+    );
+  }),
+  http.post(`${BASE_URL}/auth/check`, async () => {
+    const isSignedUpUser = false;
+
+    if (isSignedUpUser) {
+      return new HttpResponse(
+        JSON.stringify({
+          accessToken: createAccessToken(userData),
+          csrfToken: 'ctct',
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Set-Cookie': `refreshToken=${createRefreshToken(userData)}; Path=/; expires=${addDays(new Date(), 14).toUTCString()}, csrfToken=ctct; Path=/;`,
+          },
+        }
+      );
+    }
+
+    return HttpResponse.json(
+      { errorCode: 'no_signed_up_user' },
+      {
+        status: HttpStatusCode.Unauthorized,
       }
     );
   }),
