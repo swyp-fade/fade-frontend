@@ -24,7 +24,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Page() {
   const isAuthenticated = useIsAuthenticated();
-  const user = useUser();
 
   const { status, payload } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
   const { signIn } = useAuthActions();
@@ -46,10 +45,5 @@ export default function Page() {
 
   clearSearchParams();
 
-  return (
-    <>
-      {user?.accountId}어서오시오. 메인이오.
-      <Link to="/auth/signout">로그아웃</Link>
-    </>
-  );
+  return <Navigate to="/vote-fap" />;
 }
