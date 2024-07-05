@@ -15,7 +15,7 @@ const GlobalErrorPage = lazy(() => import('@Pages/GlobalErrorPage').then((module
 
 /** Root */
 const LoginPage = lazy(() => import('@Pages/Root/Login/page').then((module) => ({ default: module.default })));
-const InitializeAccountPage = lazy(() => import('@Pages/Root/InitializeAcocunt/page').then((module) => ({ default: module.default })));
+const InitializeAccountPage = lazy(() => import('@Pages/Root/InitializeAccount/page').then((module) => ({ default: module.default })));
 
 /** Auth */
 const KakaoCallback = lazy(() => import('@Pages/Auth/KakaoCallback').then((module) => ({ default: module.default })));
