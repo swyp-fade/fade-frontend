@@ -12,10 +12,12 @@ import ProtectedRoute from './ProtectedRoute';
 /** Common */
 const NotFoundPage = lazy(() => import('@Pages/NotFoundPage'));
 const GlobalErrorPage = lazy(() => import('@Pages/GlobalErrorPage').then((module) => ({ default: module.default })));
+const AppLayout = lazy(() => import('@Layouts/AppLayout').then((module) => ({ default: module.default })));
 
 /** Root */
 const LoginPage = lazy(() => import('@Pages/Root/Login/page').then((module) => ({ default: module.default })));
 const InitializeAccountPage = lazy(() => import('@Pages/Root/InitializeAccount/page').then((module) => ({ default: module.default })));
+const VoteFAPPage = lazy(() => import('@Pages/Root/voteFAP/page').then((module) => ({ default: module.default })));
 
 /** Auth */
 const KakaoCallback = lazy(() => import('@Pages/Auth/KakaoCallback').then((module) => ({ default: module.default })));
@@ -28,11 +30,13 @@ export const routesFromElements = createRoutesFromElements(
       <Route path="login" element={<LoginPage />} />
       <Route path="initialize-account" element={<InitializeAccountPage />} />
       <Route element={<ProtectedRoute />}>
-        <Route path="archive" />
-        <Route path="fap" />
-        <Route path="upload" />
-        <Route path="feed" />
-        <Route path="mypage" />
+        <Route element={<AppLayout />}>
+          <Route path="archive" />
+          <Route path="vote-fap" element={<VoteFAPPage />} />
+          <Route path="upload" />
+          <Route path="feed" />
+          <Route path="mypage" />
+        </Route>
       </Route>
     </Route>
 
