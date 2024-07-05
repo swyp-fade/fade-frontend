@@ -2,6 +2,14 @@ import { SERVICE_ERROR_MESSAGE, ServiceErrorCode, ServiceErrorResponse } from '@
 import { LoaderResponse, LoaderResponseStatus } from '@Types/loaderResponse';
 import { AxiosError, isAxiosError } from 'axios';
 
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+
 export function getPayloadFromJWT(jwt: string) {
   return JSON.parse(atob(jwt.split('.')[1]).replaceAll('\\', '')) as {
     id: string;
