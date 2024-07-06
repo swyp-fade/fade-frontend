@@ -1,4 +1,14 @@
+import { useHeader } from '@Hooks/useHeader';
+import { useState } from 'react';
+import { MdInfoOutline, MdOutlineNotificationsNone } from 'react-icons/md';
+
 export default function Page() {
+  useHeader({
+    title: 'FA:P 투표',
+    leftSlot: () => <MdInfoOutline className="size-6" />,
+    rightSlot: () => <RightSlotComponent />,
+  });
+
   return (
     <>
       투표 화면
@@ -10,3 +20,20 @@ export default function Page() {
     </>
   );
 }
+
+/** Popover 테스트용으로 ㅎㅎ */
+const RightSlotComponent = () => {
+  const [isOpened, setIsOpened] = useState(false);
+
+  return (
+    <div className="relative" onClick={() => setIsOpened(!isOpened)}>
+      <MdOutlineNotificationsNone className="size-6" />
+
+      {isOpened && (
+        <div className="absolute right-4 top-full flex min-w-max rounded border bg-white p-5">
+          <p>흐으음..</p>
+        </div>
+      )}
+    </div>
+  );
+};
