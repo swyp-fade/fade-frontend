@@ -1,5 +1,5 @@
 import { useHeaderStore } from '@Stores/header';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useLayoutEffect } from 'react';
 
 type UseHeaderProps = { title?: string; leftSlot?: () => ReactNode; rightSlot?: () => ReactNode };
 
@@ -8,7 +8,7 @@ export function useHeader({ title, leftSlot, rightSlot }: UseHeaderProps) {
   const setLeftSlot = useHeaderStore((state) => state.setLeftSlot);
   const setRightSlot = useHeaderStore((state) => state.setRightSlot);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setTitle(title);
     setLeftSlot(leftSlot);
     setRightSlot(rightSlot);
