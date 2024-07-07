@@ -1,8 +1,9 @@
-import { LoaderResponseStatus } from '@Types/loaderResponse';
-import { useAuthActions, useIsAuthenticated, useUser } from '@Hooks/auth';
+import { useAuthActions, useIsAuthenticated } from '@Hooks/auth';
 import { requestRefreshToken } from '@Services/authAPI';
+import { LoaderResponseStatus } from '@Types/loaderResponse';
 import { clearSearchParams, createErrorLoaderResponse, createSuccessLoaderResponse, tryCatcher } from '@Utils/index';
-import { Link, LoaderFunctionArgs, Navigate, useLoaderData } from 'react-router-dom';
+import { useEffect } from 'react';
+import { LoaderFunctionArgs, Navigate, useLoaderData, useNavigate } from 'react-router-dom';
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { searchParams } = new URL(request.url);
@@ -23,27 +24,29 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Page() {
+  const navigate = useNavigate();
   const isAuthenticated = useIsAuthenticated();
 
   const { status, payload } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
   const { signIn } = useAuthActions();
 
-  if (status === LoaderResponseStatus.ERROR) {
-    if (payload.errorCode === 'no_refresh_token') {
-      return <Navigate to="/login" />;
+  useEffect(() => {
+    if (status === LoaderResponseStatus.ERROR) {
+      if (payload.errorCode === 'no_refresh_token') {
+        return navigate('/login', { replace: true });
+      }
+
+      /** 위로 에러 던지기 */
+      throw new Error(payload.errorCode);
     }
 
-    /** 위로 에러 던지기 */
-    throw new Error(payload.errorCode);
-  }
+    const shouldSignIn = !isAuthenticated && status === LoaderResponseStatus.SUCCESS;
 
-  const shouldSetAuthToken = !isAuthenticated && status === LoaderResponseStatus.SUCCESS;
-
-  if (shouldSetAuthToken) {
-    signIn(payload!);
-  }
-
-  clearSearchParams();
+    if (shouldSignIn) {
+      signIn(payload!);
+      clearSearchParams();
+    }
+  }, []);
 
   return <Navigate to="/vote-fap" />;
 }
