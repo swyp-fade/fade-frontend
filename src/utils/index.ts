@@ -9,7 +9,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-
 export function getPayloadFromJWT(jwt: string) {
   return JSON.parse(atob(jwt.split('.')[1]).replaceAll('\\', '')) as {
     id: string;
@@ -63,3 +62,39 @@ export const tryCatcher = async <T, _>(tryer: () => T | Promise<T>): Promise<Try
 export function clearSearchParams() {
   history.pushState(null, '', window.location.pathname);
 }
+
+export function getBase64Image(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const fileReader = new FileReader();
+
+    fileReader.addEventListener('load', () => {
+      resolve(<string>fileReader.result);
+    });
+
+    fileReader.addEventListener('error', (error) => {
+      reject(error);
+    });
+
+    fileReader.readAsDataURL(file);
+  });
+}
+
+const MAX_FILE_SIZE = 1_000_000; // 16MB
+// const MAX_FILE_SIZE = 2 ** 24; // 16MB
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+
+export const validateLocalImageFile = (imageFile: File) => {
+  const isOversize = imageFile.size >= MAX_FILE_SIZE;
+
+  if (isOversize) {
+    return { isValid: false, message: '파일이 넘 커요' };
+  }
+
+  const isNotAcceptedTypes = imageFile.type in ACCEPTED_IMAGE_TYPES;
+
+  if (isNotAcceptedTypes) {
+    return { isValid: false, message: `.jpeg, .jpg, .png, .webp 확장자만 지원합니다.` };
+  }
+
+  return { isValid: true, message: null };
+};
