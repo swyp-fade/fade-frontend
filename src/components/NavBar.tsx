@@ -1,10 +1,11 @@
+import { UploadViewDialog } from '@Pages/Root/_dialogs/UploadDialog/dialog';
 import { cn } from '@Utils/index';
 import { IconType } from 'react-icons/lib';
 import { MdAccountBox, MdAdd, MdHowToVote, MdOutlineGridOn, MdPerson } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 interface NavItem {
-  link: string;
+  link: string | null;
   IconComponent: IconType;
 }
 
@@ -18,7 +19,7 @@ const navList: NavItem[] = [
     IconComponent: MdHowToVote,
   },
   {
-    link: '/upload',
+    link: null,
     IconComponent: MdAdd,
   },
   {
@@ -33,7 +34,7 @@ const navList: NavItem[] = [
 
 export function NavBar() {
   const location = useLocation();
-  const createNavItem = (navItem: NavItem) => <NavItem key={navItem.link} {...navItem} isActive={location.pathname.startsWith(navItem.link)} />;
+  const createNavItem = (navItem: NavItem) => <NavItem key={navItem.link} {...navItem} isActive={navItem.link ? location.pathname.startsWith(navItem.link) : false} />;
 
   return (
     <nav>
@@ -42,21 +43,34 @@ export function NavBar() {
   );
 }
 
-type NavItemProps = { link: string; IconComponent: IconType; isActive: boolean };
+type NavItemProps = { isActive: boolean } & NavItem;
 
 function NavItem({ link, IconComponent, isActive }: NavItemProps) {
   const navigate = useNavigate();
 
+  const buttonClassName = cn('block h-full w-full py-5 transition-transform pointerdevice:hover:rotate-3 pointerdevice:hover:scale-125 pointerdevice:active:scale-95', {
+    ['text-purple-700']: isActive,
+  });
+
+  if (link) {
+    return (
+      <li className="flex-1">
+        <button type="button" className={buttonClassName} onClick={() => navigate(link)}>
+          <IconComponent className="mx-auto size-6" />
+        </button>
+      </li>
+    );
+  }
+
   return (
-    <li className="flex-1">
-      <button
-        type="button"
-        className={cn('pointerdevice:hover:rotate-3 pointerdevice:hover:scale-125 pointerdevice:active:scale-95 block h-full w-full py-5 transition-transform', {
-          ['text-purple-700']: isActive,
-        })}
-        onClick={() => navigate(link)}>
-        <IconComponent className="mx-auto size-6" />
-      </button>
-    </li>
+    <UploadViewDialog
+      triggerSlot={
+        <li className="flex-1">
+          <button type="button" className={buttonClassName}>
+            <IconComponent className="mx-auto size-6" />
+          </button>
+        </li>
+      }
+    />
   );
 }

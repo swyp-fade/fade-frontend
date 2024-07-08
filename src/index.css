@@ -9,6 +9,7 @@
 
   * {
     -ms-overflow-style: none;
+    @apply outline-purple-700;
   }
 
   *::-webkit-scrollbar {
