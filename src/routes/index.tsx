@@ -1,7 +1,7 @@
 import RootLayout from '@Layouts/RootLayout';
 import RootPage from '@Pages/Root/page';
 import { lazy, Suspense } from 'react';
-import { Route, createRoutesFromElements } from 'react-router-dom';
+import { createRoutesFromElements, Route } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 
 /**
@@ -19,7 +19,6 @@ const LoginPage = lazy(() => import('@Pages/Root/Login/page').then((module) => (
 const InitializeAccountPage = lazy(() => import('@Pages/Root/InitializeAccount/page').then((module) => ({ default: module.default })));
 const ArchivePage = lazy(() => import('@Pages/Root/archive/page').then((module) => ({ default: module.default })));
 const VoteFAPPage = lazy(() => import('@Pages/Root/voteFAP/page').then((module) => ({ default: module.default })));
-const UploadPage = lazy(() => import('@Pages/Root/upload/page').then((module) => ({ default: module.default })));
 const FeedPage = lazy(() => import('@Pages/Root/feed/page').then((module) => ({ default: module.default })));
 const MyPage = lazy(() => import('@Pages/Root/mypage/page').then((module) => ({ default: module.default })));
 
@@ -42,7 +41,6 @@ export const routesFromElements = createRoutesFromElements(
           }>
           <Route path="archive" element={<ArchivePage />} />
           <Route path="vote-fap" element={<VoteFAPPage />} />
-          <Route path="upload" element={<UploadPage />} />
           <Route path="feed" element={<FeedPage />} />
           <Route path="mypage" element={<MyPage />} />
         </Route>
