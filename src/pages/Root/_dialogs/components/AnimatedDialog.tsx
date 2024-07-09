@@ -1,5 +1,5 @@
 import { cn } from '@Utils/index';
-import { Variants, motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { PropsWithChildren } from 'react';
 
 const slideUpVariants: Variants = {
