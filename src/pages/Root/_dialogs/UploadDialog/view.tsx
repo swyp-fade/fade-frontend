@@ -12,6 +12,7 @@ import { z } from 'zod';
 import { AnimatedDialog } from '../components/AnimatedDialog';
 import { SelectStyleDialog } from '../SelectStyleDialog/dialog';
 import { InputImageFile } from './components/InputImageFile';
+import { UploadGuideBottomSheet } from './components/UploadGuideBottomSheet';
 
 /** 착장 정보 스키마 */
 const outfitItemSchema = z
@@ -129,15 +130,21 @@ export const UploadView = forwardRef(({ onClose, onValueChanged }: UploadViewPro
 function Header({ onClose }: { onClose: () => void }) {
   return (
     <header className="relative px-5 py-4">
-      <button className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 hover:bg-gray-200" onClick={onClose}>
-        <MdClose className="size-6" />
+      <button className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 pointerdevice:hover:bg-gray-100" onClick={onClose}>
+        <MdClose className="size-6 group-active:pointerdevice:scale-95" />
       </button>
 
       <p className="text-center text-2xl font-semibold">사진 업로드</p>
 
-      <button className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 hover:bg-gray-200">
-        <MdInfoOutline className="size-6" />
-      </button>
+      <UploadGuideBottomSheet
+        triggerSlot={
+          <button
+            type="button"
+            className="group absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 transition-transform pointerdevice:hover:bg-gray-100">
+            <MdInfoOutline className="size-6 group-active:pointerdevice:active:scale-95" />
+          </button>
+        }
+      />
     </header>
   );
 }
