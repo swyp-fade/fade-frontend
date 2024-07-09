@@ -98,3 +98,5 @@ export const validateLocalImageFile = (imageFile: File) => {
 
   return { isValid: true, message: null };
 };
+
+export const generateRandomId = () => Math.random().toString(32).substring(2);
