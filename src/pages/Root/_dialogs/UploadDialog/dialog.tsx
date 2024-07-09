@@ -35,7 +35,7 @@ export function UploadViewDialog({ triggerSlot }: { triggerSlot: ReactNode }) {
 
       <AnimatePresence>
         {isOpened && (
-          <AlertDialog.Portal forceMount container={document.getElementById('rootLayout')!}>
+          <AlertDialog.Portal forceMount container={document.getElementById('portalSection')!}>
             <DialogOverlay />
             <AlertDialog.Title />
             <AlertDialog.Content>

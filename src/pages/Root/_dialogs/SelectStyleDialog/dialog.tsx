@@ -20,7 +20,7 @@ export function SelectStyleDialog({ triggerSlot, defaultStyles, onStylesSelected
 
       <AnimatePresence>
         {isOpened && (
-          <AlertDialog.Portal forceMount container={document.getElementById('rootLayout')!}>
+          <AlertDialog.Portal forceMount container={document.getElementById('portalSection')!}>
             <AlertDialog.Title />
             <AlertDialog.Content>
               <VisuallyHidden>
