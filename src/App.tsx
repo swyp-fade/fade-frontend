@@ -3,7 +3,6 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { MotionConfig, Transition } from 'framer-motion';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { routesFromElements } from './routes';
-import { ToastProvider } from '@Components/ToastProvider';
 
 /** Router */
 const browserRouter = createBrowserRouter(routesFromElements);
@@ -19,7 +18,6 @@ export default function App() {
     <MotionConfig transition={transitionConfig}>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={browserRouter} />
-        <ToastProvider />
       </QueryClientProvider>
     </MotionConfig>
   );

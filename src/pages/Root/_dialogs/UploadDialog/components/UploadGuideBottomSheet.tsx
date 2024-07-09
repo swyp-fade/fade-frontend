@@ -19,7 +19,7 @@ export function UploadGuideBottomSheet({ triggerSlot }: { triggerSlot: ReactNode
 
       <AnimatePresence>
         {isOpened && (
-          <AlertDialog.Portal forceMount container={document.getElementById('rootLayout')!}>
+          <AlertDialog.Portal forceMount container={document.getElementById('portalSection')!}>
             <AlertDialog.Overlay>
               <DialogOverlay onClick={() => handleOpenChange(false)} />
             </AlertDialog.Overlay>
