@@ -4,6 +4,7 @@ import { AnimatePresence } from 'framer-motion';
 import { DialogOverlay } from '../../components/DialogOverlay';
 import { AnimatedDialog } from '../../components/AnimatedDialog';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 export function UploadGuideBottomSheet({ triggerSlot }: { triggerSlot: ReactNode }) {
   const [isOpened, setIsOpened] = useState(false);
@@ -21,7 +22,11 @@ export function UploadGuideBottomSheet({ triggerSlot }: { triggerSlot: ReactNode
           <AlertDialog.Portal forceMount container={document.getElementById('rootLayout')!}>
             <DialogOverlay onClick={() => handleOpenChange(false)} />
             <AlertDialog.Title />
-            <AlertDialog.Content asChild>
+            <AlertDialog.Content>
+              <VisuallyHidden>
+                <AlertDialog.AlertDialogDescription>This description is hidden from sighted users but accessible to screen readers.</AlertDialog.AlertDialogDescription>
+              </VisuallyHidden>
+
               <AnimatedDialog modalType="bottomSheet">
                 <FlexibleLayout.Root>
                   <FlexibleLayout.Header>
