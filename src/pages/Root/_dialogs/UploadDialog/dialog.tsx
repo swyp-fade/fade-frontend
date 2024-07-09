@@ -1,12 +1,19 @@
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import { AnimatePresence } from 'framer-motion';
 import { ReactNode, useRef, useState } from 'react';
+import { AnimatedDialog } from '../components/AnimatedDialog';
 import { DialogOverlay } from '../components/DialogOverlay';
-import { UploadView } from './view';
+import { UploadImageForm } from './components/UploadImageForm';
+import { PolicyView } from './components/UploadPolicyView';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 export function UploadViewDialog({ triggerSlot }: { triggerSlot: ReactNode }) {
   const [isOpened, setIsOpened] = useState(false);
   const dirtyRef = useRef(false);
+
+  /** TODO: User 정보로 불러와야 함 */
+  const [hasAgreementOfPolicy, setHasAgreementOfPolicy] = useState(false);
+  const shouldShowPolicyView = !hasAgreementOfPolicy;
 
   const handleOpenChange = (wouldOpen: boolean) => {
     if (wouldOpen) {
@@ -31,8 +38,18 @@ export function UploadViewDialog({ triggerSlot }: { triggerSlot: ReactNode }) {
           <AlertDialog.Portal forceMount container={document.getElementById('rootLayout')!}>
             <DialogOverlay />
             <AlertDialog.Title />
-            <AlertDialog.Content asChild>
-              <UploadView onClose={() => handleOpenChange(false)} onValueChanged={(value) => (dirtyRef.current = value)} />
+            <AlertDialog.Content>
+              <VisuallyHidden>
+                <AlertDialog.AlertDialogDescription>This description is hidden from sighted users but accessible to screen readers.</AlertDialog.AlertDialogDescription>
+              </VisuallyHidden>
+
+              <AnimatedDialog>
+                {shouldShowPolicyView ? (
+                  <PolicyView onAgreePolicy={() => setHasAgreementOfPolicy(true)} onDegreePolicy={() => handleOpenChange(false)} />
+                ) : (
+                  <UploadImageForm onClose={() => handleOpenChange(false)} onValueChanged={(value) => (dirtyRef.current = value)} />
+                )}
+              </AnimatedDialog>
             </AlertDialog.Content>
           </AlertDialog.Portal>
         )}

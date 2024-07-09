@@ -16,9 +16,10 @@ type DialogOverlayProp = {
   onClick?: () => void;
 };
 
-export const DialogOverlay = forwardRef(({ onClick }: DialogOverlayProp) => {
+export const DialogOverlay = forwardRef<HTMLDivElement, DialogOverlayProp>(({ onClick }: DialogOverlayProp, ref) => {
   return (
     <motion.div
+      ref={ref}
       key="overlay"
       variants={variants}
       initial="opacityOut"

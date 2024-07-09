@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import { ReactNode, useState } from 'react';
 import { SelectStyleView } from './view';
 import { OutfitStyle } from '@Types/outfitStyle';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 type SelectStyleDialogProp = {
   triggerSlot: ReactNode;
@@ -21,7 +22,11 @@ export function SelectStyleDialog({ triggerSlot, defaultStyles, onStylesSelected
         {isOpened && (
           <AlertDialog.Portal forceMount container={document.getElementById('rootLayout')!}>
             <AlertDialog.Title />
-            <AlertDialog.Content asChild>
+            <AlertDialog.Content>
+              <VisuallyHidden>
+                <AlertDialog.AlertDialogDescription>This description is hidden from sighted users but accessible to screen readers.</AlertDialog.AlertDialogDescription>
+              </VisuallyHidden>
+
               <SelectStyleView
                 defaultStyles={defaultStyles}
                 onClose={(styles) => {
