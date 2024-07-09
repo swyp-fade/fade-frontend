@@ -12,6 +12,20 @@ const variants: Variants = {
   opacityIn: { opacity: 1 },
 };
 
-export const DialogOverlay = forwardRef(() => {
-  return <motion.div key="overlay" variants={variants} initial="opacityOut" animate="opacityIn" exit="opacityOut" className="fixed inset-0 overflow-auto bg-black/50" />;
+type DialogOverlayProp = {
+  onClick?: () => void;
+};
+
+export const DialogOverlay = forwardRef(({ onClick }: DialogOverlayProp) => {
+  return (
+    <motion.div
+      key="overlay"
+      variants={variants}
+      initial="opacityOut"
+      animate="opacityIn"
+      exit="opacityOut"
+      className="fixed inset-0 overflow-auto bg-black/50"
+      onClick={() => onClick && onClick()}
+    />
+  );
 });
