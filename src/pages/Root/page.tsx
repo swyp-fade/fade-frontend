@@ -1,4 +1,5 @@
 import { useAuthActions, useIsAuthenticated } from '@Hooks/auth';
+import { useToastActions } from '@Hooks/toast';
 import { requestRefreshToken } from '@Services/authAPI';
 import { LoaderResponseStatus } from '@Types/loaderResponse';
 import { clearSearchParams, createErrorLoaderResponse, createSuccessLoaderResponse, tryCatcher } from '@Utils/index';
@@ -26,6 +27,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Page() {
   const navigate = useNavigate();
   const isAuthenticated = useIsAuthenticated();
+  const { showToast } = useToastActions();
 
   const { status, payload } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
   const { signIn } = useAuthActions();
@@ -46,6 +48,8 @@ export default function Page() {
       signIn(payload!);
       clearSearchParams();
     }
+
+    showToast({ type: 'welcome', title: `환영환영` });
   }, []);
 
   return <Navigate to="/vote-fap" />;

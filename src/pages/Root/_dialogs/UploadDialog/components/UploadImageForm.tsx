@@ -12,6 +12,7 @@ import { z } from 'zod';
 import { SelectStyleDialog } from '../../SelectStyleDialog/dialog';
 import { InputImageFile } from './InputImageFile';
 import { UploadGuideBottomSheet } from './UploadGuideBottomSheet';
+import { useToastActions } from '@Hooks/toast';
 
 /** 착장 정보 스키마 */
 const outfitItemSchema = z
@@ -47,6 +48,7 @@ type UploadImageFormProp = { onClose: () => void; onValueChanged: (isChanged: bo
 
 export function UploadImageForm({ onClose, onValueChanged }: UploadImageFormProp) {
   const [pending, startTransition] = useTransition();
+  const { showToast } = useToastActions();
 
   const form = useForm<UploadImageSchema>({
     resolver: zodResolver(formSchema),
@@ -69,6 +71,7 @@ export function UploadImageForm({ onClose, onValueChanged }: UploadImageFormProp
   function handleSubmitAfterValidation(values: UploadImageSchema) {
     startTransition(() => {
       console.log(values);
+      showToast({ title: '사진을 성공적으로 등록 어쩌구', type: 'success' });
       // onSubmit(values);
     });
   }
