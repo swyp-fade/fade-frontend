@@ -5,14 +5,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import * as Select from '@radix-ui/react-select';
 import { OutfitStyle } from '@Types/outfitStyle';
-import { forwardRef, useEffect, useTransition } from 'react';
+import { useEffect, useTransition } from 'react';
 import { Control, useFieldArray, useForm } from 'react-hook-form';
 import { MdChevronRight, MdClose, MdInfoOutline } from 'react-icons/md';
 import { z } from 'zod';
-import { AnimatedDialog } from '../components/AnimatedDialog';
-import { SelectStyleDialog } from '../SelectStyleDialog/dialog';
-import { InputImageFile } from './components/InputImageFile';
-import { UploadGuideBottomSheet } from './components/UploadGuideBottomSheet';
+import { SelectStyleDialog } from '../../SelectStyleDialog/dialog';
+import { InputImageFile } from './InputImageFile';
+import { UploadGuideBottomSheet } from './UploadGuideBottomSheet';
 
 /** 착장 정보 스키마 */
 const outfitItemSchema = z
@@ -44,9 +43,9 @@ const formSchema = z.object({
 
 type UploadImageSchema = z.infer<typeof formSchema>;
 
-type UploadViewProps = { onClose: () => void; onValueChanged: (isChanged: boolean) => void };
+type UploadImageFormProp = { onClose: () => void; onValueChanged: (isChanged: boolean) => void };
 
-export const UploadView = forwardRef(({ onClose, onValueChanged }: UploadViewProps, ref) => {
+export function UploadImageForm({ onClose, onValueChanged }: UploadImageFormProp) {
   const [pending, startTransition] = useTransition();
 
   const form = useForm<UploadImageSchema>({
@@ -86,46 +85,44 @@ export const UploadView = forwardRef(({ onClose, onValueChanged }: UploadViewPro
   });
 
   return (
-    <AnimatedDialog>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmitAfterValidation)} className="h-full space-y-8">
-          <fieldset className="flex h-full min-w-full flex-col gap-5" disabled={pending}>
-            <FlexibleLayout.Root>
-              <FlexibleLayout.Header>
-                <Header onClose={onClose} />
-              </FlexibleLayout.Header>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmitAfterValidation)} className="h-full space-y-8">
+        <fieldset className="flex h-full min-w-full flex-col gap-5" disabled={pending}>
+          <FlexibleLayout.Root>
+            <FlexibleLayout.Header>
+              <Header onClose={onClose} />
+            </FlexibleLayout.Header>
 
-              <FlexibleLayout.Content className="space-y-8">
-                <AddImageField control={form.control} />
-                <SelectStylesField selectedStyles={styles as unknown as OutfitStyle[]} control={form.control} />
+            <FlexibleLayout.Content className="space-y-8">
+              <AddImageField control={form.control} />
+              <SelectStylesField selectedStyles={styles as unknown as OutfitStyle[]} control={form.control} />
 
-                <div className="space-y-3">
-                  <FormLabel className="text-lg font-semibold">착장 정보</FormLabel>
-                  <div className="space-y-2">
-                    {outfitFields.map((outfitField, index) => (
-                      <div key={outfitField.id} className="flex max-w-full flex-row gap-x-2">
-                        <CategoryField control={form.control} index={index} />
-                        <BrandNameField control={form.control} index={index} disabled={watchedOutfits[index].category === -1} />
-                        <DetailField control={form.control} index={index} disabled={watchedOutfits[index].brandName === ''} />
-                      </div>
-                    ))}
-                  </div>
-
-                  <AddOutfitDetailButton disabled={couldNotAddOutfitDetail} onClick={() => append({ ...initialOutfitDetailItem })} />
+              <div className="space-y-3">
+                <FormLabel className="text-lg font-semibold">착장 정보</FormLabel>
+                <div className="space-y-2">
+                  {outfitFields.map((outfitField, index) => (
+                    <div key={outfitField.id} className="flex max-w-full flex-row gap-x-2">
+                      <CategoryField control={form.control} index={index} />
+                      <BrandNameField control={form.control} index={index} disabled={watchedOutfits[index].category === -1} />
+                      <DetailField control={form.control} index={index} disabled={watchedOutfits[index].brandName === ''} />
+                    </div>
+                  ))}
                 </div>
-              </FlexibleLayout.Content>
 
-              <FlexibleLayout.Footer>
-                <UploadButton disabled={!isValid} />
-                {/* <UploadButton disabled={false} /> */}
-              </FlexibleLayout.Footer>
-            </FlexibleLayout.Root>
-          </fieldset>
-        </form>
-      </Form>
-    </AnimatedDialog>
+                <AddOutfitDetailButton disabled={couldNotAddOutfitDetail} onClick={() => append({ ...initialOutfitDetailItem })} />
+              </div>
+            </FlexibleLayout.Content>
+
+            <FlexibleLayout.Footer>
+              <UploadButton disabled={!isValid} />
+              {/* <UploadButton disabled={false} /> */}
+            </FlexibleLayout.Footer>
+          </FlexibleLayout.Root>
+        </fieldset>
+      </form>
+    </Form>
   );
-});
+}
 
 function Header({ onClose }: { onClose: () => void }) {
   return (
