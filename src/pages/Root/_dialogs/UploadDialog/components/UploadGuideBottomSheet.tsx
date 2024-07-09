@@ -20,8 +20,12 @@ export function UploadGuideBottomSheet({ triggerSlot }: { triggerSlot: ReactNode
       <AnimatePresence>
         {isOpened && (
           <AlertDialog.Portal forceMount container={document.getElementById('rootLayout')!}>
-            <DialogOverlay onClick={() => handleOpenChange(false)} />
+            <AlertDialog.Overlay>
+              <DialogOverlay onClick={() => handleOpenChange(false)} />
+            </AlertDialog.Overlay>
+
             <AlertDialog.Title />
+
             <AlertDialog.Content>
               <VisuallyHidden>
                 <AlertDialog.AlertDialogDescription>This description is hidden from sighted users but accessible to screen readers.</AlertDialog.AlertDialogDescription>
