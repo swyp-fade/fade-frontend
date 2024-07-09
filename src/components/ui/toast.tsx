@@ -22,7 +22,7 @@ export const Toast = forwardRef<ElementRef<typeof RadixToast.Root>, { value: Toa
     const wouldShowAction = value.actionSlot !== undefined;
 
     return (
-      <RadixToast.Root ref={ref} key={`toast-${value.id}`} open duration={value.duration} forceMount asChild onOpenChange={(isOpen) => !isOpen && onClose(value.id)}>
+      <RadixToast.Root ref={ref} duration={2500} forceMount asChild onOpenChange={() => onClose(value.id)}>
         <motion.li
           layout
           variants={variants}
