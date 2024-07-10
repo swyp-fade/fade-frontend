@@ -1,11 +1,11 @@
+import { AnimatedDialog } from '@Components/AnimatedDialog';
+import { DialogOverlay } from '@Components/DialogOverlay';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { AnimatePresence } from 'framer-motion';
 import { ReactNode, useRef, useState } from 'react';
-import { AnimatedDialog } from '../components/AnimatedDialog';
-import { DialogOverlay } from '../components/DialogOverlay';
 import { UploadImageForm } from './components/UploadImageForm';
 import { PolicyView } from './components/UploadPolicyView';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 export function UploadViewDialog({ triggerSlot }: { triggerSlot: ReactNode }) {
   const [isOpened, setIsOpened] = useState(false);

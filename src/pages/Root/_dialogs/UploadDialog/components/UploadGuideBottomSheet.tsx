@@ -1,10 +1,10 @@
+import { AnimatedDialog } from '@Components/AnimatedDialog';
+import { DialogOverlay } from '@Components/DialogOverlay';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { AnimatePresence } from 'framer-motion';
 import { ReactNode } from 'react';
-import { AnimatedDialog } from '../../components/AnimatedDialog';
-import { DialogOverlay } from '../../components/DialogOverlay';
 
 type UploadGuideBottomSheetProp = {
   isOpened: boolean;
