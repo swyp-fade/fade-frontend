@@ -1,27 +1,28 @@
-import { ReactNode, useState } from 'react';
-import * as AlertDialog from '@radix-ui/react-alert-dialog';
-import { AnimatePresence } from 'framer-motion';
-import { DialogOverlay } from '../../components/DialogOverlay';
-import { AnimatedDialog } from '../../components/AnimatedDialog';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
+import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { AnimatePresence } from 'framer-motion';
+import { ReactNode } from 'react';
+import { AnimatedDialog } from '../../components/AnimatedDialog';
+import { DialogOverlay } from '../../components/DialogOverlay';
 
-export function UploadGuideBottomSheet({ triggerSlot }: { triggerSlot: ReactNode }) {
-  const [isOpened, setIsOpened] = useState(false);
+type UploadGuideBottomSheetProp = {
+  isOpened: boolean;
+  triggerSlot?: ReactNode;
+  onOpenChagne: (isOpened: boolean) => void;
+  onAfterClose?: () => void;
+};
 
-  const handleOpenChange = (wouldOpen: boolean) => {
-    setIsOpened(wouldOpen);
-  };
-
+export function UploadGuideBottomSheet({ isOpened, triggerSlot, onOpenChagne, onAfterClose }: UploadGuideBottomSheetProp) {
   return (
-    <AlertDialog.Root open={isOpened} onOpenChange={handleOpenChange}>
-      <AlertDialog.Trigger asChild>{triggerSlot}</AlertDialog.Trigger>
+    <AlertDialog.Root open={isOpened} onOpenChange={onOpenChagne}>
+      {triggerSlot && <AlertDialog.Trigger asChild>{triggerSlot}</AlertDialog.Trigger>}
 
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={() => onAfterClose && onAfterClose()}>
         {isOpened && (
           <AlertDialog.Portal forceMount container={document.getElementById('portalSection')!}>
             <AlertDialog.Overlay>
-              <DialogOverlay onClick={() => handleOpenChange(false)} />
+              <DialogOverlay onClick={() => onOpenChagne(false)} />
             </AlertDialog.Overlay>
 
             <AlertDialog.Title />
@@ -49,7 +50,7 @@ export function UploadGuideBottomSheet({ triggerSlot }: { triggerSlot: ReactNode
 
                   <FlexibleLayout.Footer>
                     <div className="flex p-4">
-                      <button className="flex-1 rounded-lg bg-gray-200 py-2 text-xl text-black transition-colors" onClick={() => handleOpenChange(false)}>
+                      <button type="button" className="flex-1 rounded-lg bg-gray-200 py-2 text-xl text-black transition-colors" onClick={() => onOpenChagne(false)}>
                         확인
                       </button>
                     </div>
