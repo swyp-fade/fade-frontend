@@ -1,10 +1,10 @@
 import { OUTFIT_STYLE_LIST } from '@/constants';
+import { AnimatedDialog } from '@Components/AnimatedDialog';
 import { ToggleButton } from '@Components/ui/toogleButton';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { OutfitStyle } from '@Types/outfitStyle';
 import { forwardRef, useState } from 'react';
 import { MdChevronLeft } from 'react-icons/md';
-import { AnimatedDialog } from '../components/AnimatedDialog';
 
 type SelectStyleViewProp = {
   defaultStyles: OutfitStyle[];

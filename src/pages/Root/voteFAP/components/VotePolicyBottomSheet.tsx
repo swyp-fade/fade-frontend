@@ -4,25 +4,24 @@ import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { AnimatePresence } from 'framer-motion';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
-type UploadGuideBottomSheetProp = {
-  isOpened: boolean;
-  triggerSlot?: ReactNode;
-  onOpenChagne: (isOpened: boolean) => void;
-  onAfterClose?: () => void;
+type VotePolicyBottomSheetProp = {
+  triggerSlot: ReactNode;
 };
 
-export function UploadGuideBottomSheet({ isOpened, triggerSlot, onOpenChagne, onAfterClose }: UploadGuideBottomSheetProp) {
+export function VotePolicyBottomSheet({ triggerSlot }: VotePolicyBottomSheetProp) {
+  const [isOpened, setIsOpened] = useState(false);
+
   return (
-    <AlertDialog.Root open={isOpened} onOpenChange={onOpenChagne}>
+    <AlertDialog.Root open={isOpened} onOpenChange={setIsOpened}>
       {triggerSlot && <AlertDialog.Trigger asChild>{triggerSlot}</AlertDialog.Trigger>}
 
-      <AnimatePresence onExitComplete={() => onAfterClose && onAfterClose()}>
+      <AnimatePresence>
         {isOpened && (
           <AlertDialog.Portal forceMount container={document.getElementById('portalSection')!}>
             <AlertDialog.Overlay>
-              <DialogOverlay onClick={() => onOpenChagne(false)} />
+              <DialogOverlay onClick={() => setIsOpened(false)} />
             </AlertDialog.Overlay>
 
             <AlertDialog.Title />
@@ -36,21 +35,23 @@ export function UploadGuideBottomSheet({ isOpened, triggerSlot, onOpenChagne, on
                 <FlexibleLayout.Root>
                   <FlexibleLayout.Header>
                     <header className="relative px-5 py-4">
-                      <p className="text-center text-2xl font-semibold">사진 업로드 가이드</p>
+                      <p className="text-center text-2xl font-semibold">투표 정책</p>
                     </header>
                   </FlexibleLayout.Header>
 
                   <FlexibleLayout.Content>
-                    <ul className="list-disc space-y-5">
-                      <li className="ml-5 whitespace-pre-line">{`FADE는 스타일에만 집중하고자 합니다.\n최대한 얼굴이 보이지 않는 사진으로 올려주세요!\nFADE만의 문화를 함께 만들어가요! :)`}</li>
-                      <li className="ml-5 whitespace-pre-line">{`회원님의 스타일이 잘 보이는 사진이 좋습니다.\n얼굴 제외 전신을 볼 수 있는 사진으로 올려주세요!`}</li>
-                      <li className="ml-5 whitespace-pre-line">{`FADE는 공정한 FA:P 투표를 위해 노력하고 있습니다.\n공정성을 위해 이미 올린 사진은 다시 올릴 수 없어요!`}</li>
+                    <ul className="list-disc space-y-3">
+                      <li className="ml-5 whitespace-pre-line">{`1사이클은 10회의 FADE IN/OUT 투표로 이루어집니다.`}</li>
+                      <li className="ml-5 whitespace-pre-line">{`하루에 가능한 투표 횟수의 제한은 없습니다.`}</li>
+                      <li className="ml-5 whitespace-pre-line">{`완료된 투표는 그날의 FA:P 선정에 반영됩니다.`}</li>
+                      <li className="ml-5 whitespace-pre-line">{`투표 사진은 FADE의 알고리즘을 통해 무작위 노출됩니다.`}</li>
+                      <li className="ml-5 whitespace-pre-line">{`일자별 투표 결과는 FA:P 아카이빙 캘린더에서, 투표 내역은 마이페이지-내 투표 관리에서 확인할 수 있습니다.`}</li>
                     </ul>
                   </FlexibleLayout.Content>
 
                   <FlexibleLayout.Footer>
                     <div className="flex p-4">
-                      <button type="button" className="flex-1 rounded-lg bg-gray-200 py-2 text-xl text-black transition-colors" onClick={() => onOpenChagne(false)}>
+                      <button type="button" className="flex-1 rounded-lg bg-gray-200 py-2 text-xl text-black transition-colors" onClick={() => setIsOpened(false)}>
                         확인
                       </button>
                     </div>
