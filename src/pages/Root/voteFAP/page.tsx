@@ -2,11 +2,12 @@ import { useToastActions } from '@Hooks/toast';
 import { useHeader } from '@Hooks/useHeader';
 import { useState } from 'react';
 import { MdInfoOutline, MdOutlineNotificationsNone } from 'react-icons/md';
+import { VotePolicyBottomSheet } from './components/VotePolicyBottomSheet';
 
 export default function Page() {
   useHeader({
     title: 'FA:P 투표',
-    leftSlot: () => <MdInfoOutline className="size-6" />,
+    leftSlot: () => <ShowVotePolicyButton />,
     rightSlot: () => <RightSlotComponent />,
   });
 
@@ -69,6 +70,18 @@ export default function Page() {
         ))}
       </ul>
     </>
+  );
+}
+
+function ShowVotePolicyButton() {
+  return (
+    <VotePolicyBottomSheet
+      triggerSlot={
+        <button className="group cursor-pointer rounded-lg p-2 pointerdevice:hover:bg-gray-100">
+          <MdInfoOutline className="size-6 group-active:pointerdevice:scale-95" />
+        </button>
+      }
+    />
   );
 }
 
