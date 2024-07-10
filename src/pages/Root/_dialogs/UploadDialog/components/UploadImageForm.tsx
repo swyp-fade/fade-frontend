@@ -2,17 +2,17 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { OUTFIT_CATEGORY_LIST, OUTFIT_STYLE_MAP } from '@/constants';
 import { ToggleButton } from '@Components/ui/toogleButton';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useToastActions } from '@Hooks/toast';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import * as Select from '@radix-ui/react-select';
 import { OutfitStyle } from '@Types/outfitStyle';
-import { useEffect, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { Control, useFieldArray, useForm } from 'react-hook-form';
 import { MdChevronRight, MdClose, MdInfoOutline } from 'react-icons/md';
 import { z } from 'zod';
 import { SelectStyleDialog } from '../../SelectStyleDialog/dialog';
 import { InputImageFile } from './InputImageFile';
 import { UploadGuideBottomSheet } from './UploadGuideBottomSheet';
-import { useToastActions } from '@Hooks/toast';
 
 /** 착장 정보 스키마 */
 const outfitItemSchema = z
@@ -128,15 +128,19 @@ export function UploadImageForm({ onClose, onValueChanged }: UploadImageFormProp
 }
 
 function Header({ onClose }: { onClose: () => void }) {
+  const [isOpened, setIsOpened] = useState(false);
+
   return (
     <header className="relative px-5 py-4">
-      <button className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 pointerdevice:hover:bg-gray-100" onClick={onClose}>
+      <button type="button" className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 pointerdevice:hover:bg-gray-100" onClick={onClose}>
         <MdClose className="size-6 group-active:pointerdevice:scale-95" />
       </button>
 
       <p className="text-center text-2xl font-semibold">사진 업로드</p>
 
       <UploadGuideBottomSheet
+        isOpened={isOpened}
+        onOpenChagne={setIsOpened}
         triggerSlot={
           <button
             type="button"
