@@ -1,13 +1,15 @@
 import { cn } from '@Utils/index';
-import { HTMLAttributes, PropsWithChildren } from 'react';
+import { forwardRef, HTMLAttributes, PropsWithChildren } from 'react';
 
-function Root({ children, className, ...props }: PropsWithChildren<HTMLAttributes<HTMLDivElement>>) {
-  return (
-    <div className={cn('flex h-full flex-col', className)} {...props}>
-      {children}
-    </div>
-  );
-}
+const Root = forwardRef<HTMLDivElement, PropsWithChildren<HTMLAttributes<HTMLDivElement>>>(
+  ({ children, className, ...props }: PropsWithChildren<HTMLAttributes<HTMLDivElement>>, ref) => {
+    return (
+      <div ref={ref} className={cn('flex h-full flex-col', className)} {...props}>
+        {children}
+      </div>
+    );
+  }
+);
 
 function Header({ children }: PropsWithChildren) {
   return <>{children}</>;
