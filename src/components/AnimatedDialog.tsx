@@ -14,14 +14,21 @@ const slideInFromRightVariants: Variants = {
   exit: { x: '100%', scale: '85%', opacity: '80%', transition: { duration: 0.2 } },
 };
 
-type AnimateType = 'slideUp' | 'slideInFromRight';
+const showAtCenterVariants: Variants = {
+  hide: { opacity: 0, scale: '85%', y: '-50%', transformOrigin: 'bottom' },
+  show: { opacity: '100%', scale: '100%', y: '-50%' },
+  exit: { opacity: 0, scale: '85%' },
+};
+
+type AnimateType = 'slideUp' | 'slideInFromRight' | 'showAtCenter';
 
 const variantsMap: Record<AnimateType, Variants> = {
   slideUp: slideUpVariants,
   slideInFromRight: slideInFromRightVariants,
+  showAtCenter: showAtCenterVariants,
 };
 
-type ModalType = 'fullScreenDialog' | 'bottomSheet';
+type ModalType = 'fullScreenDialog' | 'bottomSheet' | 'modal';
 
 type AnimatedDialogProps = {
   animateType?: AnimateType;
@@ -31,6 +38,7 @@ type AnimatedDialogProps = {
 export function AnimatedDialog({ animateType = 'slideUp', modalType = 'fullScreenDialog', children }: PropsWithChildren<AnimatedDialogProps>) {
   const isFullScreenDialog = modalType === 'fullScreenDialog';
   const isBottomSheet = modalType === 'bottomSheet';
+  const isModal = modalType === 'modal';
 
   const childRef = useRef<HTMLDivElement>(null);
   const childElement = Children.only(children) as ReactElement;
@@ -66,9 +74,11 @@ export function AnimatedDialog({ animateType = 'slideUp', modalType = 'fullScree
       className={cn('pointer-events-auto absolute flex w-full flex-col bg-white', {
         ['bottom-0 left-0 h-full']: isFullScreenDialog,
         ['bottom-0 left-0 h-fit rounded-t-2xl']: isBottomSheet,
+        ['top-1/2 mx-5 h-fit w-fit rounded-2xl']: isModal,
       })}>
       {isBottomSheet && <ChildComponent ref={childRef} {...childProps} />}
       {isFullScreenDialog && children}
+      {isModal && children}
     </motion.div>
   );
 }
