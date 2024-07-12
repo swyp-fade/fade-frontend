@@ -37,7 +37,7 @@ export function NavBar() {
   const createNavItem = (navItem: NavItem) => <NavItem key={navItem.link} {...navItem} isActive={navItem.link ? location.pathname.startsWith(navItem.link) : false} />;
 
   return (
-    <nav>
+    <nav className="bg-white">
       <ul className="flex flex-row">{navList.map(createNavItem)}</ul>
     </nav>
   );

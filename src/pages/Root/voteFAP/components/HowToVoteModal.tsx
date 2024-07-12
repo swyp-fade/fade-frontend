@@ -5,7 +5,7 @@ import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { cn } from '@Utils/index';
 import { AnimatePresence, motion } from 'framer-motion';
-import { PropsWithChildren, ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 type HowToVoteModalProp = {
   triggerSlot: ReactNode;
@@ -95,10 +95,7 @@ function Carousel({ onLastClick }: { onLastClick: () => void }) {
 
       <FlexibleLayout.Footer>
         <div className="flex p-4">
-          <NextCarouselButton onClick={handleNextCarousel}>
-            {!isLastStep && '다음'}
-            {isLastStep && '확인'}
-          </NextCarouselButton>
+          <NextCarouselButton onClick={handleNextCarousel} isLastStep={isLastStep} />
         </div>
       </FlexibleLayout.Footer>
     </>
@@ -140,10 +137,14 @@ function CarouselNavItem({ isActive }: { isActive: boolean }) {
   return <li className={cn('size-2 rounded-full bg-gray-200 transition-colors', { ['bg-purple-700']: isActive })} />;
 }
 
-function NextCarouselButton({ onClick, children }: PropsWithChildren<{ onClick: () => void }>) {
+function NextCarouselButton({ onClick, isLastStep }: { onClick: () => void; isLastStep: boolean }) {
   return (
-    <button type="button" className="flex-1 rounded-lg bg-gray-200 py-2 text-xl text-black transition-colors" onClick={onClick}>
-      {children}
+    <button
+      type="button"
+      className={cn('flex-1 rounded-lg bg-gray-200 py-2 text-xl text-black transition-colors', { ['bg-purple-700 text-white']: isLastStep })}
+      onClick={onClick}>
+      {!isLastStep && '다음'}
+      {isLastStep && 'FA:P 투표 시작하기'}
     </button>
   );
 }

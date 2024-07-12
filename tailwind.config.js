@@ -11,6 +11,9 @@ export default {
       fontFamily: {
         pretendard: ['Pretendard'],
       },
+      boxShadow: {
+        bento: '0 .125rem .25rem .0625rem rgba(0,0,0,.1)',
+      },
     },
   },
   plugins: [],
