@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { MdInfoOutline, MdOutlineNotificationsNone } from 'react-icons/md';
 import { VotePolicyBottomSheet } from './components/VotePolicyBottomSheet';
 import { ReportBottomSheet } from './components/ReportBottomSheet';
+import { HowToVoteModal } from './components/HowToVoteModal';
 
 export default function Page() {
   useHeader({
@@ -67,6 +68,7 @@ export default function Page() {
         토스트 테스트
       </button>
       <ReportBottomSheet triggerSlot={<button>신고하기 테스트</button>} />
+      <HowToVoteModal triggerSlot={<button className="block">투표 방법</button>} />
       <ul className="flex flex-col gap-6">
         {[1, 2, 3, 4, 5].map((_, index) => (
           <li key={index} className="aspect-[3/4] w-full rounded-lg bg-gray-100" />
