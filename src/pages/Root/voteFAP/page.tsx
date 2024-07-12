@@ -1,80 +1,54 @@
-import { useToastActions } from '@Hooks/toast';
 import { useHeader } from '@Hooks/useHeader';
+import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { useState } from 'react';
-import { MdInfoOutline, MdOutlineNotificationsNone } from 'react-icons/md';
+import { MdBookmark, MdInfoOutline, MdOutlineNotificationsNone } from 'react-icons/md';
 import { VotePolicyBottomSheet } from './components/VotePolicyBottomSheet';
-import { ReportBottomSheet } from './components/ReportBottomSheet';
 import { HowToVoteModal } from './components/HowToVoteModal';
+
+import profileDefaultImage1 from '@Assets/profile_default_1.jpg';
+import profileDefaultImage2 from '@Assets/profile_default_2.jpg';
+import profileDefaultImage3 from '@Assets/profile_default_3.jpg';
+import profileDefaultImage4 from '@Assets/profile_default_4.jpg';
+
+import voteFadeInImage from '@Assets/vote_fade_in.png';
+import voteFadeOutImage from '@Assets/vote_fade_out.png';
+
+const defaultProfileImages = [profileDefaultImage1, profileDefaultImage2, profileDefaultImage3, profileDefaultImage4];
+
+type VoteViewStatus = 'beforeVoting' | 'voting' | 'afterVoting';
 
 export default function Page() {
   useHeader({
     title: 'FA:P 투표',
     leftSlot: () => <ShowVotePolicyButton />,
-    rightSlot: () => <RightSlotComponent />,
+    rightSlot: () => <ShowNotificationButton />,
   });
 
-  const { showToast, closeToast } = useToastActions();
+  const [voteViewState, setVoteViewState] = useState<VoteViewStatus>('beforeVoting');
+
+  const isBeforeVoting = voteViewState === 'beforeVoting';
+  const isVoting = voteViewState === 'voting';
+  const isAfterVoting = voteViewState === 'afterVoting';
 
   return (
-    <>
-      투표 화면
-      <button
-        className="block"
-        onClick={() => {
-          const toastId1 = showToast({
-            title: '사진 업로드 완료',
-            type: 'success',
-            actionSlot: () => (
-              <button
-                onClick={() => {
-                  alert('먼갈 보여줌');
-                  closeToast(toastId1);
-                }}
-                className="text-purple-700">
-                보러가기
-              </button>
-            ),
-          });
-          const toastId2 = showToast({
-            title: '사진 업로드 실패',
-            type: 'error',
-            actionSlot: () => (
-              <button
-                onClick={() => {
-                  alert('먼갈 다시 시도함');
-                  closeToast(toastId2);
-                }}>
-                다시시도
-              </button>
-            ),
-          });
-          const toastId3 = showToast({
-            title: '신고되었습니다.',
-            type: 'basic',
-          });
-          const toastId4 = showToast({
-            title: '어서오세요, FADE_1234님!',
-            type: 'welcome',
-          });
-          const toastId5 = showToast({
-            title: '이미 존재하는 ID입니다.',
-            type: 'error',
-          });
-          const toastId6 = showToast({
-            title: '업로드할 사진을 추가해주세요!',
-            type: 'error',
-          });
-        }}>
-        토스트 테스트
-      </button>
-      <ReportBottomSheet triggerSlot={<button>신고하기 테스트</button>} />
-      <HowToVoteModal triggerSlot={<button className="block">투표 방법</button>} />
-      <ul className="flex flex-col gap-6">
-        {[1, 2, 3, 4, 5].map((_, index) => (
-          <li key={index} className="aspect-[3/4] w-full rounded-lg bg-gray-100" />
-        ))}
-      </ul>
-    </>
+    <FlexibleLayout.Root className="gap-3">
+      <FlexibleLayout.Header>
+        <div className="shadow-bento flex flex-row rounded-lg border border-gray-200 bg-white p-3">
+          <p className="flex-1">FADE_1234님은 오늘 10회 투표했어요!</p>
+          <span className="text-gray-500">2/10</span>
+        </div>
+      </FlexibleLayout.Header>
+
+      <FlexibleLayout.Content className="p-0">ㅇㅇ</FlexibleLayout.Content>
+
+      <FlexibleLayout.Footer>
+        <BackgroundEllipse />
+
+        {isBeforeVoting && <BeforeVotingFooterButtons onStartClick={() => setVoteViewState('voting')} />}
+        {isVoting && <VotingFooterButton />}
+        {isAfterVoting && <AfterVotingFooterButton onRetryVote={() => setVoteViewState('voting')} />}
+      </FlexibleLayout.Footer>
+    </FlexibleLayout.Root>
   );
 }
 
@@ -90,8 +64,7 @@ function ShowVotePolicyButton() {
   );
 }
 
-/** Popover 테스트용으로 ㅎㅎ */
-const RightSlotComponent = () => {
+function ShowNotificationButton() {
   const [isOpened, setIsOpened] = useState(false);
 
   return (
@@ -105,4 +78,81 @@ const RightSlotComponent = () => {
       )}
     </div>
   );
-};
+}
+
+function BackgroundEllipse() {
+  return <div className="absolute bottom-0 left-1/2 -z-10 h-[25rem] w-[170%] -translate-x-1/2 rounded-[100%/100%] bg-purple-50" />;
+}
+
+function HowToVoteButton() {
+  return (
+    <HowToVoteModal
+      triggerSlot={
+        <button className="shadow-bento group rounded-lg border-gray-200 bg-white p-2 text-xl">
+          <span className="inline-block transition-transform pointerdevice:group-hover:scale-105 pointerdevice:group-active:scale-95">투표 방법</span>
+        </button>
+      }
+    />
+  );
+}
+
+function SubscribeButton() {
+  const randomProfileImage = defaultProfileImages.at(Math.floor(Math.random() * 4));
+
+  return (
+    <div className="shadow-bento flex flex-row items-center justify-center gap-3 rounded-lg bg-white px-3 py-2">
+      <div style={{ backgroundImage: `url('${randomProfileImage}')` }} className="size-8 rounded-lg" />
+      <p className="flex-1">익명의 뭐시기</p>
+      <button className="rounded-lg border border-gray-200 px-4 py-1">구독</button>
+    </div>
+  );
+}
+
+function BeforeVotingFooterButtons({ onStartClick }: { onStartClick: () => void }) {
+  return (
+    <>
+      <button className="shadow-bento group rounded-lg bg-purple-700 p-3 text-xl font-semibold text-white" onClick={onStartClick}>
+        <span className="inline-block transition-transform pointerdevice:group-hover:scale-105 pointerdevice:group-active:scale-95">투표 시작하기</span>
+      </button>
+
+      <HowToVoteButton />
+    </>
+  );
+}
+
+function VotingFooterButton() {
+  return (
+    <>
+      <SubscribeButton />
+
+      <div className="flex flex-row gap-3">
+        <button className="shadow-bento group flex-1 rounded-lg bg-white px-5 py-3 transition-colors pointerdevice:hover:bg-gray-200 pointerdevice:active:bg-gray-300">
+          <div style={{ backgroundImage: `url('${voteFadeOutImage}')` }} className="mx-auto h-5 w-[8.375rem] transition-transform group-hover:translate-y-[.125rem]" />
+        </button>
+
+        <button className="shadow-bento group flex-1 rounded-lg bg-white px-5 py-3 transition-colors pointerdevice:hover:bg-purple-200 pointerdevice:active:bg-purple-300">
+          <div style={{ backgroundImage: `url('${voteFadeInImage}')` }} className="mx-auto h-5 w-[6.4375rem] transition-transform group-hover:-translate-y-[.125rem]" />
+        </button>
+
+        <button className="shadow-bento rounded-lg bg-white p-3">
+          <MdBookmark className="size-6 text-gray-600" />
+        </button>
+      </div>
+    </>
+  );
+}
+
+function AfterVotingFooterButton({ onRetryVote }: { onRetryVote: () => void }) {
+  return (
+    <>
+      <button className="shadow-bento group rounded-lg bg-purple-700 p-3 text-xl font-semibold text-white" onClick={onRetryVote}>
+        <span className="inline-block transition-transform pointerdevice:group-hover:scale-105 pointerdevice:group-active:scale-95">투표 다시하기</span>
+      </button>
+
+      <div className="flex flex-row gap-3">
+        <button className="shadow-bento flex-1 rounded-lg bg-white py-2 text-lg">투표 내역 확인</button>
+        <button className="shadow-bento flex-1 rounded-lg bg-white py-2 text-lg">북마크 확인</button>
+      </div>
+    </>
+  );
+}
