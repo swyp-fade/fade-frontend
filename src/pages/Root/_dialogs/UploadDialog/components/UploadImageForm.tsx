@@ -4,7 +4,6 @@ import { ToggleButton } from '@Components/ui/toogleButton';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToastActions } from '@Hooks/toast';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
-import * as Select from '@radix-ui/react-select';
 import { OutfitStyle } from '@Types/outfitStyle';
 import { useEffect, useState, useTransition } from 'react';
 import { Control, useFieldArray, useForm } from 'react-hook-form';
@@ -12,6 +11,7 @@ import { MdChevronRight, MdClose, MdInfoOutline } from 'react-icons/md';
 import { z } from 'zod';
 import { SelectStyleDialog } from '../../SelectStyleDialog/dialog';
 import { InputImageFile } from './InputImageFile';
+import { OutfitFieldSheet } from './OutfitFieldSheet';
 import { UploadGuideBottomSheet } from './UploadGuideBottomSheet';
 
 /** 착장 정보 스키마 */
@@ -33,8 +33,6 @@ const outfitItemSchema = z
 
 type OutfitItemSchema = z.infer<typeof outfitItemSchema>;
 
-const initialOutfitDetailItem: OutfitItemSchema = { category: -1, brandName: '', details: '' };
-
 /** 사진 업로드 스키마 */
 const formSchema = z.object({
   image: z.string().refine((value) => value !== '', '사진을 선택해주세요.'),
@@ -55,7 +53,7 @@ export function UploadImageForm({ onClose, onValueChanged }: UploadImageFormProp
     defaultValues: {
       image: undefined,
       styles: [],
-      outfits: [{ ...initialOutfitDetailItem }],
+      outfits: [],
     },
     mode: 'onChange',
   });
@@ -76,16 +74,7 @@ export function UploadImageForm({ onClose, onValueChanged }: UploadImageFormProp
     });
   }
 
-  const { fields: outfitFields, append } = useFieldArray({ name: 'outfits', control: form.control });
-
-  const watchedOutfits = form.watch('outfits');
-
-  const couldNotAddOutfitDetail = watchedOutfits.some(({ category, brandName }) => {
-    const doseNotSelectCategory = category === -1;
-    const doseNotInputBrandName = !doseNotSelectCategory && brandName === '';
-
-    return doseNotSelectCategory || doseNotInputBrandName;
-  });
+  const { fields: outfitFields, append, remove, update } = useFieldArray({ name: 'outfits', control: form.control });
 
   return (
     <Form {...form}>
@@ -102,17 +91,28 @@ export function UploadImageForm({ onClose, onValueChanged }: UploadImageFormProp
 
               <div className="space-y-3">
                 <FormLabel className="text-lg font-semibold">착장 정보</FormLabel>
-                <div className="space-y-2">
-                  {outfitFields.map((outfitField, index) => (
-                    <div key={outfitField.id} className="flex max-w-full flex-row gap-x-2">
-                      <CategoryField control={form.control} index={index} />
-                      <BrandNameField control={form.control} index={index} disabled={watchedOutfits[index].category === -1} />
-                      <DetailField control={form.control} index={index} disabled={watchedOutfits[index].brandName === ''} />
-                    </div>
-                  ))}
-                </div>
+                {outfitFields.length !== 0 && (
+                  <div className="space-y-2">
+                    {outfitFields.map((outfitField, index) => (
+                      <OutfitItemCard
+                        key={outfitField.id}
+                        {...outfitField}
+                        onDeleteOutfit={() => remove(index)}
+                        onEditOutfit={(outfitItem) => update(index, outfitItem)}
+                      />
+                    ))}
+                  </div>
+                )}
 
-                <AddOutfitDetailButton disabled={couldNotAddOutfitDetail} onClick={() => append({ ...initialOutfitDetailItem })} />
+                <OutfitFieldSheet
+                  type="add"
+                  triggerSlot={
+                    <button type="button" className="w-full rounded-lg border border-gray-200 py-3 transition-colors disabled:bg-gray-100 disabled:text-gray-400">
+                      정보 추가
+                    </button>
+                  }
+                  onSubmit={(outfitField) => append({ ...outfitField })}
+                />
               </div>
             </FlexibleLayout.Content>
 
@@ -162,18 +162,6 @@ function UploadButton({ disabled }: { disabled: boolean }) {
         업로드
       </button>
     </div>
-  );
-}
-
-function AddOutfitDetailButton({ onClick, disabled }: { onClick: () => void; disabled: boolean }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="w-full rounded-lg border border-gray-200 py-3 transition-colors disabled:bg-gray-100 disabled:text-gray-400"
-      disabled={disabled}>
-      정보 추가
-    </button>
   );
 }
 
@@ -243,87 +231,35 @@ function SelectStylesField({ selectedStyles, control }: { selectedStyles: Outfit
   );
 }
 
-function CategoryField({ index, control }: { index: number; control: Control<UploadImageSchema> }) {
+function OutfitItemCard({
+  onDeleteOutfit,
+  onEditOutfit,
+  ...outfitItem
+}: OutfitItemSchema & { onDeleteOutfit: () => void; onEditOutfit: (outfitItem: OutfitItemSchema) => void }) {
   return (
-    <FormField
-      control={control}
-      name={`outfits.${index}.category`}
-      render={({ field }) => (
-        <FormItem className="flex-1">
-          <FormControl>
-            <Select.Root onValueChange={(value) => field.onChange(Number(value))}>
-              <Select.Trigger className="flex w-full flex-row items-center justify-between rounded-md border border-gray-200 px-3 py-3 text-gray-600">
-                <Select.Value placeholder="카테고리" />
-                <Select.Icon asChild>
-                  <MdChevronRight className="rotate-90" />
-                </Select.Icon>
-              </Select.Trigger>
+    <OutfitFieldSheet
+      type="edit"
+      defaultOutfitField={outfitItem}
+      triggerSlot={
+        <button type="button" className="flex w-full flex-row gap-3 rounded-lg border border-purple-50 bg-white p-3">
+          <OutfitBadge categoryType={outfitItem.category} />
 
-              <Select.Portal>
-                <Select.Content>
-                  <Select.ScrollUpButton />
-                  <Select.Viewport className="flex flex-col gap-2 rounded-md border bg-white px-2 py-2">
-                    {OUTFIT_CATEGORY_LIST.map((category, index) => (
-                      <Select.Item
-                        key={category}
-                        value={index.toString()}
-                        className="cursor-pointer rounded-sm px-2 py-2 transition-colors pointerdevice:hover:bg-gray-100">
-                        <Select.ItemText>{category}</Select.ItemText>
-                      </Select.Item>
-                    ))}
-                  </Select.Viewport>
-                </Select.Content>
-              </Select.Portal>
-            </Select.Root>
-          </FormControl>
-          <FormMessage className="text-pink-400" />
-        </FormItem>
-      )}
+          <div className="flex w-full flex-col gap-1">
+            <p className="text-left">{outfitItem.brandName}</p>
+            <p className="text-left text-sm text-gray-500">{outfitItem.details}</p>
+          </div>
+        </button>
+      }
+      onDelete={onDeleteOutfit}
+      onEdit={onEditOutfit}
     />
   );
 }
 
-function BrandNameField({ disabled, index, control }: { disabled: boolean; index: number; control: Control<UploadImageSchema> }) {
+function OutfitBadge({ categoryType }: { categoryType: number }) {
   return (
-    <FormField
-      control={control}
-      name={`outfits.${index}.brandName`}
-      render={({ field }) => (
-        <FormItem className="flex-1">
-          <FormControl>
-            <input
-              type="text"
-              className="w-full rounded-md border border-gray-200 px-3 py-3 disabled:bg-gray-100 disabled:text-gray-400 aria-[invalid=true]:border-pink-500"
-              placeholder="브랜드"
-              disabled={disabled}
-              value={field.value}
-              onChange={field.onChange}
-            />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-  );
-}
-
-function DetailField({ disabled, index, control }: { disabled: boolean; index: number; control: Control<UploadImageSchema> }) {
-  return (
-    <FormField
-      control={control}
-      name={`outfits.${index}.details`}
-      render={({ field }) => (
-        <FormItem className="flex-[2_1_0%]">
-          <FormControl>
-            <input
-              className="w-full rounded-md border border-gray-200 px-3 py-3 transition-colors disabled:bg-gray-100 disabled:text-gray-400"
-              placeholder="구매처, 상품코드 등 상세 정보"
-              disabled={disabled}
-              value={field.value}
-              onChange={field.onChange}
-            />
-          </FormControl>
-        </FormItem>
-      )}
-    />
+    <div className="min-w-fit rounded-[1rem] border border-purple-100 bg-purple-50 px-5 py-3">
+      <span>{OUTFIT_CATEGORY_LIST[categoryType]}</span>
+    </div>
   );
 }
