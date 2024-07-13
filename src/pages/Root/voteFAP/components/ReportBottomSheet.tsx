@@ -31,6 +31,10 @@ type ReportBottomSheetProp = {
 export function ReportBottomSheet({ triggerSlot }: ReportBottomSheetProp) {
   const [isOpened, setIsOpened] = useState(false);
   const [selectedReportType, setSelectedReportType] = useState<ReportType | null>(null);
+  const [reportDetails, setReportDetails] = useState('');
+
+  const isDetailsEmpty = reportDetails === '';
+  const couldEnableReportButton = !isDetailsEmpty;
 
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -41,11 +45,20 @@ export function ReportBottomSheet({ triggerSlot }: ReportBottomSheetProp) {
 
   const changeStep = (newStep: number) => {
     setCurrentStep(newStep);
+
+    if (newStep === 0) {
+      /** TODO: Dirty Field Alert */
+      setReportDetails('');
+    }
   };
 
   const handleSelect = (selectType: ReportType) => {
     setSelectedReportType(selectType);
     changeStep(1);
+  };
+
+  const handleChangeDetail = (details: string) => {
+    setReportDetails(details);
   };
 
   return (
@@ -84,13 +97,17 @@ export function ReportBottomSheet({ triggerSlot }: ReportBottomSheetProp) {
 
                   <FlexibleLayout.Content className={cn('p-0', { ['p-5']: isInputStep })}>
                     {isSelectStep && <SelectReportTypeList onSelect={handleSelect} />}
-                    {isInputStep && <InputReportDetail reportType={selectedReportType!} />}
+                    {isInputStep && <InputReportDetail details={reportDetails} reportType={selectedReportType!} onChange={handleChangeDetail} />}
                   </FlexibleLayout.Content>
 
                   <FlexibleLayout.Footer>
                     {isInputStep && (
                       <div className="flex p-4">
-                        <button type="button" className="flex-1 rounded-lg bg-pink-600 py-2 text-xl text-white transition-colors" onClick={() => closeSheet()}>
+                        <button
+                          type="button"
+                          className="flex-1 rounded-lg bg-pink-600 py-2 text-xl text-white transition-colors disabled:bg-gray-300 disabled:text-gray-500"
+                          onClick={() => closeSheet()}
+                          disabled={!couldEnableReportButton}>
                           신고하기
                         </button>
                       </div>
@@ -121,11 +138,22 @@ function SelectReportTypeList({ onSelect }: { onSelect: (selectType: ReportType)
   );
 }
 
-function InputReportDetail({ reportType }: { reportType: ReportType }) {
+function InputReportDetail({ details, reportType, onChange }: { details: string; reportType: ReportType; onChange: (value: string) => void }) {
+  const textLength = details.length;
+
   return (
     <div>
       <p className="mb-2 font-semibold">{REPORT_TYPE_TEXT[reportType]}</p>
-      <textarea className="h-[10rem] w-full resize-none rounded-lg bg-gray-100 p-5" placeholder="신고 내용을 입력해주세요." />
+      <div className="flex h-[10rem] w-full resize-none flex-col rounded-lg bg-gray-100 p-3">
+        <textarea
+          className="h-full w-full resize-none bg-transparent align-text-top outline-none transition-colors disabled:bg-gray-300 disabled:text-gray-500"
+          placeholder="신고 내용을 입력해주세요."
+          value={details}
+          onChange={(e) => onChange(e.target.value)}
+          maxLength={200}
+        />
+        <p className="text-right text-xs text-gray-400">{textLength > 200 ? 200 : textLength} / 200</p>
+      </div>
       <p className="text-xs text-gray-500">※ 신고한 사진은 회원님의 피드에 더이상 노출되지 않습니다.</p>
       <p className="text-xs text-gray-500">※ 신고 5회 누적 시 사진이 삭제됩니다.</p>
     </div>

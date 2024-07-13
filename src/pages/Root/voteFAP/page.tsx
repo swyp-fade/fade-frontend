@@ -2,8 +2,8 @@ import { useHeader } from '@Hooks/useHeader';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { useState } from 'react';
 import { MdBookmark, MdInfoOutline, MdOutlineNotificationsNone } from 'react-icons/md';
-import { VotePolicyBottomSheet } from './components/VotePolicyBottomSheet';
 import { HowToVoteModal } from './components/HowToVoteModal';
+import { VotePolicyBottomSheet } from './components/VotePolicyBottomSheet';
 
 import profileDefaultImage1 from '@Assets/profile_default_1.jpg';
 import profileDefaultImage2 from '@Assets/profile_default_2.jpg';
@@ -33,7 +33,7 @@ export default function Page() {
   return (
     <FlexibleLayout.Root className="gap-3">
       <FlexibleLayout.Header>
-        <div className="shadow-bento flex flex-row rounded-lg border border-gray-200 bg-white p-3">
+        <div className="flex flex-row rounded-lg border border-gray-200 bg-white p-3 shadow-bento">
           <p className="flex-1">FADE_1234님은 오늘 10회 투표했어요!</p>
           <span className="text-gray-500">2/10</span>
         </div>
@@ -88,7 +88,7 @@ function HowToVoteButton() {
   return (
     <HowToVoteModal
       triggerSlot={
-        <button className="shadow-bento group rounded-lg border-gray-200 bg-white p-2 text-xl">
+        <button className="group rounded-lg border-gray-200 bg-white p-2 text-xl shadow-bento">
           <span className="inline-block transition-transform pointerdevice:group-hover:scale-105 pointerdevice:group-active:scale-95">투표 방법</span>
         </button>
       }
@@ -100,7 +100,7 @@ function SubscribeButton() {
   const randomProfileImage = defaultProfileImages.at(Math.floor(Math.random() * 4));
 
   return (
-    <div className="shadow-bento flex flex-row items-center justify-center gap-3 rounded-lg bg-white px-3 py-2">
+    <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white px-3 py-2 shadow-bento">
       <div style={{ backgroundImage: `url('${randomProfileImage}')` }} className="size-8 rounded-lg" />
       <p className="flex-1">익명의 뭐시기</p>
       <button className="rounded-lg border border-gray-200 px-4 py-1">구독</button>
@@ -111,7 +111,7 @@ function SubscribeButton() {
 function BeforeVotingFooterButtons({ onStartClick }: { onStartClick: () => void }) {
   return (
     <>
-      <button className="shadow-bento group rounded-lg bg-purple-700 p-3 text-xl font-semibold text-white" onClick={onStartClick}>
+      <button className="group rounded-lg bg-purple-700 p-3 text-xl font-semibold text-white shadow-bento" onClick={onStartClick}>
         <span className="inline-block transition-transform pointerdevice:group-hover:scale-105 pointerdevice:group-active:scale-95">투표 시작하기</span>
       </button>
 
@@ -126,15 +126,15 @@ function VotingFooterButton() {
       <SubscribeButton />
 
       <div className="flex flex-row gap-3">
-        <button className="shadow-bento group flex-1 rounded-lg bg-white px-5 py-3 transition-colors pointerdevice:hover:bg-gray-200 pointerdevice:active:bg-gray-300">
+        <button className="group flex-1 rounded-lg bg-white px-5 py-3 shadow-bento transition-colors pointerdevice:hover:bg-gray-200 pointerdevice:active:bg-gray-300">
           <div style={{ backgroundImage: `url('${voteFadeOutImage}')` }} className="mx-auto h-5 w-[8.375rem] transition-transform group-hover:translate-y-[.125rem]" />
         </button>
 
-        <button className="shadow-bento group flex-1 rounded-lg bg-white px-5 py-3 transition-colors pointerdevice:hover:bg-purple-200 pointerdevice:active:bg-purple-300">
+        <button className="group flex-1 rounded-lg bg-white px-5 py-3 shadow-bento transition-colors pointerdevice:hover:bg-purple-200 pointerdevice:active:bg-purple-300">
           <div style={{ backgroundImage: `url('${voteFadeInImage}')` }} className="mx-auto h-5 w-[6.4375rem] transition-transform group-hover:-translate-y-[.125rem]" />
         </button>
 
-        <button className="shadow-bento rounded-lg bg-white p-3">
+        <button className="rounded-lg bg-white p-3 shadow-bento">
           <MdBookmark className="size-6 text-gray-600" />
         </button>
       </div>
@@ -145,13 +145,13 @@ function VotingFooterButton() {
 function AfterVotingFooterButton({ onRetryVote }: { onRetryVote: () => void }) {
   return (
     <>
-      <button className="shadow-bento group rounded-lg bg-purple-700 p-3 text-xl font-semibold text-white" onClick={onRetryVote}>
+      <button className="group rounded-lg bg-purple-700 p-3 text-xl font-semibold text-white shadow-bento" onClick={onRetryVote}>
         <span className="inline-block transition-transform pointerdevice:group-hover:scale-105 pointerdevice:group-active:scale-95">투표 다시하기</span>
       </button>
 
       <div className="flex flex-row gap-3">
-        <button className="shadow-bento flex-1 rounded-lg bg-white py-2 text-lg">투표 내역 확인</button>
-        <button className="shadow-bento flex-1 rounded-lg bg-white py-2 text-lg">북마크 확인</button>
+        <button className="flex-1 rounded-lg bg-white py-2 text-lg shadow-bento">투표 내역 확인</button>
+        <button className="flex-1 rounded-lg bg-white py-2 text-lg shadow-bento">북마크 확인</button>
       </div>
     </>
   );
