@@ -58,7 +58,7 @@ export function AnimatedDialog({ animateType = 'slideUp', modalType = 'fullScree
       setBoundHeight(childHeight);
     });
 
-    childResizeObserver.observe(childRef.current);
+    childResizeObserver.observe(childRef.current, { box: 'border-box' });
 
     return () => childResizeObserver.disconnect();
   }, []);
