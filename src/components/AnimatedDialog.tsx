@@ -74,7 +74,7 @@ export function AnimatedDialog({ animateType = 'slideUp', modalType = 'fullScree
       className={cn('pointer-events-auto absolute flex w-full flex-col bg-white', {
         ['bottom-0 left-0 h-full']: isFullScreenDialog,
         ['bottom-0 left-0 h-fit rounded-t-2xl']: isBottomSheet,
-        ['top-1/2 mx-5 h-fit w-fit rounded-2xl']: isModal,
+        ['top-1/2 mx-5 h-fit w-full max-w-[calc(100%-2.5rem)] rounded-2xl']: isModal,
       })}>
       {isBottomSheet && <ChildComponent ref={childRef} {...childProps} />}
       {isFullScreenDialog && children}

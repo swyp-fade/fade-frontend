@@ -1,3 +1,4 @@
+import { ConfirmProvider } from '@Components/ConfirmProvider';
 import { ToastProvider } from '@Components/ToastProvider';
 import { Outlet } from 'react-router-dom';
 
@@ -7,6 +8,7 @@ export default function RootLayout() {
       <Outlet />
       <div id="portalSection" />
       <ToastProvider />
+      <ConfirmProvider />
     </div>
   );
 }
