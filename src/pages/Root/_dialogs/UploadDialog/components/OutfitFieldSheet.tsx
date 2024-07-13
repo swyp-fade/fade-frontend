@@ -6,7 +6,7 @@ import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import * as Select from '@radix-ui/react-select';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { AnimatePresence } from 'framer-motion';
-import { ChangeEvent, ReactNode, useState } from 'react';
+import { ChangeEvent, ReactNode, useRef, useState } from 'react';
 import { MdChevronRight, MdClose } from 'react-icons/md';
 
 type OutfitFieldSheetProp = {
@@ -31,6 +31,8 @@ export function OutfitFieldSheet({ type, triggerSlot, defaultOutfitField = initi
   const [isOpened, setIsOpened] = useState(false);
   const [outfitField, setOutfitField] = useState(defaultOutfitField);
 
+  const submitType = useRef<string>(type);
+
   const updateOutfitField = (field: Partial<OutfitField>) => setOutfitField((prevField) => ({ ...prevField, ...field }));
 
   const isAddSheet = type === 'add';
@@ -45,35 +47,36 @@ export function OutfitFieldSheet({ type, triggerSlot, defaultOutfitField = initi
   const hasDirtyDetails = outfitField.details !== defaultOutfitField.details;
   const couldEnableEditButton = hasDirtyCategory || hasDirtyBrandName || hasDirtyDetails;
 
-  const closeSheet = () => {
-    setOutfitField(defaultOutfitField);
+  const closeSheet = (type: string) => {
+    submitType.current = type;
     setIsOpened(false);
   };
 
-  const handleAddClick = () => {
-    onSubmit && onSubmit(outfitField);
-    closeSheet();
-  };
+  const handleAfterExit = () => {
+    setOutfitField(defaultOutfitField);
 
-  const handleDelete = () => {
-    onDelete && onDelete();
-    closeSheet();
-  };
+    if (submitType.current === 'add') {
+      return onSubmit && onSubmit(outfitField);
+    }
 
-  const handleEdit = () => {
-    onEdit && onEdit(outfitField);
-    closeSheet();
+    if (submitType.current === 'delete') {
+      return onDelete && onDelete();
+    }
+
+    if (submitType.current === 'edit') {
+      return onEdit && onEdit(outfitField);
+    }
   };
 
   return (
     <AlertDialog.Root open={isOpened} onOpenChange={setIsOpened}>
       {triggerSlot && <AlertDialog.Trigger asChild>{triggerSlot}</AlertDialog.Trigger>}
 
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={handleAfterExit}>
         {isOpened && (
           <AlertDialog.Portal forceMount container={document.getElementById('portalSection')!}>
             <AlertDialog.Overlay>
-              <DialogOverlay onClick={() => closeSheet()} />
+              <DialogOverlay onClick={() => closeSheet('cancel')} />
             </AlertDialog.Overlay>
 
             <AlertDialog.Title />
@@ -84,14 +87,14 @@ export function OutfitFieldSheet({ type, triggerSlot, defaultOutfitField = initi
               </VisuallyHidden>
 
               <AnimatedDialog modalType="bottomSheet">
-                <FlexibleLayout.Root>
+                <FlexibleLayout.Root className="h-fit">
                   <FlexibleLayout.Header>
                     <header className="relative flex flex-row justify-between px-5 py-4">
                       <p className="text-xl font-semibold">
                         {isAddSheet && '착장 정보 추가'}
                         {isEditSheet && '착장 정보 편집'}
                       </p>
-                      <button>
+                      <button type="button" onClick={() => closeSheet('cancel')}>
                         <MdClose className="size-6 text-gray-600" />
                       </button>
                     </header>
@@ -108,8 +111,8 @@ export function OutfitFieldSheet({ type, triggerSlot, defaultOutfitField = initi
 
                   <FlexibleLayout.Footer>
                     <div className="flex p-4 pt-0">
-                      {isAddSheet && <AddOutfitButton disabled={!couldEnableAddButton} onAdd={handleAddClick} />}
-                      {isEditSheet && <DeleteOrEditButton onDelete={handleDelete} onEdit={handleEdit} disabled={!couldEnableEditButton} />}
+                      {isAddSheet && <AddOutfitButton disabled={!couldEnableAddButton} onAdd={() => closeSheet('add')} />}
+                      {isEditSheet && <DeleteOrEditButton onDelete={() => closeSheet('delete')} onEdit={() => closeSheet('edit')} disabled={!couldEnableEditButton} />}
                     </div>
                   </FlexibleLayout.Footer>
                 </FlexibleLayout.Root>

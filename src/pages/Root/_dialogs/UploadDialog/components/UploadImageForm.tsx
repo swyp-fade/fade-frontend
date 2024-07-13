@@ -113,7 +113,6 @@ export function UploadImageForm({ onClose, onValueChanged }: UploadImageFormProp
                   }
                   onSubmit={(outfitField) => append({ ...outfitField })}
                 />
-                {/* <AddOutfitDetailButton disabled={couldNotAddOutfitDetail} onClick={() => append({ ...initialOutfitDetailItem })} /> */}
               </div>
             </FlexibleLayout.Content>
 
