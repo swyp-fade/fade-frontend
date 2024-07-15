@@ -24,10 +24,18 @@ function Modal({ Component, id, type, props, resolve, animateType }: ModalItem) 
   const removeModal = useModalStore((state) => state.removeModal);
 
   const [isOpen, setIsOpen] = useState(true);
+  const [closeHandler, setCloseHandler] = useState<(() => Promise<boolean>) | null>(null);
 
-  /** TODO: ESC 시도 가로채기 */
   /** @param params any or undefined */
-  const handleClose = (params?: unknown) => {
+  const handleClose = async (params?: unknown) => {
+    if (closeHandler) {
+      const shouldClose = await closeHandler();
+
+      if (!shouldClose) {
+        return;
+      }
+    }
+
     setIsOpen(false);
     resolve(params);
   };
@@ -50,7 +58,7 @@ function Modal({ Component, id, type, props, resolve, animateType }: ModalItem) 
               </VisuallyHidden>
 
               <AnimatedDialog modalType={type} animateType={animateType}>
-                <Component onClose={handleClose} {...(props || {})} />
+                <Component {...(props || {})} setCloseHandler={setCloseHandler} onClose={handleClose} />
               </AnimatedDialog>
             </AlertDialog.Content>
           </AlertDialog.Portal>

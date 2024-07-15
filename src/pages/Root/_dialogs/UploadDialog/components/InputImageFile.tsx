@@ -55,7 +55,12 @@ export function InputImageFile(props: { value: string; onChange: (value: string)
 
   return (
     <>
-      <div className="m group flex aspect-[2.2/1] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-gray-200" onClick={handleSelectImageClick}>
+      <div
+        role="button"
+        tabIndex={0}
+        className="m group flex aspect-[2.2/1] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-gray-200"
+        onKeyUp={(e) => ['Enter', ' '].includes(e.key) && handleSelectImageClick()}
+        onClick={handleSelectImageClick}>
         {hasNoImageData && (
           <MdAddPhotoAlternate className="size-20 text-gray-500 transition-transform pointerdevice:group-hover:scale-125 pointerdevice:group-active:scale-95" />
         )}

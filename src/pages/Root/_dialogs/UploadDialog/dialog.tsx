@@ -1,23 +1,34 @@
 import { DefaultModalProps } from '@Stores/modal';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { UploadImageForm } from './components/UploadImageForm';
 import { PolicyView } from './components/UploadPolicyView';
+import { useConfirm } from '@Hooks/modal';
 
-export function UploadViewDialog({ onClose }: DefaultModalProps) {
+export function UploadViewDialog({ setCloseHandler, onClose }: DefaultModalProps) {
   const dirtyRef = useRef(false);
 
   /** TODO: User 정보로 불러와야 함 */
   const [hasAgreementOfPolicy, setHasAgreementOfPolicy] = useState(false);
   const shouldShowPolicyView = !hasAgreementOfPolicy;
 
-  const handleFormClose = () => {
-    console.log(dirtyRef.current);
+  const confirm = useConfirm();
+
+  useEffect(() => {
+    setCloseHandler(() => confirmUnsavedChanges);
+  }, [setCloseHandler]);
+
+  const confirmUnsavedChanges = async () => {
     if (dirtyRef.current) {
-      const wouldExit = confirm('변경되지 않은 머시깽이가 있어요. 그래도 나감?');
-      return wouldExit && onClose();
+      const wouldExit = await confirm({ title: '변경되지 않은 머시깽이가 있어요.', description: '그래도 나감? 리얼로?' });
+      return wouldExit || false;
     }
 
-    onClose();
+    return true;
+  };
+
+  const handleFormClose = async () => {
+    const sholudClose = await confirmUnsavedChanges();
+    sholudClose && onClose();
   };
 
   return (
