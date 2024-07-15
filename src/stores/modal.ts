@@ -23,6 +23,7 @@ export type ModalType = 'fullScreenDialog' | 'bottomSheet' | 'component';
 
 /** T: 반환값 / P: Props */
 export type DefaultModalProps<T = unknown, P = Record<string, unknown>> = {
+  setCloseHandler: (handler: () => () => Promise<boolean>) => void;
   onClose: (value?: T) => void;
 } & P;
 
