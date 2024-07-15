@@ -2,16 +2,17 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { OUTFIT_CATEGORY_LIST, OUTFIT_STYLE_MAP } from '@/constants';
 import { ToggleButton } from '@Components/ui/toogleButton';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useModalActions } from '@Hooks/modal';
 import { useToastActions } from '@Hooks/toast';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { OutfitStyle } from '@Types/outfitStyle';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useTransition } from 'react';
 import { Control, useFieldArray, useForm } from 'react-hook-form';
 import { MdChevronRight, MdClose, MdInfoOutline } from 'react-icons/md';
 import { z } from 'zod';
-import { SelectStyleDialog } from '../../SelectStyleDialog/dialog';
+import { SelectStyleView } from '../../SelectStyleDialog/view';
 import { InputImageFile } from './InputImageFile';
-import { OutfitFieldSheet } from './OutfitFieldSheet';
+import { OutfitFieldReturnType, OutfitItemSheet } from './OutfitFieldSheet';
 import { UploadGuideBottomSheet } from './UploadGuideBottomSheet';
 
 /** 착장 정보 스키마 */
@@ -104,21 +105,12 @@ export function UploadImageForm({ onClose, onValueChanged }: UploadImageFormProp
                   </div>
                 )}
 
-                <OutfitFieldSheet
-                  type="add"
-                  triggerSlot={
-                    <button type="button" className="w-full rounded-lg border border-gray-200 py-3 transition-colors disabled:bg-gray-100 disabled:text-gray-400">
-                      정보 추가
-                    </button>
-                  }
-                  onSubmit={(outfitField) => append({ ...outfitField })}
-                />
+                <AddOutfitItemButton onOutfitAdded={(outfitField) => append({ ...outfitField })} />
               </div>
             </FlexibleLayout.Content>
 
             <FlexibleLayout.Footer>
               <UploadButton disabled={!isValid} />
-              {/* <UploadButton disabled={false} /> */}
             </FlexibleLayout.Footer>
           </FlexibleLayout.Root>
         </fieldset>
@@ -127,8 +119,17 @@ export function UploadImageForm({ onClose, onValueChanged }: UploadImageFormProp
   );
 }
 
+/* #region Componenets */
 function Header({ onClose }: { onClose: () => void }) {
-  const [isOpened, setIsOpened] = useState(false);
+  const { showModal } = useModalActions();
+
+  const handleInfoClick = async () => {
+    showUploadGuide();
+  };
+
+  const showUploadGuide = async () => {
+    return showModal({ type: 'bottomSheet', Component: UploadGuideBottomSheet });
+  };
 
   return (
     <header className="relative px-5 py-4">
@@ -138,17 +139,12 @@ function Header({ onClose }: { onClose: () => void }) {
 
       <p className="text-center text-2xl font-semibold">사진 업로드</p>
 
-      <UploadGuideBottomSheet
-        isOpened={isOpened}
-        onOpenChagne={setIsOpened}
-        triggerSlot={
-          <button
-            type="button"
-            className="group absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 transition-transform pointerdevice:hover:bg-gray-100">
-            <MdInfoOutline className="size-6 group-active:pointerdevice:active:scale-95" />
-          </button>
-        }
-      />
+      <button
+        type="button"
+        className="group absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 transition-transform pointerdevice:hover:bg-gray-100"
+        onClick={handleInfoClick}>
+        <MdInfoOutline className="size-6 group-active:pointerdevice:active:scale-95" />
+      </button>
     </header>
   );
 }
@@ -165,8 +161,105 @@ function UploadButton({ disabled }: { disabled: boolean }) {
   );
 }
 
-/** Fields */
+function AddOutfitItemButton({ onOutfitAdded }: { onOutfitAdded: (outfits: OutfitItemSchema) => void }) {
+  const { showModal } = useModalActions();
 
+  const handleClick = async () => {
+    const addResult = await startAddOutfitFlow();
+    addResult?.outfitField && onOutfitAdded(addResult.outfitField);
+  };
+
+  const startAddOutfitFlow = async () => {
+    return showModal<OutfitFieldReturnType>({ type: 'bottomSheet', Component: OutfitItemSheet, props: { type: 'add' } });
+  };
+
+  return (
+    <button type="button" className="w-full rounded-lg border border-gray-200 py-3 transition-colors disabled:bg-gray-100 disabled:text-gray-400" onClick={handleClick}>
+      정보 추가
+    </button>
+  );
+}
+
+function SelectStyleButton({ selectedStyles, onStylesSelected }: { selectedStyles: OutfitStyle[]; onStylesSelected: (selectedStyles: OutfitStyle[]) => void }) {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    const selectResult = await startSelectStyleFlow(selectedStyles);
+    selectResult && onStylesSelected(selectResult);
+  };
+
+  const startSelectStyleFlow = async (defaultStyles: OutfitStyle[]) => {
+    return showModal<OutfitStyle[]>({
+      type: 'fullScreenDialog',
+      animateType: 'slideInFromRight',
+      Component: SelectStyleView,
+      props: { defaultStyles },
+    });
+  };
+
+  return (
+    <button type="button" className="relative block w-full rounded-lg border border-gray-200 bg-white py-3" onClick={handleClick}>
+      스타일 선택하기
+      <MdChevronRight className="absolute right-3 top-1/2 size-6 -translate-y-1/2" />
+    </button>
+  );
+}
+
+function OutfitItemCard({
+  onDeleteOutfit,
+  onEditOutfit,
+  ...outfitItem
+}: OutfitItemSchema & { onDeleteOutfit: () => void; onEditOutfit: (outfitItem: OutfitItemSchema) => void }) {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    const mutationResult = await startOutfitMutation();
+
+    if (mutationResult === undefined) {
+      return;
+    }
+
+    const { type, outfitField } = mutationResult;
+
+    if (type === 'edit') {
+      return onEditOutfit(outfitField!);
+    }
+
+    if (type === 'delete') {
+      return onDeleteOutfit();
+    }
+  };
+
+  const startOutfitMutation = async () => {
+    return showModal<OutfitFieldReturnType>({
+      type: 'bottomSheet',
+      Component: OutfitItemSheet,
+      props: { type: 'edit', defaultOutfitField: outfitItem },
+    });
+  };
+
+  return (
+    <button type="button" className="flex w-full flex-row gap-3 rounded-lg border border-purple-50 bg-white p-3" onClick={handleClick}>
+      <OutfitBadge categoryType={outfitItem.category} />
+
+      <div className="flex w-full flex-col gap-1">
+        <p className="text-left">{outfitItem.brandName}</p>
+        <p className="text-left text-sm text-gray-500">{outfitItem.details}</p>
+      </div>
+    </button>
+  );
+}
+
+function OutfitBadge({ categoryType }: { categoryType: number }) {
+  return (
+    <div className="min-w-fit rounded-[1rem] border border-purple-100 bg-purple-50 px-5 py-3">
+      <span>{OUTFIT_CATEGORY_LIST[categoryType]}</span>
+    </div>
+  );
+}
+/* #endregion */
+
+/* #region Fields */
 function AddImageField({ control }: { control: Control<UploadImageSchema> }) {
   return (
     <FormField
@@ -213,16 +306,7 @@ function SelectStylesField({ selectedStyles, control }: { selectedStyles: Outfit
           )}
 
           <FormControl>
-            <SelectStyleDialog
-              triggerSlot={
-                <button className="relative block w-full rounded-lg border border-gray-200 bg-white py-3">
-                  스타일 선택하기
-                  <MdChevronRight className="absolute right-3 top-1/2 size-6 -translate-y-1/2" />
-                </button>
-              }
-              defaultStyles={selectedStyles}
-              onStylesSelected={(styles) => field.onChange(styles)}
-            />
+            <SelectStyleButton selectedStyles={selectedStyles} onStylesSelected={field.onChange} />
           </FormControl>
           <FormMessage className="text-pink-400" />
         </FormItem>
@@ -230,36 +314,4 @@ function SelectStylesField({ selectedStyles, control }: { selectedStyles: Outfit
     />
   );
 }
-
-function OutfitItemCard({
-  onDeleteOutfit,
-  onEditOutfit,
-  ...outfitItem
-}: OutfitItemSchema & { onDeleteOutfit: () => void; onEditOutfit: (outfitItem: OutfitItemSchema) => void }) {
-  return (
-    <OutfitFieldSheet
-      type="edit"
-      defaultOutfitField={outfitItem}
-      triggerSlot={
-        <button type="button" className="flex w-full flex-row gap-3 rounded-lg border border-purple-50 bg-white p-3">
-          <OutfitBadge categoryType={outfitItem.category} />
-
-          <div className="flex w-full flex-col gap-1">
-            <p className="text-left">{outfitItem.brandName}</p>
-            <p className="text-left text-sm text-gray-500">{outfitItem.details}</p>
-          </div>
-        </button>
-      }
-      onDelete={onDeleteOutfit}
-      onEdit={onEditOutfit}
-    />
-  );
-}
-
-function OutfitBadge({ categoryType }: { categoryType: number }) {
-  return (
-    <div className="min-w-fit rounded-[1rem] border border-purple-100 bg-purple-50 px-5 py-3">
-      <span>{OUTFIT_CATEGORY_LIST[categoryType]}</span>
-    </div>
-  );
-}
+/* #endregion */

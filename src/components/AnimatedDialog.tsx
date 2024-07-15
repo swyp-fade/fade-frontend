@@ -1,9 +1,11 @@
+import { ModalType } from '@Stores/modal';
 import { cn } from '@Utils/index';
 import { motion, Variants } from 'framer-motion';
 import { Children, PropsWithChildren, ReactElement, useEffect, useRef, useState } from 'react';
 
 const slideUpVariants: Variants = {
   hide: { y: '100%', scale: '85%', opacity: '80%', transformOrigin: 'bottom' },
+  // show: { y: 0, scale: '100%', height: 'auto', opacity: '100%' },
   show: (height: number | null) => ({ y: 0, scale: '100%', height: height || '100%', opacity: '100%' }),
   exit: { y: '100%', scale: '85%', opacity: '80%', transition: { duration: 0.2 } },
 };
@@ -20,15 +22,13 @@ const showAtCenterVariants: Variants = {
   exit: { opacity: 0, scale: '85%' },
 };
 
-type AnimateType = 'slideUp' | 'slideInFromRight' | 'showAtCenter';
+export type AnimateType = 'slideUp' | 'slideInFromRight' | 'showAtCenter';
 
 const variantsMap: Record<AnimateType, Variants> = {
   slideUp: slideUpVariants,
   slideInFromRight: slideInFromRightVariants,
   showAtCenter: showAtCenterVariants,
 };
-
-type ModalType = 'fullScreenDialog' | 'bottomSheet' | 'modal';
 
 type AnimatedDialogProps = {
   animateType?: AnimateType;
@@ -38,7 +38,7 @@ type AnimatedDialogProps = {
 export function AnimatedDialog({ animateType = 'slideUp', modalType = 'fullScreenDialog', children }: PropsWithChildren<AnimatedDialogProps>) {
   const isFullScreenDialog = modalType === 'fullScreenDialog';
   const isBottomSheet = modalType === 'bottomSheet';
-  const isModal = modalType === 'modal';
+  const isComponent = modalType === 'component';
 
   const childRef = useRef<HTMLDivElement>(null);
   const childElement = Children.only(children) as ReactElement;
@@ -73,12 +73,12 @@ export function AnimatedDialog({ animateType = 'slideUp', modalType = 'fullScree
       custom={boundHeight}
       className={cn('pointer-events-auto absolute flex w-full flex-col bg-white', {
         ['bottom-0 left-0 h-full']: isFullScreenDialog,
-        ['bottom-0 left-0 h-fit rounded-t-2xl']: isBottomSheet,
-        ['top-1/2 mx-5 h-fit w-full max-w-[calc(100%-2.5rem)] rounded-2xl']: isModal,
+        ['bottom-0 left-0 rounded-t-2xl']: isBottomSheet,
+        ['top-1/2 mx-5 h-fit w-full max-w-[calc(100%-2.5rem)] rounded-2xl']: isComponent,
       })}>
       {isBottomSheet && <ChildComponent ref={childRef} {...childProps} />}
       {isFullScreenDialog && children}
-      {isModal && children}
+      {isComponent && children}
     </motion.div>
   );
 }

@@ -1,55 +1,22 @@
-import { AnimatedDialog } from '@Components/AnimatedDialog';
-import { DialogOverlay } from '@Components/DialogOverlay';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
-import * as AlertDialog from '@radix-ui/react-alert-dialog';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { DefaultModalProps } from '@Stores/modal';
 import { cn } from '@Utils/index';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ReactNode, useState } from 'react';
+import { motion } from 'framer-motion';
+import { forwardRef, useState } from 'react';
 
-type HowToVoteModalProp = {
-  triggerSlot: ReactNode;
-};
-
-export function HowToVoteModal({ triggerSlot }: HowToVoteModalProp) {
-  const [isOpened, setIsOpened] = useState(false);
-
+export const HowToVoteModal = forwardRef<HTMLDivElement, DefaultModalProps>(({ onClose }: DefaultModalProps, ref) => {
   return (
-    <AlertDialog.Root open={isOpened} onOpenChange={setIsOpened}>
-      {triggerSlot && <AlertDialog.Trigger asChild>{triggerSlot}</AlertDialog.Trigger>}
+    <FlexibleLayout.Root ref={ref} className="h-fit">
+      <FlexibleLayout.Header>
+        <header className="relative px-5 py-4">
+          <p className="text-center text-2xl font-semibold">FA:P 투표 방법</p>
+        </header>
+      </FlexibleLayout.Header>
 
-      <AnimatePresence>
-        {isOpened && (
-          <AlertDialog.Portal forceMount container={document.getElementById('portalSection')!}>
-            <AlertDialog.Overlay>
-              <DialogOverlay onClick={() => setIsOpened(false)} />
-            </AlertDialog.Overlay>
-
-            <AlertDialog.Title />
-
-            <AlertDialog.Content>
-              <VisuallyHidden>
-                <AlertDialog.AlertDialogDescription>This description is hidden from sighted users but accessible to screen readers.</AlertDialog.AlertDialogDescription>
-              </VisuallyHidden>
-
-              <AnimatedDialog modalType="modal" animateType="showAtCenter">
-                <FlexibleLayout.Root className="w-full">
-                  <FlexibleLayout.Header>
-                    <header className="relative px-5 py-4">
-                      <p className="text-center text-2xl font-semibold">FA:P 투표 방법</p>
-                    </header>
-                  </FlexibleLayout.Header>
-
-                  <Carousel onLastClick={() => setIsOpened(false)} />
-                </FlexibleLayout.Root>
-              </AnimatedDialog>
-            </AlertDialog.Content>
-          </AlertDialog.Portal>
-        )}
-      </AnimatePresence>
-    </AlertDialog.Root>
+      <Carousel onLastClick={onClose} />
+    </FlexibleLayout.Root>
   );
-}
+});
 
 type CarouselItem = {
   image: string;
