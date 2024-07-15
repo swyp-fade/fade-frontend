@@ -1,8 +1,10 @@
+import { useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { useState } from 'react';
 import { MdBookmark, MdInfoOutline, MdOutlineNotificationsNone } from 'react-icons/md';
 import { HowToVoteModal } from './components/HowToVoteModal';
+import { ReportBottomSheet } from './components/ReportBottomSheet';
 import { VotePolicyBottomSheet } from './components/VotePolicyBottomSheet';
 
 import profileDefaultImage1 from '@Assets/profile_default_1.jpg';
@@ -30,6 +32,18 @@ export default function Page() {
   const isVoting = voteViewState === 'voting';
   const isAfterVoting = voteViewState === 'afterVoting';
 
+  const { showModal } = useModalActions();
+
+  const handleReportClick = async () => {
+    const reportResult = await startReportFlow();
+
+    console.log(reportResult);
+  };
+
+  const startReportFlow = async () => {
+    return showModal({ type: 'bottomSheet', Component: ReportBottomSheet });
+  };
+
   return (
     <FlexibleLayout.Root className="gap-3">
       <FlexibleLayout.Header>
@@ -39,7 +53,9 @@ export default function Page() {
         </div>
       </FlexibleLayout.Header>
 
-      <FlexibleLayout.Content className="p-0">ㅇㅇ</FlexibleLayout.Content>
+      <FlexibleLayout.Content className="p-0">
+        <button onClick={handleReportClick}>신고하기</button>
+      </FlexibleLayout.Content>
 
       <FlexibleLayout.Footer>
         <BackgroundEllipse />
@@ -53,14 +69,16 @@ export default function Page() {
 }
 
 function ShowVotePolicyButton() {
+  const { showModal } = useModalActions();
+
+  const showVotePolicyModal = async () => {
+    return await showModal({ type: 'bottomSheet', Component: VotePolicyBottomSheet });
+  };
+
   return (
-    <VotePolicyBottomSheet
-      triggerSlot={
-        <button className="group cursor-pointer rounded-lg p-2 pointerdevice:hover:bg-gray-100">
-          <MdInfoOutline className="size-6 group-active:pointerdevice:scale-95" />
-        </button>
-      }
-    />
+    <button className="group cursor-pointer rounded-lg p-2 pointerdevice:hover:bg-gray-100" onClick={showVotePolicyModal}>
+      <MdInfoOutline className="size-6 group-active:pointerdevice:scale-95" />
+    </button>
   );
 }
 
@@ -85,14 +103,16 @@ function BackgroundEllipse() {
 }
 
 function HowToVoteButton() {
+  const { showModal } = useModalActions();
+
+  const showHowToVoteModal = async () => {
+    return await showModal({ type: 'component', Component: HowToVoteModal });
+  };
+
   return (
-    <HowToVoteModal
-      triggerSlot={
-        <button className="group rounded-lg border-gray-200 bg-white p-2 text-xl shadow-bento">
-          <span className="inline-block transition-transform pointerdevice:group-hover:scale-105 pointerdevice:group-active:scale-95">투표 방법</span>
-        </button>
-      }
-    />
+    <button className="group rounded-lg border-gray-200 bg-white p-2 text-xl shadow-bento" onClick={showHowToVoteModal}>
+      <span className="inline-block transition-transform pointerdevice:group-hover:scale-105 pointerdevice:group-active:scale-95">투표 방법</span>
+    </button>
   );
 }
 
