@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import kakaoLoginImage from '@Assets/kakao_login_medium_wide.png';
+import kakaoLoginImage from '@Assets/kakao_login.png';
 
 export function KakaoLoginButton() {
   const { VITE_KAKAO_API_KEY: apiKey, VITE_KAKAO_REDIRECT_URL: redirectURL } = import.meta.env;
