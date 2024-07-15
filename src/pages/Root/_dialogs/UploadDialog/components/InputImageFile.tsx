@@ -2,9 +2,10 @@ import { getBase64Image, validateLocalImageFile } from '@Utils/index';
 import { ChangeEvent, useRef, useState } from 'react';
 import { MdAddPhotoAlternate } from 'react-icons/md';
 import { UploadGuideBottomSheet } from './UploadGuideBottomSheet';
+import { useModalActions } from '@Hooks/modal';
 
 export function InputImageFile(props: { value: string; onChange: (value: string) => void }) {
-  const [isGuideOpened, setIsGuideOpened] = useState(false);
+  const { showModal } = useModalActions();
 
   const [imageData, setImageData] = useState<string | null>(null); // base64 data
   const inputRef = useRef<HTMLInputElement>(null);
@@ -40,18 +41,20 @@ export function InputImageFile(props: { value: string; onChange: (value: string)
     inputRef.current!.click();
   };
 
-  const handleSelectImageClick = () => {
+  const handleSelectImageClick = async () => {
     if (hasNoImageData) {
-      return setIsGuideOpened(true);
+      await showUploadGuide();
     }
 
     selectImageFile();
   };
 
+  const showUploadGuide = async () => {
+    return showModal({ type: 'bottomSheet', Component: UploadGuideBottomSheet });
+  };
+
   return (
     <>
-      <UploadGuideBottomSheet isOpened={isGuideOpened} onOpenChagne={setIsGuideOpened} onAfterClose={() => selectImageFile()} />
-
       <div className="m group flex aspect-[2.2/1] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-gray-200" onClick={handleSelectImageClick}>
         {hasNoImageData && (
           <MdAddPhotoAlternate className="size-20 text-gray-500 transition-transform pointerdevice:group-hover:scale-125 pointerdevice:group-active:scale-95" />

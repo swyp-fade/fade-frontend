@@ -1,55 +1,49 @@
 import { OUTFIT_STYLE_LIST } from '@/constants';
-import { AnimatedDialog } from '@Components/AnimatedDialog';
 import { ToggleButton } from '@Components/ui/toogleButton';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
+import { DefaultModalProps } from '@Stores/modal';
 import { OutfitStyle } from '@Types/outfitStyle';
-import { forwardRef, useState } from 'react';
+import { useState } from 'react';
 import { MdChevronLeft } from 'react-icons/md';
 
-type SelectStyleViewProp = {
-  defaultStyles: OutfitStyle[];
-  onClose: (styles: OutfitStyle[]) => void;
-};
+type SelectStyleViewProp = { defaultStyles: OutfitStyle[] };
 
-export const SelectStyleView = forwardRef(({ defaultStyles = [], onClose }: SelectStyleViewProp, ref) => {
+export const SelectStyleView = ({ defaultStyles = [], onClose }: DefaultModalProps<OutfitStyle[], SelectStyleViewProp>) => {
   const [selectedStyles, setSelectedStyles] = useState<OutfitStyle[]>(defaultStyles);
 
   return (
-    <AnimatedDialog animateType="slideInFromRight">
-      <FlexibleLayout.Root className="border-l shadow-xl">
-        <FlexibleLayout.Header>
-          {/* TODO: 취소? 저장? 경고? */}
-          <Header onBack={() => onClose(defaultStyles)} />
-        </FlexibleLayout.Header>
+    <FlexibleLayout.Root className="border-l shadow-xl">
+      <FlexibleLayout.Header>
+        <Header onBack={() => onClose(defaultStyles)} />
+      </FlexibleLayout.Header>
 
-        <FlexibleLayout.Content className="space-y-3">
-          <p>스타일은 복수선택 가능하며 사진 필터링에 이용됩니다.</p>
-          <ul className="flex flex-row flex-wrap gap-x-2 gap-y-3">
-            {OUTFIT_STYLE_LIST.map((outfitStyle, index) => (
-              <li key={outfitStyle}>
-                <ToggleButton
-                  selected={selectedStyles.includes(index)}
-                  onSelect={(isSelected) => {
-                    if (isSelected) {
-                      setSelectedStyles((prevStyles) => [...prevStyles, index]);
-                    } else {
-                      setSelectedStyles((prevStyles) => prevStyles.filter((value) => value !== index));
-                    }
-                  }}>
-                  {outfitStyle}
-                </ToggleButton>
-              </li>
-            ))}
-          </ul>
-        </FlexibleLayout.Content>
+      <FlexibleLayout.Content className="space-y-3">
+        <p>스타일은 복수선택 가능하며 사진 필터링에 이용됩니다.</p>
+        <ul className="flex flex-row flex-wrap gap-x-2 gap-y-3">
+          {OUTFIT_STYLE_LIST.map((outfitStyle, index) => (
+            <li key={outfitStyle}>
+              <ToggleButton
+                selected={selectedStyles.includes(index)}
+                onSelect={(isSelected) => {
+                  if (isSelected) {
+                    setSelectedStyles((prevStyles) => [...prevStyles, index]);
+                  } else {
+                    setSelectedStyles((prevStyles) => prevStyles.filter((value) => value !== index));
+                  }
+                }}>
+                {outfitStyle}
+              </ToggleButton>
+            </li>
+          ))}
+        </ul>
+      </FlexibleLayout.Content>
 
-        <FlexibleLayout.Footer>
-          <DoneSelectStylesButton onClick={() => onClose(selectedStyles)} />
-        </FlexibleLayout.Footer>
-      </FlexibleLayout.Root>
-    </AnimatedDialog>
+      <FlexibleLayout.Footer>
+        <DoneSelectStylesButton onClick={() => onClose(selectedStyles)} />
+      </FlexibleLayout.Footer>
+    </FlexibleLayout.Root>
   );
-});
+};
 
 function Header({ onBack }: { onBack: () => void }) {
   return (

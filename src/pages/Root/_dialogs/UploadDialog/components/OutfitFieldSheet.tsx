@@ -1,22 +1,9 @@
 import { OUTFIT_CATEGORY_LIST } from '@/constants';
-import { AnimatedDialog } from '@Components/AnimatedDialog';
-import { DialogOverlay } from '@Components/DialogOverlay';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
-import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import * as Select from '@radix-ui/react-select';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { AnimatePresence } from 'framer-motion';
-import { ChangeEvent, ReactNode, useRef, useState } from 'react';
+import { DefaultModalProps } from '@Stores/modal';
+import { ChangeEvent, forwardRef, useState } from 'react';
 import { MdChevronRight, MdClose } from 'react-icons/md';
-
-type OutfitFieldSheetProp = {
-  type: 'add' | 'edit';
-  defaultOutfitField?: OutfitField;
-  triggerSlot: ReactNode;
-  onSubmit?: (outfitField: OutfitField) => void;
-  onDelete?: () => void;
-  onEdit?: (outfitField: OutfitField) => void;
-};
 
 type OutfitField = {
   id?: string;
@@ -27,103 +14,81 @@ type OutfitField = {
 
 const initialOutfitField: OutfitField = { category: -1, brandName: '', details: '' };
 
-export function OutfitFieldSheet({ type, triggerSlot, defaultOutfitField = initialOutfitField, onSubmit, onDelete, onEdit }: OutfitFieldSheetProp) {
-  const [isOpened, setIsOpened] = useState(false);
-  const [outfitField, setOutfitField] = useState(defaultOutfitField);
+export type OutfitFieldReturnType = {
+  type: 'add' | 'delete' | 'edit';
+  outfitField?: OutfitField;
+};
 
-  const submitType = useRef<string>(type);
+type OutfitFieldSheetProp = {
+  type: 'add' | 'edit';
+  defaultOutfitField?: OutfitField;
+};
 
-  const updateOutfitField = (field: Partial<OutfitField>) => setOutfitField((prevField) => ({ ...prevField, ...field }));
+export const OutfitItemSheet = forwardRef<HTMLDivElement, DefaultModalProps<OutfitFieldReturnType, OutfitFieldSheetProp>>(
+  ({ type, defaultOutfitField = initialOutfitField, onClose }: DefaultModalProps<OutfitFieldReturnType, OutfitFieldSheetProp>, ref) => {
+    const [outfitField, setOutfitField] = useState(defaultOutfitField);
 
-  const isAddSheet = type === 'add';
-  const isEditSheet = type === 'edit';
+    const updateOutfitField = (field: Partial<OutfitField>) => setOutfitField((prevField) => ({ ...prevField, ...field }));
 
-  const doneSelectCategory = outfitField.category != -1;
-  const doneInputBrandName = outfitField.brandName !== '';
-  const couldEnableAddButton = doneSelectCategory && doneInputBrandName;
+    const isAddSheet = type === 'add';
+    const isEditSheet = type === 'edit';
 
-  const hasDirtyCategory = outfitField.category !== defaultOutfitField.category;
-  const hasDirtyBrandName = outfitField.brandName !== defaultOutfitField.brandName;
-  const hasDirtyDetails = outfitField.details !== defaultOutfitField.details;
-  const couldEnableEditButton = hasDirtyCategory || hasDirtyBrandName || hasDirtyDetails;
+    const doneSelectCategory = outfitField.category != -1;
+    const doneInputBrandName = outfitField.brandName !== '';
+    const couldEnableAddButton = doneSelectCategory && doneInputBrandName;
 
-  const closeSheet = (type: string) => {
-    submitType.current = type;
-    setIsOpened(false);
-  };
+    const hasDirtyCategory = outfitField.category !== defaultOutfitField.category;
+    const hasDirtyBrandName = outfitField.brandName !== defaultOutfitField.brandName;
+    const hasDirtyDetails = outfitField.details !== defaultOutfitField.details;
+    const couldEnableEditButton = hasDirtyCategory || hasDirtyBrandName || hasDirtyDetails;
 
-  const handleAfterExit = () => {
-    setOutfitField(defaultOutfitField);
+    const handleClose = (closeType: string) => {
+      if (closeType === 'add') {
+        return onClose({ type: 'add', outfitField });
+      }
 
-    if (submitType.current === 'add') {
-      return onSubmit && onSubmit(outfitField);
-    }
+      if (closeType === 'edit') {
+        return onClose({ type: 'edit', outfitField });
+      }
 
-    if (submitType.current === 'delete') {
-      return onDelete && onDelete();
-    }
+      if (closeType === 'delete') {
+        return onClose({ type: 'delete' });
+      }
+    };
 
-    if (submitType.current === 'edit') {
-      return onEdit && onEdit(outfitField);
-    }
-  };
+    return (
+      <FlexibleLayout.Root ref={ref} className="h-fit">
+        <FlexibleLayout.Header>
+          <header className="relative flex flex-row justify-between px-5 py-4">
+            <p className="text-xl font-semibold">
+              {isAddSheet && '착장 정보 추가'}
+              {isEditSheet && '착장 정보 편집'}
+            </p>
+            <button type="button" onClick={() => onClose()}>
+              <MdClose className="size-6 text-gray-600" />
+            </button>
+          </header>
+        </FlexibleLayout.Header>
 
-  return (
-    <AlertDialog.Root open={isOpened} onOpenChange={setIsOpened}>
-      {triggerSlot && <AlertDialog.Trigger asChild>{triggerSlot}</AlertDialog.Trigger>}
+        <FlexibleLayout.Content className="flex flex-col gap-3">
+          <div className="flex flex-row gap-3">
+            <CategorySelect categoryId={outfitField.category} onSelect={(category) => updateOutfitField({ category })} />
+            <BrandNameField value={outfitField.brandName} disabled={outfitField.category === -1} onChange={(brandName) => updateOutfitField({ brandName })} />
+          </div>
 
-      <AnimatePresence onExitComplete={handleAfterExit}>
-        {isOpened && (
-          <AlertDialog.Portal forceMount container={document.getElementById('portalSection')!}>
-            <AlertDialog.Overlay>
-              <DialogOverlay onClick={() => closeSheet('cancel')} />
-            </AlertDialog.Overlay>
+          <DetailField value={outfitField.details} disabled={outfitField.brandName === ''} onChange={(details) => updateOutfitField({ details })} />
+        </FlexibleLayout.Content>
 
-            <AlertDialog.Title />
-
-            <AlertDialog.Content>
-              <VisuallyHidden>
-                <AlertDialog.AlertDialogDescription>This description is hidden from sighted users but accessible to screen readers.</AlertDialog.AlertDialogDescription>
-              </VisuallyHidden>
-
-              <AnimatedDialog modalType="bottomSheet">
-                <FlexibleLayout.Root className="h-fit">
-                  <FlexibleLayout.Header>
-                    <header className="relative flex flex-row justify-between px-5 py-4">
-                      <p className="text-xl font-semibold">
-                        {isAddSheet && '착장 정보 추가'}
-                        {isEditSheet && '착장 정보 편집'}
-                      </p>
-                      <button type="button" onClick={() => closeSheet('cancel')}>
-                        <MdClose className="size-6 text-gray-600" />
-                      </button>
-                    </header>
-                  </FlexibleLayout.Header>
-
-                  <FlexibleLayout.Content className="flex flex-col gap-3">
-                    <div className="flex flex-row gap-3">
-                      <CategorySelect categoryId={outfitField.category} onSelect={(category) => updateOutfitField({ category })} />
-                      <BrandNameField value={outfitField.brandName} disabled={outfitField.category === -1} onChange={(brandName) => updateOutfitField({ brandName })} />
-                    </div>
-
-                    <DetailField value={outfitField.details} disabled={outfitField.brandName === ''} onChange={(details) => updateOutfitField({ details })} />
-                  </FlexibleLayout.Content>
-
-                  <FlexibleLayout.Footer>
-                    <div className="flex p-4 pt-0">
-                      {isAddSheet && <AddOutfitButton disabled={!couldEnableAddButton} onAdd={() => closeSheet('add')} />}
-                      {isEditSheet && <DeleteOrEditButton onDelete={() => closeSheet('delete')} onEdit={() => closeSheet('edit')} disabled={!couldEnableEditButton} />}
-                    </div>
-                  </FlexibleLayout.Footer>
-                </FlexibleLayout.Root>
-              </AnimatedDialog>
-            </AlertDialog.Content>
-          </AlertDialog.Portal>
-        )}
-      </AnimatePresence>
-    </AlertDialog.Root>
-  );
-}
+        <FlexibleLayout.Footer>
+          <div className="flex p-4 pt-0">
+            {isAddSheet && <AddOutfitButton disabled={!couldEnableAddButton} onAdd={() => handleClose('add')} />}
+            {isEditSheet && <DeleteOrEditButton onDelete={() => handleClose('delete')} onEdit={() => handleClose('edit')} disabled={!couldEnableEditButton} />}
+          </div>
+        </FlexibleLayout.Footer>
+      </FlexibleLayout.Root>
+    );
+  }
+);
 
 function CategorySelect({ categoryId, onSelect }: { categoryId: number; onSelect: (categoryId: number) => void }) {
   return (
