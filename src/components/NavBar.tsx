@@ -1,3 +1,4 @@
+import { useModalActions } from '@Hooks/modal';
 import { UploadViewDialog } from '@Pages/Root/_dialogs/UploadDialog/dialog';
 import { cn } from '@Utils/index';
 import { IconType } from 'react-icons/lib';
@@ -48,7 +49,7 @@ type NavItemProps = { isActive: boolean } & NavItem;
 function NavItem({ link, IconComponent, isActive }: NavItemProps) {
   const navigate = useNavigate();
 
-  const buttonClassName = cn('block h-full w-full py-5 transition-transform pointerdevice:hover:rotate-3 pointerdevice:hover:scale-125 pointerdevice:active:scale-95', {
+  const buttonClassName = cn('block h-full w-full py-5 group', {
     ['text-purple-700']: isActive,
   });
 
@@ -56,21 +57,31 @@ function NavItem({ link, IconComponent, isActive }: NavItemProps) {
     return (
       <li className="flex-1">
         <button type="button" className={buttonClassName} onClick={() => navigate(link)}>
-          <IconComponent className="mx-auto size-6" />
+          <IconComponent className="mx-auto size-6 transition-transform pointerdevice:group-hover:rotate-3 pointerdevice:group-hover:scale-125 pointerdevice:group-active:scale-95" />
         </button>
       </li>
     );
   }
 
+  return <UploadImageButton buttonClassName={buttonClassName} IconComponent={IconComponent} />;
+}
+
+function UploadImageButton({ buttonClassName, IconComponent }: { buttonClassName: string; IconComponent: IconType }) {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    return await startUploadImageFlow();
+  };
+
+  const startUploadImageFlow = async () => {
+    return showModal({ type: 'fullScreenDialog', Component: UploadViewDialog });
+  };
+
   return (
-    <UploadViewDialog
-      triggerSlot={
-        <li className="flex-1">
-          <button type="button" className={buttonClassName}>
-            <IconComponent className="mx-auto size-6" />
-          </button>
-        </li>
-      }
-    />
+    <li className="flex-1">
+      <button type="button" className={buttonClassName} onClick={handleClick}>
+        <IconComponent className="mx-auto size-6" />
+      </button>
+    </li>
   );
 }
