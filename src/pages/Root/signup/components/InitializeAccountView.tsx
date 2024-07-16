@@ -117,12 +117,12 @@ function AccountIdField({ control, invalid }: { control: Control<InitializeAccou
       control={control}
       name="accountId"
       render={({ field }) => (
-        <FormItem>
+        <FormItem className="space-y-1">
           <FormControl>
             <Input placeholder="계정 ID" {...field} className="peer aria-[invalid=true]:border-pink-400" />
           </FormControl>
 
-          <div className="mt-2 pl-2 text-xs text-gray-600">
+          <div className="pl-1 text-xs text-gray-600">
             {invalid && <FormMessage className="text-xs text-pink-400" />}
             {!invalid && field.value === '' && <p>사용할 계정 ID를 입력해주세요.</p>}
             {!invalid && field.value !== '' && <p>사용할 수 있는 ID입니다.</p>}
@@ -144,7 +144,7 @@ function SexField({ control }: { control: Control<InitializeAccountFormSchema> }
       control={control}
       name="sex"
       render={({ field }) => (
-        <FormItem>
+        <FormItem className="space-y-1">
           <FormControl>
             <RadioGroup.Root defaultValue="men" className="flex w-full flex-row gap-5" value={field.value} onValueChange={field.onChange}>
               <RadioGroup.Item
@@ -160,7 +160,7 @@ function SexField({ control }: { control: Control<InitializeAccountFormSchema> }
             </RadioGroup.Root>
           </FormControl>
 
-          <p className="mt-2 pl-2 text-xs text-gray-600">성별을 선택해주세요. 사진의 필터링에 활용되니 사실과 같게 선택해주세요!</p>
+          <p className="pl-1 text-xs text-gray-600">성별을 선택해주세요. 사진의 필터링에 활용되니 사실과 같게 선택해주세요!</p>
 
           <FormMessage className="text-pink-400" />
         </FormItem>
