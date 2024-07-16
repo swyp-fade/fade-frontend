@@ -56,7 +56,19 @@ export const handlers = [
     });
   }),
 
-  http.post(`${BASE_URL}/auth/signup`, async () => {
+  http.post(`${BASE_URL}/auth/signup`, async ({ request }) => {
+    const requestPayload = (await request.json()) as { accountId: string };
+    const alreadyExistAccountId = requestPayload.accountId === 'asdf';
+
+    if (alreadyExistAccountId) {
+      return HttpResponse.json(
+        { errorCode: 'account_already_exists' },
+        {
+          status: HttpStatusCode.Unauthorized,
+        }
+      );
+    }
+
     return new HttpResponse(
       JSON.stringify({
         accessToken: createAccessToken(userData),
