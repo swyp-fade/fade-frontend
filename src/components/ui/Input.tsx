@@ -1,8 +1,13 @@
 import cn from 'classnames';
-import { InputHTMLAttributes } from 'react';
+import { forwardRef, InputHTMLAttributes } from 'react';
+import { MdHighlightOff, MdOutlineCheckCircle } from 'react-icons/md';
 
-export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
+export const Input = forwardRef<HTMLDivElement, InputHTMLAttributes<HTMLInputElement>>(({ className, ...props }: InputHTMLAttributes<HTMLInputElement>, ref) => {
   return (
-    <input className={cn(className, 'w-full appearance-none rounded-lg border border-gray-200 px-5 py-[.875rem] outline-none focus:border-purple-500')} {...props} />
+    <div ref={ref} className={cn(className, 'peer flex flex-row rounded-lg border border-gray-200 px-5 py-[.875rem] focus-within:border-purple-500')} {...props}>
+      <input className={'w-full appearance-none outline-none'} />
+      {props['aria-invalid'] === false && props.value !== '' && <MdOutlineCheckCircle className="size-6 text-purple-500" />}
+      {props['aria-invalid'] === true && <MdHighlightOff className="size-6 text-pink-600" />}
+    </div>
   );
-}
+});
