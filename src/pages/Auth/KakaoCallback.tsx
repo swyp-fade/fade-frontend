@@ -37,7 +37,7 @@ export default function KakaoCallback() {
       return navigate('/', { replace: true });
     }
 
-    return navigate(`/initialize-account?code=${searchParams.get('code')}`, { replace: true });
+    return navigate(`/signup?code=${searchParams.get('code')}`, { replace: true });
   }, [status, payload]);
 
   return <></>;

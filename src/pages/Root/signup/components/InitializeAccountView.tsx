@@ -8,20 +8,13 @@ import { requestSignUp, SignUpType } from '@Services/authAPI';
 import { tryCatcher } from '@Utils/index';
 import { useTransition } from 'react';
 import { Control, useForm } from 'react-hook-form';
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
-export default function Page() {
+export default function InitializeAccountView({ authorizationCode }: { authorizationCode: string }) {
   const navigate = useNavigate();
 
   const { signIn } = useAuthActions();
-
-  const [searchParams] = useSearchParams();
-  const authorizationCode = searchParams.get('code');
-
-  if (authorizationCode === null || authorizationCode === '') {
-    return <Navigate to="/login" />;
-  }
 
   const handleSubmit = async (values: InitializeAccountFormSchema) => {
     const [response, errorCode] = await tryCatcher(() =>

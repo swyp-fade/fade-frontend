@@ -16,7 +16,7 @@ const AppLayout = lazy(() => import('@Layouts/AppLayout').then((module) => ({ de
 
 /** Root */
 const LoginPage = lazy(() => import('@Pages/Root/Login/page').then((module) => ({ default: module.default })));
-const InitializeAccountPage = lazy(() => import('@Pages/Root/InitializeAccount/page').then((module) => ({ default: module.default })));
+const SignUpPage = lazy(() => import('@Pages/Root/signup/page').then((module) => ({ default: module.default })));
 const ArchivePage = lazy(() => import('@Pages/Root/archive/page').then((module) => ({ default: module.default })));
 const VoteFAPPage = lazy(() => import('@Pages/Root/voteFAP/page').then((module) => ({ default: module.default })));
 const FeedPage = lazy(() => import('@Pages/Root/feed/page').then((module) => ({ default: module.default })));
@@ -31,7 +31,7 @@ export const routesFromElements = createRoutesFromElements(
     <Route path="/" ErrorBoundary={GlobalErrorPage}>
       <Route index element={<RootPage />} loader={async (params) => (await import('@Pages/Root/page')).loader(params)} />
       <Route path="login" element={<LoginPage />} />
-      <Route path="initialize-account" element={<InitializeAccountPage />} />
+      <Route path="signup" element={<SignUpPage />} />
       <Route element={<ProtectedRoute />}>
         <Route
           element={
