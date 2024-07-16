@@ -147,7 +147,7 @@ function CheckIcon({ isActive }: { isActive: boolean }) {
   return (
     <div className="grid size-6 place-items-center">
       <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <motion.path animate={{ pathLength: isActive ? 1 : 0 }} d="M2 6L6.5 10L14 2" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        <motion.path animate={{ pathLength: isActive ? 1 : 0 }} d="M2 6L6.5 10L14 2" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </div>
   );
