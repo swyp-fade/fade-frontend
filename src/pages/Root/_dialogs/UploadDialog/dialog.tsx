@@ -26,15 +26,10 @@ export function UploadViewDialog({ setCloseHandler, onClose }: DefaultModalProps
     return true;
   };
 
-  const handleFormClose = async () => {
-    const sholudClose = await confirmUnsavedChanges();
-    sholudClose && onClose();
-  };
-
   return (
     <>
       {shouldShowPolicyView && <PolicyView onAgreePolicy={() => setHasAgreementOfPolicy(true)} onDegreePolicy={onClose} />}
-      {!shouldShowPolicyView && <UploadImageForm onClose={handleFormClose} onValueChanged={(value) => (dirtyRef.current = value)} />}
+      {!shouldShowPolicyView && <UploadImageForm onClose={onClose} onValueChanged={(value) => (dirtyRef.current = value)} />}
     </>
   );
 }

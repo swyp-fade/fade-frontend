@@ -28,12 +28,8 @@ function Modal({ Component, id, type, props, resolve, animateType }: ModalItem) 
 
   /** @param params any or undefined */
   const handleClose = async (params?: unknown) => {
-    if (closeHandler) {
-      const shouldClose = await closeHandler();
-
-      if (!shouldClose) {
-        return;
-      }
+    if (closeHandler && !(await closeHandler())) {
+      return;
     }
 
     setIsOpen(false);
