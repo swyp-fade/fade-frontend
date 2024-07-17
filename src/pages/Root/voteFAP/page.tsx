@@ -1,10 +1,12 @@
 import { useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
+import { useVotingStore } from '@Stores/vote';
 import { useState } from 'react';
 import { MdInfoOutline, MdOutlineNotificationsNone } from 'react-icons/md';
 import { VoteController } from './components/VoteController';
 import { VotePolicyBottomSheet } from './components/VotePolicyBottomSheet';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function Page() {
   useHeader({
@@ -16,16 +18,34 @@ export default function Page() {
   return (
     <FlexibleLayout.Root className="gap-3">
       <FlexibleLayout.Header>
-        <div className="flex flex-row rounded-lg border border-gray-200 bg-white p-3 shadow-bento">
-          <p className="flex-1">FADE_1234님은 오늘 10회 투표했어요!</p>
-          <span className="text-gray-500">2/10</span>
-        </div>
+        <VotingCounter />
       </FlexibleLayout.Header>
 
       <FlexibleLayout.Content className="overflow-visible p-0">
         <VoteController />
       </FlexibleLayout.Content>
     </FlexibleLayout.Root>
+  );
+}
+
+function VotingCounter() {
+  const { hasVotedToday, votingCountToday, isVotingInProgress, votingProgress } = useVotingStore();
+
+  const shouldVoteToday = !hasVotedToday && votingCountToday === 0;
+
+  return (
+    <div className="flex flex-row rounded-lg border border-gray-200 bg-white p-3 shadow-bento">
+      {shouldVoteToday && <p className="flex-1">FADE_1234님, 오늘의 투표를 진행해보세요!</p>}
+      {!shouldVoteToday && <p className="flex-1">FADE_1234님은 오늘 {votingCountToday}회 투표했어요!</p>}
+
+      <AnimatePresence>
+        {isVotingInProgress && (
+          <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-gray-500">
+            {votingProgress > 10 ? 10 : votingProgress}/10
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
