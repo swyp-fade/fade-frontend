@@ -20,7 +20,7 @@ const REPORT_TYPE_TEXT: Record<ReportType, string> = {
 
 const reportTypeList: ReportType[] = [ReportType.PORNO_OR_SEXUAL_IMAGE, ReportType.ILLEGAL_USE_OR_AI_IMAGE, ReportType.REPUGNANT_SYMBOL, ReportType.OTHER];
 
-type ReportResult = {
+export type ReportResult = {
   selectedReportType: ReportType;
   reportDetails: string;
 };
