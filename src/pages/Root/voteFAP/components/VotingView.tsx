@@ -1,39 +1,11 @@
 import { useModalActions } from '@Hooks/modal';
 import { useToastActions } from '@Hooks/toast';
-import { cn, generateAnonName, generateRandomId } from '@Utils/index';
+import { SwipeDirection, useVotingStore } from '@Stores/vote';
+import { cn, generateAnonName } from '@Utils/index';
 import { AnimatePresence, motion, MotionValue, useMotionValue, useTransform, Variants } from 'framer-motion';
 import { useLayoutEffect, useState } from 'react';
 import { MdBookmark, MdReport } from 'react-icons/md';
 import { ReportBottomSheet, ReportResult } from './ReportBottomSheet';
-
-import testFashionImage1 from '@Assets/test_fashion_image.jpg';
-import testFashionImage10 from '@Assets/test_fashion_image_10.jpg';
-import testFashionImage2 from '@Assets/test_fashion_image_2.jpg';
-import testFashionImage3 from '@Assets/test_fashion_image_3.jpg';
-import testFashionImage4 from '@Assets/test_fashion_image_4.jpg';
-import testFashionImage5 from '@Assets/test_fashion_image_5.webp';
-import testFashionImage6 from '@Assets/test_fashion_image_6.jpg';
-import testFashionImage7 from '@Assets/test_fashion_image_7.jpg';
-import testFashionImage8 from '@Assets/test_fashion_image_8.jpg';
-import testFashionImage9 from '@Assets/test_fashion_image_9.jpg';
-
-const testFahsionImages = [
-  testFashionImage1,
-  testFashionImage2,
-  testFashionImage3,
-  testFashionImage4,
-  testFashionImage5,
-  testFashionImage6,
-  testFashionImage7,
-  testFashionImage8,
-  testFashionImage9,
-  testFashionImage10,
-];
-
-type FashionCard = {
-  userId: string;
-  imageURL: string;
-};
 
 import swipeFadeInImage from '@Assets/swipe_fade_in.png';
 import swipeFadeOutImage from '@Assets/swipe_fade_out.png';
@@ -47,19 +19,17 @@ import profileDefaultImage4 from '@Assets/profile_default_4.jpg';
 
 const defaultProfileImages = [profileDefaultImage1, profileDefaultImage2, profileDefaultImage3, profileDefaultImage4];
 
-type DragDirection = 'left' | 'right';
-
 const cardVariants: Variants = {
   current: { opacity: 1, y: 0, scale: 1, zIndex: 0 },
   upcoming: { opacity: 0.5, y: -64, scale: 0.9, zIndex: -1 },
   remainings: { opacity: 0, y: 0, scale: 0.9 },
-  exit: (direction: DragDirection) => ({ x: direction === 'left' ? -300 : 300, y: 40, rotate: direction === 'left' ? -20 : 20, opacity: 0 }),
+  exit: (direction: SwipeDirection) => ({ x: direction === 'left' ? -300 : 300, y: 40, rotate: direction === 'left' ? -20 : 20, opacity: 0 }),
 };
 
 const letterVariants: Variants = {
-  initial: (direction: DragDirection) => ({ y: direction === 'left' ? '-100%' : '100%' }),
+  initial: (direction: SwipeDirection) => ({ y: direction === 'left' ? '-100%' : '100%' }),
   animate: { y: 0 },
-  exit: (direction: DragDirection) => ({ y: direction === 'left' ? '100%' : '-100%' }),
+  exit: (direction: SwipeDirection) => ({ y: direction === 'left' ? '100%' : '-100%' }),
 };
 
 const offsetBoundary = 150;
@@ -71,40 +41,39 @@ const outputRotate = [-45, 0, 45];
 const outputOpacity = [1, 0, 1];
 
 export function VotingView({ onFinishVote }: { onFinishVote: () => void }) {
-  const testCards: FashionCard[] = testFahsionImages.map((image) => ({
-    userId: generateRandomId(),
-    imageURL: image,
-  }));
+  const clearVotingProgress = useVotingStore((state) => state.clearVotingProgress);
+  const setHasVotedToday = useVotingStore((state) => state.setHasVotedToday);
+  const hasVotedToday = useVotingStore((state) => state.hasVotedToday);
 
-  const [viewCards, setViewCards] = useState(testCards);
-  const [direction, setDirection] = useState<DragDirection>('right');
+  const viewCards = useVotingStore((state) => state.viewCards);
 
   useLayoutEffect(() => {
     if (viewCards.length === 0) {
+      !hasVotedToday && setHasVotedToday(true);
+
+      clearVotingProgress();
       onFinishVote();
     }
   }, [viewCards]);
 
-  const handleSelect = (direction: DragDirection) => {
-    setViewCards((viewCards) => viewCards.slice(0, -1));
-    setDirection(direction);
-  };
-
   return (
     <div className="flex h-full flex-col justify-between gap-5">
-      <FahsionCards direction={direction} cards={viewCards} onSelect={handleSelect} />
-      <VotingTools direction={direction} onFadeOut={() => handleSelect('left')} onFadeIn={() => handleSelect('right')} />
+      <FahsionCards />
+      <VotingTools />
     </div>
   );
 }
 
-function FahsionCards({ direction, cards, onSelect }: { direction: DragDirection; cards: FashionCard[]; onSelect: (direction: DragDirection) => void }) {
+function FahsionCards() {
+  const viewCards = useVotingStore((state) => state.viewCards);
+  const swipeDirection = useVotingStore((state) => state.swipeDirection);
+
   return (
     <div className="relative flex-1">
-      <AnimatePresence custom={direction}>
-        {cards.map((card, i) => {
-          const isLastCard = i === cards.length - 1;
-          const isUpcoming = i === cards.length - 2;
+      <AnimatePresence custom={swipeDirection}>
+        {viewCards.map((card, i) => {
+          const isLastCard = i === viewCards.length - 1;
+          const isUpcoming = i === viewCards.length - 2;
 
           return (
             <motion.div
@@ -112,11 +81,11 @@ function FahsionCards({ direction, cards, onSelect }: { direction: DragDirection
               id={`card-${i}`}
               className={`absolute flex h-full w-full`}
               variants={cardVariants}
-              custom={direction}
+              custom={swipeDirection}
               initial="remainings"
               animate={isLastCard ? 'current' : isUpcoming ? 'upcoming' : 'remainings'}
               exit="exit">
-              <FashionCard isCurrentCard={isLastCard} imageURL={card.imageURL} onSelect={onSelect} />
+              <FashionCard isCurrentCard={isLastCard} imageURL={card.imageURL} />
             </motion.div>
           );
         })}
@@ -125,9 +94,11 @@ function FahsionCards({ direction, cards, onSelect }: { direction: DragDirection
   );
 }
 
-type FashionCardProps = { imageURL: string; isCurrentCard: boolean; onSelect: (direction: DragDirection) => void };
+type FashionCardProps = { imageURL: string; isCurrentCard: boolean };
 
-function FashionCard({ imageURL, isCurrentCard, onSelect }: FashionCardProps) {
+function FashionCard({ imageURL, isCurrentCard }: FashionCardProps) {
+  const handleSelect = useVotingStore((state) => state.handleSelect);
+
   const x = useMotionValue(0);
 
   const computedX = useTransform(x, inputX, outputX);
@@ -136,7 +107,7 @@ function FashionCard({ imageURL, isCurrentCard, onSelect }: FashionCardProps) {
 
   const [isReporting, setIsReporting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragOffBoundary, setDragOffBoundary] = useState<DragDirection | null>(null);
+  const [dragOffBoundary, setDragOffBoundary] = useState<SwipeDirection | null>(null);
 
   const isLeftBoundary = dragOffBoundary === 'left';
   const isRightBoundary = dragOffBoundary === 'right';
@@ -151,7 +122,7 @@ function FashionCard({ imageURL, isCurrentCard, onSelect }: FashionCardProps) {
     }
 
     showToast({ type: 'basic', title: '신고되었습니다.' });
-    onSelect('left');
+    handleSelect('left');
   };
 
   return (
@@ -175,7 +146,6 @@ function FashionCard({ imageURL, isCurrentCard, onSelect }: FashionCardProps) {
       <DragController
         x={x}
         onDragOffBoundary={(boundary) => setDragOffBoundary(boundary)}
-        onSelect={onSelect}
         onDragStart={() => setIsDragging(true)}
         onDragEnd={() => setIsDragging(false)}
       />
@@ -227,11 +197,12 @@ type DragControllerProps = {
   x: MotionValue;
   onDragStart: () => void;
   onDragEnd: () => void;
-  onDragOffBoundary: (boundary: DragDirection | null) => void;
-  onSelect: (direction: DragDirection) => void;
+  onDragOffBoundary: (boundary: SwipeDirection | null) => void;
 };
 
-function DragController({ x, onDragStart, onDragEnd, onDragOffBoundary, onSelect }: DragControllerProps) {
+function DragController({ x, onDragStart, onDragEnd, onDragOffBoundary }: DragControllerProps) {
+  const handleSelect = useVotingStore((state) => state.handleSelect);
+
   return (
     <motion.div
       style={{ x }}
@@ -258,31 +229,33 @@ function DragController({ x, onDragStart, onDragEnd, onDragOffBoundary, onSelect
         const isOffBoundary = x > offsetBoundary || x < -offsetBoundary;
         const direction = x > 0 ? 'right' : 'left';
 
-        isOffBoundary && onSelect(direction);
+        isOffBoundary && handleSelect(direction);
       }}
     />
   );
 }
 
-function SubscribeButton({ direction }: { direction: DragDirection }) {
+function SubscribeButton() {
   const randomProfileImage = defaultProfileImages.at(Math.floor(Math.random() * 4));
   const randomAnonName = generateAnonName();
 
   return (
     <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white px-3 py-2 shadow-bento">
       <div style={{ backgroundImage: `url('${randomProfileImage}')` }} className="size-8 rounded-lg" />
-      <AnimatedUsername name={randomAnonName} direction={direction} />
+      <AnimatedUsername name={randomAnonName} />
       <button className="rounded-lg border border-gray-200 px-4 py-1">구독</button>
     </div>
   );
 }
 
-function AnimatedUsername({ name, direction }: { name: string; direction: DragDirection }) {
+function AnimatedUsername({ name }: { name: string }) {
+  const swipeDirection = useVotingStore((state) => state.swipeDirection);
+
   return (
     <div className="relative flex h-full flex-1 items-center">
       <span className="pr-1">익명의</span>
       <div className="relative inline-block flex-1">
-        <AnimatePresence custom={direction} initial={false}>
+        <AnimatePresence custom={swipeDirection} initial={false}>
           <motion.div
             key={name}
             className="absolute top-1/2 flex-1 -translate-y-1/2 overflow-hidden"
@@ -296,7 +269,7 @@ function AnimatedUsername({ name, direction }: { name: string; direction: DragDi
                   key={`${name}-${letter}-${index}`}
                   id={`${name}-${letter}-${index}`}
                   variants={letterVariants}
-                  custom={direction}
+                  custom={swipeDirection}
                   className={cn('inline-block whitespace-normal', { ['pl-1']: letter === ' ' })}>
                   {letter}
                 </motion.span>
@@ -309,16 +282,16 @@ function AnimatedUsername({ name, direction }: { name: string; direction: DragDi
   );
 }
 
-type VotingToolsProps = { direction: DragDirection; onFadeIn: () => void; onFadeOut: () => void };
+function VotingTools() {
+  const handleSelect = useVotingStore((state) => state.handleSelect);
 
-function VotingTools({ direction, onFadeIn, onFadeOut }: VotingToolsProps) {
   return (
     <div className="flex w-full flex-col gap-3">
-      <SubscribeButton direction={direction} />
+      <SubscribeButton />
 
       <div className="flex flex-row gap-3">
-        <VoteButton type="fadeOut" onClick={onFadeOut} />
-        <VoteButton type="fadeIn" onClick={onFadeIn} />
+        <VoteButton type="fadeOut" onClick={() => handleSelect('left')} />
+        <VoteButton type="fadeIn" onClick={() => handleSelect('right')} />
         <BookmarkButton />
       </div>
     </div>
