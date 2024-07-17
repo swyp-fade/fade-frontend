@@ -100,3 +100,38 @@ export const validateLocalImageFile = (imageFile: File) => {
 };
 
 export const generateRandomId = () => Math.random().toString(32).substring(2);
+
+const randomNames = [
+  '알렉산더 맥퀸',
+  '알렉산더 왕',
+  '캘빈 클라인',
+  '도미니코 돌체',
+  '도나텔라 베르사체',
+  '조르지오 아르마니',
+  '후세인 샬라얀',
+  '장 폴 고티에',
+  '질 샌더',
+  '지미 추',
+  '존 갈리아노',
+  '칼 라거펠트',
+  '마크 제이콥스',
+  '마이클 코스',
+  '미우치아 프라다',
+  '폴 스미스',
+  '피비 필로',
+  '피에르 가르뎅',
+  '랄프 로렌',
+  '렌조 로소',
+  '리카르도 티시',
+  '로베르토 카발리',
+  '소니아 리키엘',
+  '스테파노 가바나',
+  '스텔라 맥카트니',
+  '톰 브라운',
+  '톰 포드',
+  '발렌티노 가라바니',
+  '비비안 웨스트우드',
+  '요지 야마모토',
+];
+
+export const generateAnonName = () => `${randomNames[Math.floor(Math.random() * randomNames.length)]}`;
