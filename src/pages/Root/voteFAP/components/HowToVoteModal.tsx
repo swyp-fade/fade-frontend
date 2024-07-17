@@ -3,6 +3,11 @@ import { DefaultModalProps } from '@Stores/modal';
 import { cn } from '@Utils/index';
 import { motion } from 'framer-motion';
 import { forwardRef, useState } from 'react';
+import Lottie from 'react-lottie-player';
+
+import howToVoteAsset1 from '@Assets/how_to_vote_1.json';
+import howToVoteAsset2 from '@Assets/how_to_vote_2.png';
+import howToVoteAsset3 from '@Assets/how_to_vote_3.png';
 
 export const HowToVoteModal = forwardRef<HTMLDivElement, DefaultModalProps>(({ onClose }: DefaultModalProps, ref) => {
   return (
@@ -18,22 +23,35 @@ export const HowToVoteModal = forwardRef<HTMLDivElement, DefaultModalProps>(({ o
   );
 });
 
+type LottieJSON = { [k in string]: unknown };
+
 type CarouselItem = {
-  image: string;
   description: string;
-};
+} & (
+  | {
+      type: 'lottie';
+      data: LottieJSON;
+    }
+  | {
+      type: 'image';
+      data: string;
+    }
+);
 
 const carouselList: CarouselItem[] = [
   {
-    image: 'https://img.khan.co.kr/news/2024/02/03/news-p.v1.20240131.e92b61eee105426b8fb091a0d5d8b0fe_P1.jpg',
+    type: 'lottie',
+    data: howToVoteAsset1,
     description: `FA:P 선정에 동의한다면 오른쪽으로 스와이프해 FADE IN,\n동의하지 않는다면 왼쪽으로 스와이프해 FADE OUT!`,
   },
   {
-    image: 'https://img.khan.co.kr/news/2024/02/03/news-p.v1.20240131.e92b61eee105426b8fb091a0d5d8b0fe_P1.jpg',
+    type: 'image',
+    data: howToVoteAsset2,
     description: `공정한 투표를 위해 투표가 진행되는 동안은\n계정명이 가려지며 익명으로 진행돼요!`,
   },
   {
-    image: 'https://img.khan.co.kr/news/2024/02/03/news-p.v1.20240131.e92b61eee105426b8fb091a0d5d8b0fe_P1.jpg',
+    type: 'image',
+    data: howToVoteAsset3,
     description: `가장 많은 FADE IN을 받은 사진은\n그날의 FA:P로 선정돼요.\n마음에 드는 사진은 북마크하고,\n다른 유저를 구독해 다양한 패션을 확인해보세요!`,
   },
 ];
@@ -79,11 +97,15 @@ function CarouselImageSection({ currentStep }: { currentStep: number }) {
   );
 }
 
-function CarouselItem({ description, image }: CarouselItem) {
+function CarouselItem({ data, description, type }: CarouselItem) {
+  const isLottie = type === 'lottie';
+  const isImage = type === 'image';
+
   return (
     <li className="flex h-full min-w-full flex-col items-center justify-center">
       <div className="flex flex-1 items-center justify-center">
-        <img src={image} className="max-h-[13.125rem] w-full object-contain" />
+        {isImage && <img src={data} className="max-h-[13.125rem] w-full object-contain" />}
+        {isLottie && <Lottie loop play animationData={data} className="max-h-full w-full" />}
       </div>
       <p className="whitespace-pre-line text-center">{description}</p>
     </li>
