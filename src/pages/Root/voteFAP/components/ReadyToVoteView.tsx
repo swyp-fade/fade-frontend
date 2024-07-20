@@ -13,14 +13,14 @@ export function ReadyToVoteView({ onStartClick }: { onStartClick: () => void }) 
 
 function ReadyToVoteCover() {
   return (
-    <div className="flex max-h-full w-full flex-1 items-center justify-center rounded-lg bg-gray-200 shadow-bento">
-      <div className="flex h-full max-w-full items-center justify-center">
-        <div
-          style={{ backgroundImage: `url('${voteStartImage}')`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }}
-          className="aspect-[3/4] h-full w-full max-w-full"
-        />
-      </div>
-    </div>
+    <div
+      className="flex-1 rounded-lg bg-gray-200 shadow-bento"
+      style={{
+        backgroundImage: `url('${voteStartImage}')`,
+        backgroundSize: 'contain',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+      }}></div>
   );
 }
 

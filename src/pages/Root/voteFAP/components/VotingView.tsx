@@ -127,15 +127,15 @@ function FashionCard({ imageURL, isCurrentCard }: FashionCardProps) {
 
   return (
     <motion.div
-      style={{ x: computedX, rotate: computedRotate }}
-      className="relative flex max-h-full w-full flex-1 items-center justify-center rounded-lg bg-gray-200 shadow-bento">
-      <div className="relative flex h-full max-w-full items-center justify-center">
-        <div
-          style={{ backgroundImage: `url('${imageURL}')`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }}
-          className="aspect-[3/4] h-full w-full max-w-full"
-        />
-      </div>
-
+      style={{
+        x: computedX,
+        rotate: computedRotate,
+        backgroundImage: `url('${imageURL}')`,
+        backgroundSize: 'contain',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+      }}
+      className="relative flex-1 rounded-lg bg-gray-200 shadow-bento">
       {isCurrentCard && <ReportButton shouldBelowZIndex={isDragging || isReporting} onReportStart={() => setIsDragging(true)} onReportEnd={handleReportEnd} />}
 
       <motion.div style={{ opacity: computedOpacity }} className="absolute inset-0 grid place-items-center rounded-lg bg-purple-500">
@@ -207,7 +207,7 @@ function DragController({ x, onDragStart, onDragEnd, onDragOffBoundary }: DragCo
     <motion.div
       style={{ x }}
       className="absolute inset-0 cursor-grab active:cursor-grabbing"
-      drag="x"
+      drag
       dragSnapToOrigin
       dragElastic={0.06}
       dragConstraints={{ left: 0, right: 0 }}
@@ -312,10 +312,15 @@ function VoteButton({ type, onClick }: VoteButtonProps) {
       })}
       onClick={onClick}>
       <div
-        style={{ backgroundImage: `url('${isFadeIn ? voteFadeInImage : voteFadeOutImage}')` }}
-        className={cn('mx-auto h-5 w-[8.375rem] transition-transform', {
-          ['w-[8.375rem] group-hover:translate-y-[.125rem]']: isFadeOut,
-          ['w-[6.4375rem] group-hover:-translate-y-[.125rem]']: isFadeIn,
+        style={{
+          backgroundImage: `url('${isFadeIn ? voteFadeInImage : voteFadeOutImage}')`,
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+        }}
+        className={cn('mx-auto h-5 transition-transform', {
+          ['pointerdevice:group-hover:translate-y-[.125rem]']: isFadeOut,
+          ['pointerdevice:group-hover:-translate-y-[.125rem]']: isFadeIn,
         })}
       />
     </button>
