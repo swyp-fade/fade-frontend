@@ -78,7 +78,7 @@ function NavButtons({ currentImageId, onNavClicked }: { currentImageId: number; 
   return (
     <ul className="mt-5 flex flex-row justify-center gap-3">
       {onboardingImages.map((_, index) => (
-        <li>
+        <li key={`nav-${index}`}>
           <button
             className={cn('size-2 rounded-full bg-gray-200 transition-colors', { ['bg-purple-500']: index === currentImageId })}
             onClick={() => onNavClicked(index)}

@@ -57,6 +57,7 @@ export default {
         fullscreen: { raw: '(display-mode: fullscreen)' },
         touchdevice: { raw: '(pointer: coarse)' },
         pointerdevice: { raw: '(pointer: fine)' },
+        pwa: { raw: '(display-mode: standalone)' },
       },
       fontSize: {
         h1: '2rem',

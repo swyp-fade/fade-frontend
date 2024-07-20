@@ -6,7 +6,7 @@ import { FlexibleLayout } from './FlexibleLayout';
 
 export default function AppLayout() {
   return (
-    <FlexibleLayout.Root>
+    <FlexibleLayout.Root className="w-full flex-1 border border-red-500">
       <FlexibleLayout.Header>
         <Header />
       </FlexibleLayout.Header>
