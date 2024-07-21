@@ -6,8 +6,10 @@ export function KakaoLoginButton() {
   const kakaoLoginURL = `https://kauth.kakao.com/oauth/authorize?client_id=${apiKey}&redirect_uri=${redirectURL}&response_type=code`;
 
   return (
-    <Link to={kakaoLoginURL}>
-      <div className={`h-[2.8125rem] w-[18.75rem] rounded bg-gray-100`} style={{ backgroundImage: `url('${kakaoLoginImage}')` }} />
-    </Link>
+    <Link
+      style={{ backgroundImage: `url('${kakaoLoginImage}')`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat' }}
+      to={kakaoLoginURL}
+      className="h-[2.625rem] w-[20rem] rounded transition-transform touchdevice:active:scale-95 pointerdevice:hover:scale-105 pointerdevice:active:scale-95"
+    />
   );
 }
