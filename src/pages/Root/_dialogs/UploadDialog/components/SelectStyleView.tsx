@@ -48,8 +48,8 @@ export const SelectStyleView = ({ defaultStyles = [], onClose }: DefaultModalPro
 function Header({ onBack }: { onBack: () => void }) {
   return (
     <header className="relative px-5 py-4">
-      <button className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 hover:bg-gray-200" onClick={onBack}>
-        <MdChevronLeft className="size-6" />
+      <button className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 hover:bg-gray-100 touchdevice:active:bg-gray-100" onClick={onBack}>
+        <MdChevronLeft className="size-6 transition-transform group-active:scale-95" />
       </button>
 
       <p className="text-center text-2xl font-semibold">스타일 선택</p>
@@ -60,8 +60,8 @@ function Header({ onBack }: { onBack: () => void }) {
 function DoneSelectStylesButton({ onClick }: { onClick: () => void }) {
   return (
     <div className="flex p-5">
-      <button className="flex-1 rounded-lg bg-black py-2 text-xl text-white" onClick={onClick}>
-        스타일 선택 완료
+      <button className="group flex-1 rounded-lg bg-black py-2 text-xl text-white" onClick={onClick}>
+        <span className="inline-block transition-transform group-active:scale-95">스타일 선택 완료</span>
       </button>
     </div>
   );
