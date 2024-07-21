@@ -15,7 +15,7 @@ const GlobalErrorPage = lazy(() => import('@Pages/GlobalErrorPage').then((module
 const AppLayout = lazy(() => import('@Layouts/AppLayout').then((module) => ({ default: module.default })));
 
 /** Root */
-const LoginPage = lazy(() => import('@Pages/Root/Login/page').then((module) => ({ default: module.default })));
+const LoginPage = lazy(() => import('@Pages/Root/login/page').then((module) => ({ default: module.default })));
 const SignUpPage = lazy(() => import('@Pages/Root/signup/page').then((module) => ({ default: module.default })));
 const ArchivePage = lazy(() => import('@Pages/Root/archive/page').then((module) => ({ default: module.default })));
 const VoteFAPPage = lazy(() => import('@Pages/Root/voteFAP/page').then((module) => ({ default: module.default })));
