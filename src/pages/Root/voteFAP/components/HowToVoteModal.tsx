@@ -130,10 +130,12 @@ function NextCarouselButton({ onClick, isLastStep }: { onClick: () => void; isLa
   return (
     <button
       type="button"
-      className={cn('flex-1 rounded-lg bg-gray-200 py-2 text-xl text-black transition-colors', { ['bg-purple-700 text-white']: isLastStep })}
+      className={cn('group flex-1 rounded-lg bg-gray-200 py-2 text-xl text-black transition-colors', { ['bg-purple-700 text-white']: isLastStep })}
       onClick={onClick}>
-      {!isLastStep && '다음'}
-      {isLastStep && 'FA:P 투표 시작하기'}
+      <span className="inline-block transition-transform group-active:scale-95">
+        {!isLastStep && '다음'}
+        {isLastStep && 'FA:P 투표 시작하기'}
+      </span>
     </button>
   );
 }

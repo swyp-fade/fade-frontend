@@ -23,8 +23,8 @@ export const VotePolicyBottomSheet = forwardRef<HTMLDivElement, DefaultModalProp
 
       <FlexibleLayout.Footer>
         <div className="flex p-4">
-          <button type="button" className="flex-1 rounded-lg bg-gray-200 py-2 text-xl text-black transition-colors" onClick={onClose}>
-            확인
+          <button type="button" className="group flex-1 rounded-lg bg-gray-200 py-2 text-xl text-black transition-colors" onClick={onClose}>
+            <span className="inline-block transition-transform group-active:scale-95">확인</span>
           </button>
         </div>
       </FlexibleLayout.Footer>

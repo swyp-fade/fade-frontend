@@ -7,6 +7,7 @@ import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 const enum ReportType {
   PORNO_OR_SEXUAL_IMAGE = 'PORNO_OR_SEXUAL_IMAGE',
   ILLEGAL_USE_OR_AI_IMAGE = 'ILLEGAL_USE_OR_AI_IMAGE',
+  UNRELATED_OR_SPAM = 'UNRELATED_OR_SPAM',
   REPUGNANT_SYMBOL = 'REPUGNANT_SYMBOL',
   OTHER = 'OTHER',
 }
@@ -14,11 +15,18 @@ const enum ReportType {
 const REPORT_TYPE_TEXT: Record<ReportType, string> = {
   PORNO_OR_SEXUAL_IMAGE: '음란물 또는 성적인 사진',
   ILLEGAL_USE_OR_AI_IMAGE: '도용 또는 AI 이미지',
+  UNRELATED_OR_SPAM: '패션과 관련 없는 이미지 또는 스팸',
   REPUGNANT_SYMBOL: '혐오 발언 또는 상징',
   OTHER: '기타',
 };
 
-const reportTypeList: ReportType[] = [ReportType.PORNO_OR_SEXUAL_IMAGE, ReportType.ILLEGAL_USE_OR_AI_IMAGE, ReportType.REPUGNANT_SYMBOL, ReportType.OTHER];
+const reportTypeList: ReportType[] = [
+  ReportType.PORNO_OR_SEXUAL_IMAGE,
+  ReportType.ILLEGAL_USE_OR_AI_IMAGE,
+  ReportType.UNRELATED_OR_SPAM,
+  ReportType.REPUGNANT_SYMBOL,
+  ReportType.OTHER,
+];
 
 export type ReportResult = {
   selectedReportType: ReportType;
@@ -67,9 +75,9 @@ export const ReportBottomSheet = forwardRef<HTMLDivElement, DefaultModalProps<Re
           {isInputStep && (
             <button
               type="button"
-              className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 pointerdevice:hover:bg-gray-100"
+              className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
               onClick={() => changeStep(0)}>
-              <MdChevronLeft className="size-6 group-active:pointerdevice:scale-95" />
+              <MdChevronLeft className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
             </button>
           )}
           <p className="text-center text-2xl font-semibold">신고</p>
@@ -86,10 +94,10 @@ export const ReportBottomSheet = forwardRef<HTMLDivElement, DefaultModalProps<Re
           <div className="flex p-4">
             <button
               type="button"
-              className="flex-1 rounded-lg bg-pink-600 py-2 text-xl text-white transition-colors disabled:bg-gray-300 disabled:text-gray-500"
+              className="group flex-1 rounded-lg bg-pink-600 py-2 text-xl text-white transition-colors disabled:bg-gray-300 disabled:text-gray-500"
               onClick={handleReport}
               disabled={!couldEnableReportButton}>
-              신고하기
+              <span className="inline-block transition-transform group-active:scale-95">신고하기</span>
             </button>
           </div>
         )}

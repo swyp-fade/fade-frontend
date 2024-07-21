@@ -101,9 +101,11 @@ function InitializeAccountForm({ onSubmit }: { onSubmit: (values: InitializeAcco
           </div>
 
           <button
-            className="w-full self-end rounded-lg bg-purple-500 py-3 text-xl font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
+            className="group w-full self-end rounded-lg bg-purple-500 py-3 text-xl font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
             disabled={!couldSubmit}>
-            FADE 시작하기
+            <span className="inline-block transition-transform touchdevice:group-active:scale-95 pointerdevice:group-hover:scale-105 pointerdevice:group-active:scale-95">
+              FADE 시작하기
+            </span>
           </button>
         </fieldset>
       </form>

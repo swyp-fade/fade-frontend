@@ -1,10 +1,10 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { cn } from '@Utils/index';
+import { motion } from 'framer-motion';
 import { useEffect, useLayoutEffect, useState } from 'react';
 
 import onboardingImage1 from '@Assets/onboarding_image_1.jpg';
 import onboardingImage2 from '@Assets/onboarding_image_2.jpg';
 import onboardingImage3 from '@Assets/onboarding_image_3.jpg';
-import { cn } from '@Utils/index';
 
 const onboardingImages = [onboardingImage1, onboardingImage2, onboardingImage3];
 
@@ -55,23 +55,15 @@ export function Carousel() {
 }
 
 function DissolveImages({ currentImageId }: { currentImageId: number }) {
-  return (
-    <AnimatePresence>
-      {onboardingImages.map(
-        (image, index) =>
-          index === currentImageId && (
-            <motion.div
-              key={image}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              style={{ backgroundImage: `url('${image}')`, backgroundSize: 'contain' }}
-              className="absolute left-0 top-0 aspect-[3/4] w-full"
-            />
-          )
-      )}
-    </AnimatePresence>
-  );
+  return onboardingImages.map((image, index) => (
+    <motion.div
+      key={image}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: index === currentImageId ? 1 : 0 }}
+      style={{ backgroundImage: `url('${image}')` }}
+      className={`absolute left-0 top-0 aspect-[3/4] w-full bg-contain bg-center bg-no-repeat`}
+    />
+  ));
 }
 
 function NavButtons({ currentImageId, onNavClicked }: { currentImageId: number; onNavClicked: (index: number) => void }) {

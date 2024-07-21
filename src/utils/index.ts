@@ -79,8 +79,8 @@ export function getBase64Image(file: File) {
   });
 }
 
-const MAX_FILE_SIZE = 1_000_000; // 16MB
-// const MAX_FILE_SIZE = 2 ** 24; // 16MB
+// const MAX_FILE_SIZE = 1_000_000; // 16MB
+const MAX_FILE_SIZE = 2 ** 24; // 16MB
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 export const validateLocalImageFile = (imageFile: File) => {

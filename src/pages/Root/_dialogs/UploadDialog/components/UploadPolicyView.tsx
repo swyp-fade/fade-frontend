@@ -6,12 +6,7 @@ export function PolicyView({ onDegreePolicy, onAgreePolicy }: { onDegreePolicy: 
     <FlexibleLayout.Root>
       <FlexibleLayout.Header>
         <header className="relative px-5 py-4">
-          <button
-            className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 pointerdevice:hover:bg-gray-100"
-            onClick={() => onDegreePolicy()}>
-            <MdClose className="size-6 group-active:pointerdevice:scale-95" />
-          </button>
-
+          <CloseButton onClick={() => onDegreePolicy()} />
           <p className="text-center text-2xl font-semibold">사진 업로드 정책</p>
         </header>
       </FlexibleLayout.Header>
@@ -28,14 +23,30 @@ export function PolicyView({ onDegreePolicy, onAgreePolicy }: { onDegreePolicy: 
       </FlexibleLayout.Content>
 
       <FlexibleLayout.Footer>
-        <div className="flex p-4">
-          <button
-            className="flex-1 rounded-lg bg-black py-2 text-xl text-white transition-colors disabled:bg-gray-200 disabled:text-gray-400 disabled:pointerdevice:cursor-not-allowed"
-            onClick={() => onAgreePolicy()}>
-            동의하고 계속하기
-          </button>
-        </div>
+        <AgreeButton onClick={() => onAgreePolicy()} />
       </FlexibleLayout.Footer>
     </FlexibleLayout.Root>
+  );
+}
+
+function CloseButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
+      onClick={onClick}>
+      <MdClose className="size-6 transition-transform group-active:scale-95" />
+    </button>
+  );
+}
+
+function AgreeButton({ onClick }: { onClick: () => void }) {
+  return (
+    <div className="flex p-4">
+      <button
+        className="group flex-1 rounded-lg bg-black py-2 text-xl text-white transition-colors disabled:bg-gray-200 disabled:text-gray-400 disabled:pointerdevice:cursor-not-allowed"
+        onClick={onClick}>
+        <span className="inline-block transition-transform group-active:scale-95">동의하고 계속하기</span>
+      </button>
+    </div>
   );
 }
