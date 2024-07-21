@@ -57,8 +57,8 @@ function ShowVotePolicyButton() {
   };
 
   return (
-    <button className="group cursor-pointer rounded-lg p-2 pointerdevice:hover:bg-gray-100" onClick={showVotePolicyModal}>
-      <MdInfoOutline className="size-6 group-active:pointerdevice:scale-95" />
+    <button className="group cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100" onClick={showVotePolicyModal}>
+      <MdInfoOutline className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
     </button>
   );
 }
@@ -67,14 +67,16 @@ function ShowNotificationButton() {
   const [isOpened, setIsOpened] = useState(false);
 
   return (
-    <div className="relative" onClick={() => setIsOpened(!isOpened)}>
-      <MdOutlineNotificationsNone className="size-6" />
+    <button
+      className="group relative cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
+      onClick={() => setIsOpened(!isOpened)}>
+      <MdOutlineNotificationsNone className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
 
       {isOpened && (
         <div className="absolute right-4 top-full flex min-w-max rounded border bg-white p-5">
           <p>흐으음..</p>
         </div>
       )}
-    </div>
+    </button>
   );
 }
