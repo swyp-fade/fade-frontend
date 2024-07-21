@@ -59,13 +59,13 @@ export const OutfitItemSheet = forwardRef<HTMLDivElement, DefaultModalProps<Outf
     return (
       <FlexibleLayout.Root ref={ref} className="h-fit">
         <FlexibleLayout.Header>
-          <header className="relative flex flex-row justify-between px-5 py-4">
+          <header className="relative flex flex-row items-center justify-between px-5 pt-4">
             <p className="text-xl font-semibold">
               {isAddSheet && '착장 정보 추가'}
               {isEditSheet && '착장 정보 편집'}
             </p>
-            <button type="button" onClick={() => onClose()}>
-              <MdClose className="size-6 text-gray-600" />
+            <button type="button" onClick={() => onClose()} className="group rounded-lg p-1 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
+              <MdClose className="size-6 text-gray-600 transition-transform group-active:scale-95" />
             </button>
           </header>
         </FlexibleLayout.Header>
@@ -93,7 +93,7 @@ export const OutfitItemSheet = forwardRef<HTMLDivElement, DefaultModalProps<Outf
 function CategorySelect({ categoryId, onSelect }: { categoryId: number; onSelect: (categoryId: number) => void }) {
   return (
     <Select.Root defaultValue={categoryId !== -1 ? String(categoryId) : undefined} onValueChange={(value) => onSelect(Number(value))}>
-      <Select.Trigger className="flex w-[30%] max-w-[8rem] flex-row items-center justify-between rounded-md border border-gray-200 px-3 py-3 text-gray-600">
+      <Select.Trigger className="flex w-[30%] min-w-fit max-w-[8rem] flex-row items-center justify-between rounded-md border border-gray-200 px-3 py-3 text-gray-600">
         <Select.Value placeholder="카테고리" />
         <Select.Icon asChild>
           <MdChevronRight className="rotate-90" />
@@ -160,25 +160,28 @@ function AddOutfitButton({ disabled, onAdd }: { disabled: boolean; onAdd: () => 
   return (
     <button
       type="button"
-      className="flex-1 rounded-lg bg-purple-700 py-2 text-xl text-white transition-colors disabled:bg-gray-300 disabled:text-gray-500"
+      className="group flex-1 rounded-lg bg-purple-700 py-2 text-xl text-white transition-colors disabled:bg-gray-300 disabled:text-gray-500"
       onClick={onAdd}
       disabled={disabled}>
-      추가
+      <span className="inline-block transition-transform group-active:scale-95">추가</span>
     </button>
   );
 }
 
 function DeleteOrEditButton({ disabled, onDelete, onEdit }: { disabled: boolean; onDelete: () => void; onEdit: () => void }) {
   return (
-    <div className="flex w-full justify-end">
-      <button className="rounded-lg bg-white px-10 py-3 text-xl font-semibold text-pink-400" onClick={onDelete}>
-        삭제
-      </button>
+    <div className="flex w-full justify-end gap-2">
       <button
-        className="rounded-lg bg-purple-700 px-10 py-3 text-xl font-semibold text-white transition-colors disabled:bg-gray-300 disabled:text-gray-500"
+        className="group rounded-lg bg-white px-10 py-3 text-xl font-semibold text-pink-400 transition-colors touchdevice:active:bg-pink-50 pointerdevice:hover:bg-pink-50"
+        onClick={onDelete}>
+        <span className="inline-block transition-transform group-active:scale-95">삭제</span>
+      </button>
+
+      <button
+        className="group rounded-lg bg-purple-700 px-10 py-3 text-xl font-semibold text-white transition-colors disabled:bg-gray-300 disabled:text-gray-500"
         onClick={onEdit}
         disabled={disabled}>
-        수정
+        <span className="inline-block transition-transform group-active:scale-95">수정</span>
       </button>
     </div>
   );
