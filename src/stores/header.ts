@@ -13,7 +13,7 @@ export type HeaderStore = {
   setRightSlot: (slot: SlotType | undefined) => void;
 };
 
-export const useHeaderStore = create<HeaderStore>((set, get) => ({
+export const useHeaderStore = create<HeaderStore>((set) => ({
   title: undefined,
   leftSlot: undefined,
   rightSlot: undefined,
