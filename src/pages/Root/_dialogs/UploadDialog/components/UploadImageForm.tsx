@@ -133,17 +133,20 @@ function Header({ onClose }: { onClose: () => void }) {
 
   return (
     <header className="relative px-5 py-4">
-      <button type="button" className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 pointerdevice:hover:bg-gray-100" onClick={onClose}>
-        <MdClose className="size-6 group-active:pointerdevice:scale-95" />
+      <button
+        type="button"
+        className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
+        onClick={onClose}>
+        <MdClose className="size-6 transition-transform group-active:scale-95" />
       </button>
 
       <p className="text-center text-2xl font-semibold">사진 업로드</p>
 
       <button
         type="button"
-        className="group absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 transition-transform pointerdevice:hover:bg-gray-100"
+        className="group absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 transition-transform touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
         onClick={handleInfoClick}>
-        <MdInfoOutline className="size-6 group-active:pointerdevice:active:scale-95" />
+        <MdInfoOutline className="size-6 transition-transform group-active:scale-95" />
       </button>
     </header>
   );
@@ -153,9 +156,9 @@ function UploadButton({ disabled }: { disabled: boolean }) {
   return (
     <div className="flex p-4">
       <button
-        className="flex-1 rounded-lg bg-black py-2 text-xl text-white transition-colors disabled:bg-gray-200 disabled:text-gray-400 disabled:pointerdevice:cursor-not-allowed"
+        className="group flex-1 rounded-lg bg-black py-2 text-xl text-white transition-colors disabled:bg-gray-200 disabled:text-gray-400 disabled:pointerdevice:cursor-not-allowed"
         disabled={disabled}>
-        업로드
+        <span className="inline-block transition-transform group-active:scale-95">업로드</span>
       </button>
     </div>
   );
@@ -198,7 +201,7 @@ function SelectStyleButton({ selectedStyles, onStylesSelected }: { selectedStyle
   };
 
   return (
-    <button type="button" className="relative block w-full rounded-lg border border-gray-200 bg-white py-3" onClick={handleClick}>
+    <button type="button" className="relative block w-full rounded-lg border border-purple-50 bg-white py-3" onClick={handleClick}>
       스타일 선택하기
       <MdChevronRight className="absolute right-3 top-1/2 size-6 -translate-y-1/2" />
     </button>
