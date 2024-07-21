@@ -307,20 +307,15 @@ function VoteButton({ type, onClick }: VoteButtonProps) {
   return (
     <button
       className={cn('group flex-1 rounded-lg bg-white px-5 py-3 shadow-bento transition-colors', {
-        ['pointerdevice:hover:bg-gray-200 pointerdevice:active:bg-gray-300']: isFadeOut,
-        ['pointerdevice:hover:bg-purple-200 pointerdevice:active:bg-purple-300']: isFadeIn,
+        ['touchdevice:active:bg-gray-200 pointerdevice:hover:bg-gray-200 pointerdevice:active:bg-gray-300']: isFadeOut,
+        ['touchdevice:active:bg-purple-200 pointerdevice:hover:bg-purple-200 pointerdevice:active:bg-purple-300']: isFadeIn,
       })}
       onClick={onClick}>
       <div
-        style={{
-          backgroundImage: `url('${isFadeIn ? voteFadeInImage : voteFadeOutImage}')`,
-          backgroundSize: 'contain',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-        }}
-        className={cn('mx-auto h-5 transition-transform', {
-          ['pointerdevice:group-hover:translate-y-[.125rem]']: isFadeOut,
-          ['pointerdevice:group-hover:-translate-y-[.125rem]']: isFadeIn,
+        style={{ backgroundImage: `url('${isFadeIn ? voteFadeInImage : voteFadeOutImage}')` }}
+        className={cn('mx-auto h-5 bg-contain bg-center bg-no-repeat transition-transform', {
+          ['touchdevice:group-active:translate-y-[.125rem] pointerdevice:group-hover:translate-y-[.125rem]']: isFadeOut,
+          ['touchdevice:group-active:-translate-y-[.125rem] pointerdevice:group-hover:-translate-y-[.125rem]']: isFadeIn,
         })}
       />
     </button>
