@@ -67,9 +67,9 @@ export const ReportBottomSheet = forwardRef<HTMLDivElement, DefaultModalProps<Re
           {isInputStep && (
             <button
               type="button"
-              className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 pointerdevice:hover:bg-gray-100"
+              className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
               onClick={() => changeStep(0)}>
-              <MdChevronLeft className="size-6 group-active:pointerdevice:scale-95" />
+              <MdChevronLeft className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
             </button>
           )}
           <p className="text-center text-2xl font-semibold">신고</p>
@@ -86,10 +86,10 @@ export const ReportBottomSheet = forwardRef<HTMLDivElement, DefaultModalProps<Re
           <div className="flex p-4">
             <button
               type="button"
-              className="flex-1 rounded-lg bg-pink-600 py-2 text-xl text-white transition-colors disabled:bg-gray-300 disabled:text-gray-500"
+              className="group flex-1 rounded-lg bg-pink-600 py-2 text-xl text-white transition-colors disabled:bg-gray-300 disabled:text-gray-500"
               onClick={handleReport}
               disabled={!couldEnableReportButton}>
-              신고하기
+              <span className="inline-block transition-transform group-active:scale-95">신고하기</span>
             </button>
           </div>
         )}
