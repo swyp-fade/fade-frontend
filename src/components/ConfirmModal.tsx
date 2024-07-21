@@ -23,12 +23,12 @@ export function ConfirmModal({ title, description, onClose }: DefaultModalProps<
 
       <FlexibleLayout.Footer>
         <div className="flex gap-3 p-4">
-          <button type="button" className="flex-1 rounded-lg bg-gray-200 py-2 text-xl font-semibold text-black transition-colors" onClick={() => onClose(false)}>
-            취소
+          <button type="button" className="group flex-1 rounded-lg bg-gray-200 py-2 text-xl font-semibold text-black transition-colors" onClick={() => onClose(false)}>
+            <span className="inline-block transition-transform group-active:scale-95">취소</span>
           </button>
 
-          <button type="button" className="flex-1 rounded-lg bg-pink-400 py-2 text-xl font-semibold text-white transition-colors" onClick={() => onClose(true)}>
-            확인
+          <button type="button" className="group flex-1 rounded-lg bg-pink-400 py-2 text-xl font-semibold text-white transition-colors" onClick={() => onClose(true)}>
+            <span className="inline-block transition-transform group-active:scale-95">확인</span>
           </button>
         </div>
       </FlexibleLayout.Footer>
