@@ -3,6 +3,7 @@ import { Carousel } from './components/Carousel';
 import { KakaoLoginButton } from './components/KakaoLoginButton';
 
 import onboardingBackground from '@Assets/onboarding_background.jpg';
+import { Link } from 'react-router-dom';
 
 export default function Page() {
   return (
@@ -16,7 +17,12 @@ export default function Page() {
       </div>
 
       <div className="flex flex-1 items-center">
-        <KakaoLoginButton />
+        <div className="flex flex-col gap-3">
+          <KakaoLoginButton />
+          <Link to="/auth/callback/kakao?code=test" className="rounded-lg border bg-gray-50 p-2 text-center">
+            테스트 로그인
+          </Link>
+        </div>
       </div>
     </section>
   );
