@@ -7,6 +7,7 @@ import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 const enum ReportType {
   PORNO_OR_SEXUAL_IMAGE = 'PORNO_OR_SEXUAL_IMAGE',
   ILLEGAL_USE_OR_AI_IMAGE = 'ILLEGAL_USE_OR_AI_IMAGE',
+  UNRELATED_OR_SPAM = 'UNRELATED_OR_SPAM',
   REPUGNANT_SYMBOL = 'REPUGNANT_SYMBOL',
   OTHER = 'OTHER',
 }
@@ -14,11 +15,18 @@ const enum ReportType {
 const REPORT_TYPE_TEXT: Record<ReportType, string> = {
   PORNO_OR_SEXUAL_IMAGE: '음란물 또는 성적인 사진',
   ILLEGAL_USE_OR_AI_IMAGE: '도용 또는 AI 이미지',
+  UNRELATED_OR_SPAM: '패션과 관련 없는 이미지 또는 스팸',
   REPUGNANT_SYMBOL: '혐오 발언 또는 상징',
   OTHER: '기타',
 };
 
-const reportTypeList: ReportType[] = [ReportType.PORNO_OR_SEXUAL_IMAGE, ReportType.ILLEGAL_USE_OR_AI_IMAGE, ReportType.REPUGNANT_SYMBOL, ReportType.OTHER];
+const reportTypeList: ReportType[] = [
+  ReportType.PORNO_OR_SEXUAL_IMAGE,
+  ReportType.ILLEGAL_USE_OR_AI_IMAGE,
+  ReportType.UNRELATED_OR_SPAM,
+  ReportType.REPUGNANT_SYMBOL,
+  ReportType.OTHER,
+];
 
 export type ReportResult = {
   selectedReportType: ReportType;
