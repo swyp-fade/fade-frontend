@@ -177,7 +177,7 @@ function AddOutfitItemButton({ onOutfitAdded }: { onOutfitAdded: (outfits: Outfi
   };
 
   return (
-    <button type="button" className="w-full rounded-lg border border-gray-200 py-3 transition-colors disabled:bg-gray-100 disabled:text-gray-400" onClick={handleClick}>
+    <button type="button" className="w-full rounded-lg border border-purple-50 py-3 transition-colors disabled:bg-gray-100 disabled:text-gray-400" onClick={handleClick}>
       정보 추가
     </button>
   );
