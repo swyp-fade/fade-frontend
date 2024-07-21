@@ -10,9 +10,9 @@ import { useEffect, useTransition } from 'react';
 import { Control, useFieldArray, useForm } from 'react-hook-form';
 import { MdChevronRight, MdClose, MdInfoOutline } from 'react-icons/md';
 import { z } from 'zod';
-import { SelectStyleView } from '../../SelectStyleDialog/view';
 import { InputImageFile } from './InputImageFile';
 import { OutfitFieldReturnType, OutfitItemSheet } from './OutfitFieldSheet';
+import { SelectStyleView } from './SelectStyleView';
 import { UploadGuideBottomSheet } from './UploadGuideBottomSheet';
 
 /** 착장 정보 스키마 */
