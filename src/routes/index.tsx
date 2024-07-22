@@ -28,7 +28,13 @@ const SignOut = lazy(() => import('@Pages/Auth/SignOut').then((module) => ({ def
 
 export const routesFromElements = createRoutesFromElements(
   <Route element={<RootLayout />}>
-    <Route path="/" ErrorBoundary={GlobalErrorPage}>
+    <Route
+      path="/"
+      errorElement={
+        <Suspense>
+          <GlobalErrorPage />
+        </Suspense>
+      }>
       <Route index element={<RootPage />} loader={async () => (await import('@Pages/Root/page')).loader()} />
       <Route path="login" element={<LoginPage />} />
       <Route path="signup" element={<SignUpPage />} />
@@ -47,7 +53,13 @@ export const routesFromElements = createRoutesFromElements(
       </Route>
     </Route>
 
-    <Route path="/auth" ErrorBoundary={GlobalErrorPage}>
+    <Route
+      path="/auth"
+      errorElement={
+        <Suspense>
+          <GlobalErrorPage />
+        </Suspense>
+      }>
       <Route path="callback">
         <Route path="kakao">
           <Route index element={<KakaoCallback />} loader={async (params) => (await import('@Pages/Auth/KakaoCallback')).loader(params)} />
@@ -58,6 +70,6 @@ export const routesFromElements = createRoutesFromElements(
       </Route>
     </Route>
 
-    <Route path="*" Component={NotFoundPage} />
+    <Route path="*" element={<NotFoundPage />} />
   </Route>
 );
