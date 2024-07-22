@@ -29,7 +29,7 @@ const SignOut = lazy(() => import('@Pages/Auth/SignOut').then((module) => ({ def
 export const routesFromElements = createRoutesFromElements(
   <Route element={<RootLayout />}>
     <Route path="/" ErrorBoundary={GlobalErrorPage}>
-      <Route index element={<RootPage />} loader={async (params) => (await import('@Pages/Root/page')).loader(params)} />
+      <Route index element={<RootPage />} loader={async () => (await import('@Pages/Root/page')).loader()} />
       <Route path="login" element={<LoginPage />} />
       <Route path="signup" element={<SignUpPage />} />
       <Route element={<ProtectedRoute />}>
