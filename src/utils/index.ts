@@ -1,7 +1,6 @@
-import { SERVICE_ERROR_MESSAGE, ServiceErrorCode, ServiceErrorResponse } from '@Types/serviceError';
 import { LoaderResponse, LoaderResponseStatus } from '@Types/loaderResponse';
-import { AxiosError, isAxiosError } from 'axios';
-
+import { ServiceErrorResponse } from '@Types/serviceError';
+import { isAxiosError } from 'axios';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -19,21 +18,6 @@ export function getPayloadFromJWT(jwt: string) {
   };
 }
 
-export type RequiredWith<T, K extends keyof T> = T & {
-  [P in K]-?: T[P];
-};
-
-export const isAxiosErrorWithCustomCode = (error: unknown): error is RequiredWith<AxiosError<ServiceErrorResponse>, 'response'> => {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    isAxiosError<ServiceErrorResponse>(error) &&
-    !!error.response &&
-    !!error.response.data.errorCode &&
-    error.response.data.errorCode in SERVICE_ERROR_MESSAGE
-  );
-};
-
 export function createSuccessLoaderResponse<T>(payload: T): LoaderResponse<T> {
   return { status: LoaderResponseStatus.SUCCESS, payload };
 }
@@ -42,20 +26,33 @@ export function createErrorLoaderResponse<T = never>(payload: ServiceErrorRespon
   return { status: LoaderResponseStatus.ERROR, payload };
 }
 
-export type TryCatcherResult<T> = [T, null] | [null, ServiceErrorCode];
+export type TryCatcherResult<T> = [T, null] | [null, ServiceErrorResponse];
 
 export const tryCatcher = async <T, _>(tryer: () => T | Promise<T>): Promise<TryCatcherResult<T>> => {
   try {
     const result = await tryer();
     return [result, null];
   } catch (error) {
-    if (isAxiosErrorWithCustomCode(error)) {
-      const { errorCode } = error.response.data;
+    if (isAxiosError<ServiceErrorResponse>(error)) {
+      /** API 오류 */
+      if (error.response) {
+        return [null, error.response.data];
+      }
 
-      return [null, errorCode];
+      /** 네트워크 오류(disconnected, timeout, cors, etc...) */
+      if (error.request) {
+        console.error(error);
+        throw error;
+      }
+
+      /** 설정 문제이거나 클라이언트 코드 문제임 */
+      console.error(error);
+      throw error;
     }
 
-    return [null, 'unknown_error' as ServiceErrorCode];
+    /** 클라이언트 코드 문제임 */
+    console.error(error);
+    throw error;
   }
 };
 
