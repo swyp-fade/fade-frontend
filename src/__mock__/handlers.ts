@@ -2,6 +2,7 @@ import { addDays } from 'date-fns';
 import { HttpResponse, http } from 'msw';
 import { createAccessToken, createRefreshToken } from './utils';
 import { HttpStatusCode } from 'axios';
+import { ServiceErrorResponse } from '@Types/serviceError';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -25,7 +26,17 @@ export const handlers = [
      * : 서비스를 처음 들어온 경우
      * */
     if (refreshToken === undefined) {
-      return new HttpResponse(JSON.stringify({ errorCode: 'no_refresh_token' }), { status: HttpStatusCode.Unauthorized });
+      return new HttpResponse(
+        JSON.stringify({
+          statusCode: HttpStatusCode.Unauthorized,
+          message: '토큰이 존재하지 않습니다.',
+          result: {
+            errorCode: 'TOKEN_NOT_EXIST',
+            data: null,
+          },
+        } as ServiceErrorResponse),
+        { status: HttpStatusCode.Unauthorized }
+      );
     }
 
     /**
@@ -82,7 +93,7 @@ export const handlers = [
       }
     );
   }),
-  http.post(`${BASE_URL}/auth/check`, async () => {
+  http.post(`${BASE_URL}/auth/social-login/KAKAO/signin`, async () => {
     const isSignedUpUser = false;
 
     if (isSignedUpUser) {
@@ -101,7 +112,14 @@ export const handlers = [
     }
 
     return HttpResponse.json(
-      { errorCode: 'no_signed_up_user' },
+      {
+        statusCode: HttpStatusCode.Unauthorized,
+        message: '',
+        result: {
+          errorCode: 'NOT_MATCH_SOCIAL_MEMBER',
+          data: { accessToken: createAccessToken(userData) },
+        },
+      } as ServiceErrorResponse<'NOT_MATCH_SOCIAL_MEMBER'>,
       {
         status: HttpStatusCode.Unauthorized,
       }
