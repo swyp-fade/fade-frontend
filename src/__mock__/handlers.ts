@@ -67,13 +67,20 @@ export const handlers = [
     });
   }),
 
-  http.post(`${BASE_URL}/auth/signup`, async ({ request }) => {
+  http.post(`${BASE_URL}/auth/social-login/KAKAO/signup`, async ({ request }) => {
     const requestPayload = (await request.json()) as { accountId: string };
     const alreadyExistAccountId = requestPayload.accountId === 'asdf';
 
     if (alreadyExistAccountId) {
       return HttpResponse.json(
-        { errorCode: 'account_already_exists' },
+        {
+          statusCode: HttpStatusCode.Unauthorized,
+          message: '',
+          result: {
+            errorCode: 'ALREADY_EXIST_MEMBER_ID',
+            data: null,
+          },
+        } as ServiceErrorResponse,
         {
           status: HttpStatusCode.Unauthorized,
         }
@@ -93,6 +100,7 @@ export const handlers = [
       }
     );
   }),
+
   http.post(`${BASE_URL}/auth/social-login/KAKAO/signin`, async () => {
     const isSignedUpUser = false;
 
