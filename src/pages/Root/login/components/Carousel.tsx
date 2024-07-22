@@ -44,8 +44,8 @@ export function Carousel() {
   };
 
   return (
-    <div>
-      <div className="relative aspect-[3/4] w-[18.75rem] rounded-lg shadow-bento">
+    <div className="flex h-full flex-col items-center justify-center gap-2">
+      <div className="relative aspect-[3/4] h-full rounded-lg shadow-bento">
         <DissolveImages currentImageId={currentImageId} />
       </div>
 
@@ -61,14 +61,14 @@ function DissolveImages({ currentImageId }: { currentImageId: number }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: index === currentImageId ? 1 : 0 }}
       style={{ backgroundImage: `url('${image}')` }}
-      className={`absolute left-0 top-0 aspect-[3/4] w-full bg-contain bg-center bg-no-repeat`}
+      className={`absolute inset-0 bg-contain bg-center bg-no-repeat`}
     />
   ));
 }
 
 function NavButtons({ currentImageId, onNavClicked }: { currentImageId: number; onNavClicked: (index: number) => void }) {
   return (
-    <ul className="mt-5 flex flex-row justify-center gap-3">
+    <ul className="flex flex-row justify-center gap-3">
       {onboardingImages.map((_, index) => (
         <li key={`nav-${index}`}>
           <button
