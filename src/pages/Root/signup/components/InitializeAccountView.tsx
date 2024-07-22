@@ -13,18 +13,18 @@ import { Control, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
-export default function InitializeAccountView({ authorizationCode }: { authorizationCode: string }) {
+export default function InitializeAccountView({ accessToken }: { accessToken: string }) {
   const navigate = useNavigate();
 
   const { showToast } = useToastActions();
   const { signIn } = useAuthActions();
 
   const handleSubmit = async (values: InitializeAccountFormSchema) => {
-    const [response, errorCode] = await tryCatcher(() =>
+    const [response, errorResponse] = await tryCatcher(() =>
       requestSignUp({
         ...values,
         signUpType: SignUpType.KAKAO,
-        authorizationCode,
+        accessToken,
       })
     );
 
@@ -33,12 +33,10 @@ export default function InitializeAccountView({ authorizationCode }: { authoriza
       return navigate('/', { replace: true });
     }
 
-    if (errorCode) {
-      if (errorCode === 'account_already_exists') {
-        return showToast({ type: 'error', title: '이미 존재하는 ID입니다.' });
-      }
+    const { errorCode } = errorResponse.result;
 
-      throw new Error(errorCode);
+    if (errorCode === 'ALREADY_EXIST_MEMBER_ID') {
+      return showToast({ type: 'error', title: '이미 존재하는 ID입니다.' });
     }
   };
 
@@ -102,8 +100,9 @@ function InitializeAccountForm({ onSubmit }: { onSubmit: (values: InitializeAcco
 
           <button
             className="group w-full self-end rounded-lg bg-purple-500 py-3 text-xl font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
-            disabled={!couldSubmit}>
-            <span className="inline-block transition-transform touchdevice:group-active:scale-95 pointerdevice:group-hover:scale-105 pointerdevice:group-active:scale-95">
+            disabled={!couldSubmit}
+            aria-disabled={!couldSubmit}>
+            <span className="inline-block transition-transform group-aria-[disabled=false]:touchdevice:group-active:scale-95 group-aria-[disabled=false]:pointerdevice:group-hover:scale-105 group-aria-[disabled=false]:pointerdevice:group-active:scale-95">
               FADE 시작하기
             </span>
           </button>
