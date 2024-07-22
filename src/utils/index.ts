@@ -41,17 +41,17 @@ export const tryCatcher = async <T, _>(tryer: () => T | Promise<T>): Promise<Try
 
       /** 네트워크 오류(disconnected, timeout, cors, etc...) */
       if (error.request) {
-        console.error(error);
+        // console.error(error);
         throw error;
       }
 
       /** 설정 문제이거나 클라이언트 코드 문제임 */
-      console.error(error);
+      // console.error(error);
       throw error;
     }
 
     /** 클라이언트 코드 문제임 */
-    console.error(error);
+    // console.error(error);
     throw error;
   }
 };
