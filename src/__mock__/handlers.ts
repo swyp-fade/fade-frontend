@@ -1,9 +1,10 @@
 import { addDays } from 'date-fns';
-import { HttpResponse, http } from 'msw';
+import { HttpResponse, delay, http } from 'msw';
 import { createAccessToken, createRefreshToken } from './utils';
 import { HttpStatusCode } from 'axios';
 import { ServiceErrorResponse } from '@Types/serviceError';
 
+const NETWORK_DELAY = 1000;
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const userData = {
@@ -21,6 +22,7 @@ export const handlers = [
   http.post(`${BASE_URL}/auth/refresh`, async ({ cookies }) => {
     const { refreshToken } = cookies;
 
+    await delay(NETWORK_DELAY);
     /**
      * Case 1: Request with no Refresh Token
      * : 서비스를 처음 들어온 경우
@@ -60,6 +62,8 @@ export const handlers = [
   }),
 
   http.get(`${BASE_URL}/auth/signout`, async () => {
+    await delay(NETWORK_DELAY);
+
     return new HttpResponse(null, {
       headers: {
         'Set-Cookie': `refreshToken=; Path=/; expires=${new Date(0).toUTCString()}, csrfToken=; Path=/; expires=${new Date(0).toUTCString()};`,
@@ -68,6 +72,8 @@ export const handlers = [
   }),
 
   http.post(`${BASE_URL}/auth/social-login/KAKAO/signup`, async ({ request }) => {
+    await delay(NETWORK_DELAY);
+
     const requestPayload = (await request.json()) as { accountId: string };
     const alreadyExistAccountId = requestPayload.accountId === 'asdf';
 
@@ -102,6 +108,7 @@ export const handlers = [
   }),
 
   http.post(`${BASE_URL}/auth/social-login/KAKAO/signin`, async () => {
+    await delay(NETWORK_DELAY);
     const isSignedUpUser = false;
 
     if (isSignedUpUser) {
@@ -132,5 +139,59 @@ export const handlers = [
         status: HttpStatusCode.Unauthorized,
       }
     );
+  }),
+
+  http.post(`${BASE_URL}/attachments/presign-url`, async ({ request }) => {
+    await delay(NETWORK_DELAY);
+    const { checksum } = (await request.json()) as { checksum: string };
+
+    // 중복 사진이라면
+    if (checksum === '1966ae1427bee21403a89a9565de6695532538459a3f7434280b7c863b901c41') {
+      return HttpResponse.json(
+        {
+          statusCode: HttpStatusCode.Conflict,
+          message: '이미 동일한 이미지로 업로드된 파일이 존재합니다.',
+          result: {
+            errorCode: 'ALREADY_EXISTS_ATTACHMENT',
+            data: null,
+          },
+        } as ServiceErrorResponse,
+        {
+          status: HttpStatusCode.Conflict,
+        }
+      );
+    }
+
+    return HttpResponse.json({ presignURL: 'https://TEST_URL.com', attachmentId: 0 }, { status: HttpStatusCode.Ok });
+  }),
+
+  /** S3 Presigned URL */
+  http.put(`https://test_url.com`, async ({ request }) => {
+    await delay(NETWORK_DELAY);
+    return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.post(`${BASE_URL}/feeds`, async ({ request }) => {
+    await delay(NETWORK_DELAY);
+    const wouldCauseError = false;
+
+    /** FEED_UPDATE_DENIED인데... 일어날 리가? */
+    if (wouldCauseError) {
+      return HttpResponse.json(
+        {
+          statusCode: HttpStatusCode.Forbidden,
+          message: '게시글 수정 권한이 없습니다.',
+          result: {
+            errorCode: 'FEED_UPDATE_DENIED',
+            data: null,
+          },
+        } as ServiceErrorResponse<'FEED_UPDATE_DENIED'>,
+        {
+          status: HttpStatusCode.Forbidden,
+        }
+      );
+    }
+
+    return HttpResponse.json({ feedId: 0 }, { status: HttpStatusCode.Ok });
   }),
 ];
