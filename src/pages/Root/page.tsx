@@ -1,6 +1,6 @@
 import { useAuthActions, useIsAuthenticated } from '@Hooks/auth';
 import { useToastActions } from '@Hooks/toast';
-import { requestRefreshToken } from '@Services/authAPI';
+import { requestRefreshToken } from '@Services/auth';
 import { LoaderResponseStatus } from '@Types/loaderResponse';
 import { clearSearchParams, createErrorLoaderResponse, createSuccessLoaderResponse, tryCatcher } from '@Utils/index';
 import { useEffect } from 'react';
