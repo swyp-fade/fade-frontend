@@ -2,11 +2,11 @@ import { useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { useVotingStore } from '@Stores/vote';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { MdInfoOutline, MdOutlineNotificationsNone } from 'react-icons/md';
 import { VoteController } from './components/VoteController';
 import { VotePolicyBottomSheet } from './components/VotePolicyBottomSheet';
-import { AnimatePresence, motion } from 'framer-motion';
 
 export default function Page() {
   useHeader({
