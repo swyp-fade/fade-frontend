@@ -2,8 +2,8 @@ import { LoaderResponse, LoaderResponseStatus } from '@Types/loaderResponse';
 import { ServiceErrorResponse } from '@Types/serviceError';
 import { isAxiosError } from 'axios';
 import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
 import { sha256 } from 'js-sha256';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -29,7 +29,7 @@ export function createErrorLoaderResponse<T = never>(payload: ServiceErrorRespon
 
 export type TryCatcherResult<T> = [T, null] | [null, ServiceErrorResponse];
 
-export const tryCatcher = async <T, _>(tryer: () => T | Promise<T>): Promise<TryCatcherResult<T>> => {
+export const tryCatcher = async <T>(tryer: () => T | Promise<T>): Promise<TryCatcherResult<T>> => {
   try {
     const result = await tryer();
     return [result, null];
@@ -145,4 +145,19 @@ export async function calculateFileHash(file: File) {
   const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 
   return hashHex;
+}
+
+export async function prefetchImages(images: string[]): Promise<void> {
+  await Promise.all(
+    images.map(
+      (image) =>
+        new Promise((resolve, reject) => {
+          const prefetchImage = new Image();
+
+          prefetchImage.addEventListener('load', () => resolve(null));
+          prefetchImage.addEventListener('error', () => reject(null));
+          prefetchImage.src = image;
+        })
+    )
+  );
 }
