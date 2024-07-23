@@ -6,7 +6,7 @@ import { useAuthActions } from '@Hooks/auth';
 import { useToastActions } from '@Hooks/toast';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import * as RadioGroup from '@radix-ui/react-radio-group';
-import { requestSignUp, SignUpType } from '@Services/authAPI';
+import { requestSignUp, SignUpType } from '@Services/auth';
 import { cn, tryCatcher } from '@Utils/index';
 import { useTransition } from 'react';
 import { Control, useForm } from 'react-hook-form';

@@ -3,6 +3,7 @@ import { ServiceErrorResponse } from '@Types/serviceError';
 import { isAxiosError } from 'axios';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { sha256 } from 'js-sha256';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -77,20 +78,23 @@ export function getBase64Image(file: File) {
 }
 
 // const MAX_FILE_SIZE = 1_000_000; // 16MB
-const MAX_FILE_SIZE = 2 ** 24; // 16MB
+// const MAX_FILE_SIZE = 2 ** 24; // 16MB
+const MAX_FILE_SIZE = 16 * 1024 * 1024; // 16MB
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
-export const validateLocalImageFile = (imageFile: File) => {
+type ValidationResult = { isValid: true; message: null } | { isValid: false; message: string };
+
+export const validateLocalImageFile = (imageFile: File): ValidationResult => {
+  const isAcceptedTypes = ACCEPTED_IMAGE_TYPES.includes(imageFile.type);
+
+  if (!isAcceptedTypes) {
+    return { isValid: false, message: `.jpeg, .jpg, .png, .webp 확장자만 지원합니다.` };
+  }
+
   const isOversize = imageFile.size >= MAX_FILE_SIZE;
 
   if (isOversize) {
     return { isValid: false, message: '파일이 넘 커요' };
-  }
-
-  const isNotAcceptedTypes = imageFile.type in ACCEPTED_IMAGE_TYPES;
-
-  if (isNotAcceptedTypes) {
-    return { isValid: false, message: `.jpeg, .jpg, .png, .webp 확장자만 지원합니다.` };
   }
 
   return { isValid: true, message: null };
@@ -132,3 +136,13 @@ const randomNames = [
 ];
 
 export const generateAnonName = () => `${randomNames[Math.floor(Math.random() * randomNames.length)]}`;
+
+export async function calculateFileHash(file: File) {
+  const arrayBuffer = await file.arrayBuffer();
+
+  const hashBuffer = sha256.arrayBuffer(arrayBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+
+  return hashHex;
+}

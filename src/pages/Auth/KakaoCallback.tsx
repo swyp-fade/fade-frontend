@@ -1,5 +1,5 @@
 import { useAuthActions } from '@Hooks/auth';
-import { requestSignInWithCode } from '@Services/authAPI';
+import { requestSignInWithCode } from '@Services/auth';
 import { LoaderResponseStatus } from '@Types/loaderResponse';
 import { isErrorWithData } from '@Types/serviceError';
 import { createErrorLoaderResponse, createSuccessLoaderResponse, tryCatcher } from '@Utils/index';

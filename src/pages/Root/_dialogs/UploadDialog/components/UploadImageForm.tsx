@@ -5,8 +5,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useModalActions } from '@Hooks/modal';
 import { useToastActions } from '@Hooks/toast';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
+import { requestCreateFeed } from '@Services/feed';
+import { useMutation } from '@tanstack/react-query';
 import { OutfitStyle } from '@Types/outfitStyle';
-import { useEffect, useTransition } from 'react';
+import { useEffect } from 'react';
 import { Control, useFieldArray, useForm } from 'react-hook-form';
 import { MdChevronRight, MdClose, MdInfoOutline } from 'react-icons/md';
 import { z } from 'zod';
@@ -18,13 +20,13 @@ import { UploadGuideBottomSheet } from './UploadGuideBottomSheet';
 /** 착장 정보 스키마 */
 const outfitItemSchema = z
   .object({
-    category: z.number(),
+    categoryId: z.number(),
     brandName: z.string(),
     details: z.string(),
   })
   .refine(
-    ({ category, brandName }) => {
-      const doseNotSelectCategory = category === -1;
+    ({ categoryId, brandName }) => {
+      const doseNotSelectCategory = categoryId === -1;
       const doseInputBrandName = !doseNotSelectCategory && brandName !== '';
 
       return doseNotSelectCategory || doseInputBrandName;
@@ -36,30 +38,34 @@ type OutfitItemSchema = z.infer<typeof outfitItemSchema>;
 
 /** 사진 업로드 스키마 */
 const formSchema = z.object({
-  image: z.string().refine((value) => value !== '', '사진을 선택해주세요.'),
-  styles: z.array(z.number()), // Optional
+  attachmentId: z.number().refine((value) => value !== -1, '사진을 선택해주세요.'),
+  styleIds: z.array(z.number()), // Optional
   outfits: z.array(outfitItemSchema), // Optional
 });
 
 type UploadImageSchema = z.infer<typeof formSchema>;
 
-type UploadImageFormProp = { onClose: () => void; onValueChanged: (isChanged: boolean) => void };
+type UploadImageFormProp = { onClose: () => void; onValueChanged: (isChanged: boolean) => void; onSubmitSuccess: () => void };
 
-export function UploadImageForm({ onClose, onValueChanged }: UploadImageFormProp) {
-  const [pending, startTransition] = useTransition();
+export function UploadImageForm({ onClose, onValueChanged, onSubmitSuccess }: UploadImageFormProp) {
   const { showToast } = useToastActions();
+
+  const createFeedMutation = useMutation({
+    mutationKey: ['createFeed'],
+    mutationFn: requestCreateFeed,
+  });
 
   const form = useForm<UploadImageSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      image: undefined,
-      styles: [],
+      attachmentId: -1,
+      styleIds: [],
       outfits: [],
     },
     mode: 'onChange',
   });
 
-  const { styles } = form.watch();
+  const { styleIds } = form.watch();
   const { isDirty, isValid } = form.formState;
 
   /** 정보 입력 후 나가기 방지 */
@@ -68,10 +74,18 @@ export function UploadImageForm({ onClose, onValueChanged }: UploadImageFormProp
   }, [isDirty]);
 
   function handleSubmitAfterValidation(values: UploadImageSchema) {
-    startTransition(() => {
-      console.log(values);
-      showToast({ title: '사진을 성공적으로 등록 어쩌구', type: 'success' });
-      // onSubmit(values);
+    console.log(values);
+
+    const { mutateAsync: createFeed } = createFeedMutation;
+
+    createFeed(values, {
+      onError() {
+        showToast({ title: '사진 올리기 실패 어쩌구', type: 'error' });
+      },
+      onSuccess() {
+        showToast({ title: '사진을 성공적으로 등록 어쩌구', type: 'success' });
+        onSubmitSuccess();
+      },
     });
   }
 
@@ -80,7 +94,7 @@ export function UploadImageForm({ onClose, onValueChanged }: UploadImageFormProp
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmitAfterValidation)} className="h-full space-y-8">
-        <fieldset className="flex h-full min-w-full flex-col gap-5" disabled={pending}>
+        <fieldset className="flex h-full min-w-full flex-col gap-5" disabled={createFeedMutation.isPending}>
           <FlexibleLayout.Root>
             <FlexibleLayout.Header>
               <Header onClose={onClose} />
@@ -88,7 +102,7 @@ export function UploadImageForm({ onClose, onValueChanged }: UploadImageFormProp
 
             <FlexibleLayout.Content className="space-y-8">
               <AddImageField control={form.control} />
-              <SelectStylesField selectedStyles={styles as unknown as OutfitStyle[]} control={form.control} />
+              <SelectStylesField selectedStyles={styleIds as unknown as OutfitStyle[]} control={form.control} />
 
               <div className="space-y-3">
                 <FormLabel className="text-lg font-semibold">착장 정보</FormLabel>
@@ -243,7 +257,7 @@ function OutfitItemCard({
 
   return (
     <button type="button" className="flex w-full flex-row gap-3 rounded-lg border border-purple-50 bg-white p-3" onClick={handleClick}>
-      <OutfitBadge categoryType={outfitItem.category} />
+      <OutfitBadge categoryType={outfitItem.categoryId} />
 
       <div className="flex w-full flex-col gap-1">
         <p className="text-left">{outfitItem.brandName}</p>
@@ -267,7 +281,7 @@ function AddImageField({ control }: { control: Control<UploadImageSchema> }) {
   return (
     <FormField
       control={control}
-      name="image"
+      name="attachmentId"
       render={({ field }) => (
         <FormItem>
           <FormLabel className="text-lg font-semibold">사진 추가</FormLabel>
@@ -293,7 +307,7 @@ function SelectStylesField({ selectedStyles, control }: { selectedStyles: Outfit
   return (
     <FormField
       control={control}
-      name="styles"
+      name="styleIds"
       render={({ field }) => (
         <FormItem>
           <FormLabel className="mb-3 text-lg font-semibold">스타일</FormLabel>

@@ -7,12 +7,12 @@ import { MdChevronRight, MdClose } from 'react-icons/md';
 
 type OutfitField = {
   id?: string;
-  category: number;
+  categoryId: number;
   brandName: string;
   details: string;
 };
 
-const initialOutfitField: OutfitField = { category: -1, brandName: '', details: '' };
+const initialOutfitField: OutfitField = { categoryId: -1, brandName: '', details: '' };
 
 export type OutfitFieldReturnType = {
   type: 'add' | 'delete' | 'edit';
@@ -33,11 +33,11 @@ export const OutfitItemSheet = forwardRef<HTMLDivElement, DefaultModalProps<Outf
     const isAddSheet = type === 'add';
     const isEditSheet = type === 'edit';
 
-    const doneSelectCategory = outfitField.category != -1;
+    const doneSelectCategory = outfitField.categoryId != -1;
     const doneInputBrandName = outfitField.brandName !== '';
     const couldEnableAddButton = doneSelectCategory && doneInputBrandName;
 
-    const hasDirtyCategory = outfitField.category !== defaultOutfitField.category;
+    const hasDirtyCategory = outfitField.categoryId !== defaultOutfitField.categoryId;
     const hasDirtyBrandName = outfitField.brandName !== defaultOutfitField.brandName;
     const hasDirtyDetails = outfitField.details !== defaultOutfitField.details;
     const couldEnableEditButton = hasDirtyCategory || hasDirtyBrandName || hasDirtyDetails;
@@ -72,8 +72,8 @@ export const OutfitItemSheet = forwardRef<HTMLDivElement, DefaultModalProps<Outf
 
         <FlexibleLayout.Content className="flex flex-col gap-3">
           <div className="flex flex-row gap-3">
-            <CategorySelect categoryId={outfitField.category} onSelect={(category) => updateOutfitField({ category })} />
-            <BrandNameField value={outfitField.brandName} disabled={outfitField.category === -1} onChange={(brandName) => updateOutfitField({ brandName })} />
+            <CategorySelect categoryId={outfitField.categoryId} onSelect={(categoryId) => updateOutfitField({ categoryId })} />
+            <BrandNameField value={outfitField.brandName} disabled={outfitField.categoryId === -1} onChange={(brandName) => updateOutfitField({ brandName })} />
           </div>
 
           <DetailField value={outfitField.details} disabled={outfitField.brandName === ''} onChange={(details) => updateOutfitField({ details })} />
