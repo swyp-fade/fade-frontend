@@ -1,8 +1,32 @@
+import { ServiceErrorResponse } from '@Types/serviceError';
+import { HttpStatusCode } from 'axios';
 import { addDays } from 'date-fns';
 import { HttpResponse, delay, http } from 'msw';
 import { createAccessToken, createRefreshToken } from './utils';
-import { HttpStatusCode } from 'axios';
-import { ServiceErrorResponse } from '@Types/serviceError';
+
+import testFashionImage1 from '@Assets/test_fashion_image.jpg';
+import testFashionImage10 from '@Assets/test_fashion_image_10.jpg';
+import testFashionImage2 from '@Assets/test_fashion_image_2.jpg';
+import testFashionImage3 from '@Assets/test_fashion_image_3.jpg';
+import testFashionImage4 from '@Assets/test_fashion_image_4.jpg';
+import testFashionImage5 from '@Assets/test_fashion_image_5.webp';
+import testFashionImage6 from '@Assets/test_fashion_image_6.jpg';
+import testFashionImage7 from '@Assets/test_fashion_image_7.jpg';
+import testFashionImage8 from '@Assets/test_fashion_image_8.jpg';
+import testFashionImage9 from '@Assets/test_fashion_image_9.jpg';
+
+const testFahsionImages = [
+  testFashionImage1,
+  testFashionImage2,
+  testFashionImage3,
+  testFashionImage4,
+  testFashionImage5,
+  testFashionImage6,
+  testFashionImage7,
+  testFashionImage8,
+  testFashionImage9,
+  testFashionImage10,
+];
 
 const NETWORK_DELAY = 1000;
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -166,12 +190,12 @@ export const handlers = [
   }),
 
   /** S3 Presigned URL */
-  http.put(`https://test_url.com`, async ({ request }) => {
+  http.put(`https://test_url.com`, async () => {
     await delay(NETWORK_DELAY);
     return new HttpResponse('', { status: HttpStatusCode.Ok });
   }),
 
-  http.post(`${BASE_URL}/feeds`, async ({ request }) => {
+  http.post(`${BASE_URL}/feeds`, async () => {
     await delay(NETWORK_DELAY);
     const wouldCauseError = false;
 
@@ -193,5 +217,23 @@ export const handlers = [
     }
 
     return HttpResponse.json({ feedId: 0 }, { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/vote/candidates`, async () => {
+    await delay(NETWORK_DELAY);
+
+    const voteCandidates = testFahsionImages.map((image) => ({
+      feedId: Math.floor(Math.random() * 100),
+      userId: Math.floor(Math.random() * 100),
+      imageURL: image,
+    }));
+
+    return HttpResponse.json({ voteCandidates }, { status: HttpStatusCode.Ok });
+  }),
+
+  http.post(`${BASE_URL}/vote/candidates`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return new HttpResponse('', { status: HttpStatusCode.Ok });
   }),
 ];
