@@ -2,6 +2,7 @@ import { LoaderResponse, LoaderResponseStatus } from '@Types/loaderResponse';
 import { ServiceErrorResponse } from '@Types/serviceError';
 import { isAxiosError } from 'axios';
 import { type ClassValue, clsx } from 'clsx';
+import { isAfter, isBefore, isSameMonth, isSameYear } from 'date-fns';
 import { sha256 } from 'js-sha256';
 import { twMerge } from 'tailwind-merge';
 
@@ -160,4 +161,15 @@ export async function prefetchImages(images: string[]): Promise<void> {
         })
     )
   );
+}
+export function isBetweenDate(pre: Date, cur: Date, post: Date) {
+  return sameOrAfter(cur, pre) && sameOrBefore(cur, post);
+}
+
+export function sameOrBefore(d1 = new Date(), d2 = new Date()) {
+  return isSameYear(d1, d2) && isSameMonth(d1, d2) ? true : isBefore(d1, d2) ? true : false;
+}
+
+export function sameOrAfter(d1 = new Date(), d2 = new Date()) {
+  return isSameYear(d1, d2) && isSameMonth(d1, d2) ? true : isAfter(d1, d2) ? true : false;
 }
