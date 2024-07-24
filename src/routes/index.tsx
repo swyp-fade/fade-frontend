@@ -19,7 +19,7 @@ const LoginPage = lazy(() => import('@Pages/Root/login/page').then((module) => (
 const SignUpPage = lazy(() => import('@Pages/Root/signup/page').then((module) => ({ default: module.default })));
 const ArchivePage = lazy(() => import('@Pages/Root/archive/page').then((module) => ({ default: module.default })));
 const VoteFAPPage = lazy(() => import('@Pages/Root/voteFAP/page').then((module) => ({ default: module.default })));
-const FeedPage = lazy(() => import('@Pages/Root/feed/page').then((module) => ({ default: module.default })));
+const SubscribePage = lazy(() => import('@Pages/Root/subscribe/page').then((module) => ({ default: module.default })));
 const MyPage = lazy(() => import('@Pages/Root/mypage/page').then((module) => ({ default: module.default })));
 
 /** Auth */
@@ -47,7 +47,7 @@ export const routesFromElements = createRoutesFromElements(
           }>
           <Route path="archive" element={<ArchivePage />} />
           <Route path="vote-fap" element={<VoteFAPPage />} />
-          <Route path="feed" element={<FeedPage />} />
+          <Route path="subscribe" element={<SubscribePage />} />
           <Route path="mypage" element={<MyPage />} />
         </Route>
       </Route>

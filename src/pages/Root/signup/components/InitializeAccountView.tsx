@@ -52,7 +52,7 @@ export default function InitializeAccountView({ accessToken }: { accessToken: st
         </header>
       </FlexibleLayout.Header>
 
-      <FlexibleLayout.Content>
+      <FlexibleLayout.Content className="p-5">
         <InitializeAccountForm onSubmit={handleSubmit} />
       </FlexibleLayout.Content>
     </FlexibleLayout.Root>

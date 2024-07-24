@@ -24,7 +24,7 @@ const navList: NavItem[] = [
     IconComponent: MdAdd,
   },
   {
-    link: '/feed',
+    link: '/subscribe',
     IconComponent: MdAccountBox,
   },
   {

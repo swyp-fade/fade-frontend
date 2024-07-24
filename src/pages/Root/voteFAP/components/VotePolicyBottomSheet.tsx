@@ -11,7 +11,7 @@ export const VotePolicyBottomSheet = forwardRef<HTMLDivElement, DefaultModalProp
         </header>
       </FlexibleLayout.Header>
 
-      <FlexibleLayout.Content>
+      <FlexibleLayout.Content className="p-5">
         <ul className="list-disc space-y-3">
           <li className="ml-5 whitespace-pre-line">{`1사이클은 10회의 FADE IN/OUT 투표로 이루어집니다.`}</li>
           <li className="ml-5 whitespace-pre-line">{`하루에 가능한 투표 횟수의 제한은 없습니다.`}</li>
