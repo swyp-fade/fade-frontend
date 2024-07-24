@@ -108,7 +108,7 @@ function ReportButton({ onReportEnd }: ReportButtonProps) {
     <motion.button
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className={cn('group absolute right-4 top-4 z-[2] cursor-pointer rounded-lg bg-white px-2 py-1')}
+      className={cn('group absolute right-4 top-4 cursor-pointer rounded-lg bg-white px-2 py-1')}
       onClick={() => handleReportClick()}>
       <div className="flex flex-row items-center gap-1 transition-transform group-active:scale-95">
         <MdReport className="size-[1.125rem]" />
