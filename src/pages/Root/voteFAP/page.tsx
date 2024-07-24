@@ -16,7 +16,7 @@ export default function Page() {
   });
 
   return (
-    <FlexibleLayout.Root className="gap-3">
+    <FlexibleLayout.Root className="gap-3 p-5">
       <FlexibleLayout.Header>
         <VotingCounter />
       </FlexibleLayout.Header>
