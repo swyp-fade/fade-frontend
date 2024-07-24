@@ -1,4 +1,4 @@
-import { cn } from '@Utils/index';
+import { cn, prefetchImages } from '@Utils/index';
 import { motion } from 'framer-motion';
 import { useEffect, useLayoutEffect, useState } from 'react';
 
@@ -8,11 +8,8 @@ import onboardingImage3 from '@Assets/onboarding_image_3.jpg';
 
 const onboardingImages = [onboardingImage1, onboardingImage2, onboardingImage3];
 
-const loadOnboardingImagePreload = async () => {
-  onboardingImages.forEach((image) => {
-    const img = new Image();
-    img.src = image;
-  });
+const prefetchOnboardingImages = async () => {
+  prefetchImages(onboardingImages);
 };
 
 export function Carousel() {
@@ -31,7 +28,7 @@ export function Carousel() {
   };
 
   useLayoutEffect(() => {
-    loadOnboardingImagePreload();
+    prefetchOnboardingImages();
   }, []);
 
   useEffect(() => {
