@@ -100,7 +100,7 @@ export function UploadImageForm({ onClose, onValueChanged, onSubmitSuccess }: Up
               <Header onClose={onClose} />
             </FlexibleLayout.Header>
 
-            <FlexibleLayout.Content className="space-y-8">
+            <FlexibleLayout.Content className="space-y-8 p-5">
               <AddImageField control={form.control} />
               <SelectStylesField selectedStyles={styleIds as unknown as OutfitStyle[]} control={form.control} />
 

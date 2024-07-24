@@ -12,7 +12,7 @@ export default function GlobalErrorPage() {
         </header>
       </FlexibleLayout.Header>
 
-      <FlexibleLayout.Content>
+      <FlexibleLayout.Content className="p-5">
         <div className="flex h-full flex-col items-center justify-center gap-4">
           <p className="text-lg font-medium">어라, 개발자가 놓친 오류를 발견하셨어요!</p>
 

@@ -11,7 +11,7 @@ export function PolicyView({ onDegreePolicy, onAgreePolicy }: { onDegreePolicy: 
         </header>
       </FlexibleLayout.Header>
 
-      <FlexibleLayout.Content>
+      <FlexibleLayout.Content className="p-5">
         <ul className="ml-5 list-decimal space-y-5 text-lg">
           <li>{`FADE는 본인 사진 업로드를 원칙으로 합니다.`}</li>
           <li>{`업로드한 사진은 업로드 날짜와 무관하게 모두 FA:P(일 별로 가장 많은 표를 받은 사진) 선정의 후보가 되며, 다른 유저의 투표에 포함될 수 있습니다.`}</li>

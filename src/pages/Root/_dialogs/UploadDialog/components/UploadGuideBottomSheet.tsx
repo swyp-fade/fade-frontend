@@ -11,7 +11,7 @@ export const UploadGuideBottomSheet = forwardRef<HTMLDivElement, DefaultModalPro
         </header>
       </FlexibleLayout.Header>
 
-      <FlexibleLayout.Content>
+      <FlexibleLayout.Content className="p-5">
         <ul className="list-disc space-y-5">
           <li className="ml-5 whitespace-pre-line">{`FADE는 스타일에만 집중하고자 합니다.\n최대한 얼굴이 보이지 않는 사진으로 올려주세요!\nFADE만의 문화를 함께 만들어가요! :)`}</li>
           <li className="ml-5 whitespace-pre-line">{`회원님의 스타일이 잘 보이는 사진이 좋습니다.\n얼굴 제외 전신을 볼 수 있는 사진으로 올려주세요!`}</li>

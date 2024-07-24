@@ -99,7 +99,7 @@ export function TermOfService({ onClose }: DefaultModalProps) {
         </header>
       </FlexibleLayout.Header>
 
-      <FlexibleLayout.Content>
+      <FlexibleLayout.Content className="p-5">
         <p className="whitespace-pre-line">{tosContent}</p>
       </FlexibleLayout.Content>
     </FlexibleLayout.Root>

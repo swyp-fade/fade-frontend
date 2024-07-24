@@ -10,7 +10,7 @@ export default function NotFound() {
         </header>
       </FlexibleLayout.Header>
 
-      <FlexibleLayout.Content>
+      <FlexibleLayout.Content className="p-5">
         <div className="flex h-full flex-col items-center justify-center gap-4">
           <p className="text-lg font-medium">어라, 존재하지 않는 페이지로 들어오셨어요!</p>
           <p>경로를 다시 확인해주시거나 아래의 버튼을 통해 이동해주세요.</p>

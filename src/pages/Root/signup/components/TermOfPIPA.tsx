@@ -23,7 +23,7 @@ export function TermOfPIPA({ onClose }: DefaultModalProps) {
         </header>
       </FlexibleLayout.Header>
 
-      <FlexibleLayout.Content>
+      <FlexibleLayout.Content className="p-5">
         <p className="whitespace-pre-line">{pipaContent}</p>
       </FlexibleLayout.Content>
     </FlexibleLayout.Root>
