@@ -1,7 +1,181 @@
+import { OUTFIT_CATEGORY_LIST, OUTFIT_STYLE_LIST } from '@/constants';
+import testImage from '@Assets/test_fashion_image.jpg';
+import { useModalActions } from '@Hooks/modal';
+import { useToastActions } from '@Hooks/toast';
 import { useHeader } from '@Hooks/useHeader';
+import { cn } from '@Utils/index';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+import { motion } from 'framer-motion';
+import { MdBookmark, MdChevronRight, MdOutlineNotificationsNone, MdReport } from 'react-icons/md';
+import { ReportBottomSheet, ReportResult } from '../voteFAP/components/ReportBottomSheet';
+
+type SubscribeBadgeType = {
+  userId: number;
+  profileURL: string;
+  accountId: string;
+};
+
+const subscribeList: SubscribeBadgeType[] = [
+  {
+    userId: 0,
+    profileURL: testImage,
+    accountId: 'testaccount',
+  },
+  {
+    userId: 1,
+    profileURL: testImage,
+    accountId: 'testaccount',
+  },
+  {
+    userId: 2,
+    profileURL: testImage,
+    accountId: 'testaccount',
+  },
+  {
+    userId: 3,
+    profileURL: testImage,
+    accountId: 'testaccount',
+  },
+  {
+    userId: 4,
+    profileURL: testImage,
+    accountId: 'testaccount',
+  },
+];
 
 export default function Page() {
-  useHeader({ title: '구독' });
+  useHeader({ title: '구독', rightSlot: () => <ShowNotificationButton /> });
 
-  return <>구독 페이지</>;
+  return (
+    <div className="flex h-full flex-col">
+      <div className="relative h-fit w-full px-5 py-4">
+        <div className="overflow-y-scroll">
+          <ul className="flex flex-row gap-3">
+            {subscribeList.map((subscribe) => (
+              <li
+                key={`subscribe-${subscribe.userId}`}
+                className={cn('boder-gray-200 flex h-full flex-row items-center gap-2 rounded-lg border p-2', {
+                  ['border-purple-100 bg-purple-50']: subscribe.userId === 0,
+                })}>
+                <div style={{ backgroundImage: `url('${subscribe.profileURL}')` }} className="size-8 overflow-hidden rounded-lg bg-cover bg-center bg-no-repeat" />
+                <span>{subscribe.accountId}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <button className="bg-fade-gradient absolute right-5 top-1/2 -translate-y-1/2 px-2 py-4">
+          <MdChevronRight className="size-6" />
+        </button>
+      </div>
+
+      {/* croll-snap-type: y mandatory; */}
+      <div className="min-h-1 flex-1 snap-y snap-mandatory overflow-y-scroll">
+        <FeedCard />
+        <FeedCard />
+        <FeedCard />
+        <FeedCard />
+      </div>
+    </div>
+  );
+}
+
+function ShowNotificationButton() {
+  return (
+    <button className="group relative cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
+      <MdOutlineNotificationsNone className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
+    </button>
+  );
+}
+
+type ReportButtonProps = { onReportEnd: (result: ReportResult | undefined) => void };
+
+function ReportButton({ onReportEnd }: ReportButtonProps) {
+  const { showModal } = useModalActions();
+
+  const handleReportClick = async () => {
+    const reportResult = await startReportFlow();
+    onReportEnd(reportResult);
+  };
+
+  const startReportFlow = async () => {
+    // TODO: Report에 사진 ID? 유저 ID? 넘겨주긴 해야 함
+    return await showModal<ReportResult>({ type: 'bottomSheet', Component: ReportBottomSheet });
+  };
+
+  return (
+    <motion.button
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className={cn('group absolute right-4 top-4 z-[2] cursor-pointer rounded-lg bg-white px-2 py-1')}
+      onClick={() => handleReportClick()}>
+      <div className="flex flex-row items-center gap-1 transition-transform group-active:scale-95">
+        <MdReport className="size-[1.125rem]" />
+        <span>신고하기</span>
+      </div>
+    </motion.button>
+  );
+}
+
+function BookmarkButton() {
+  return (
+    <button className="rounded-lg border bg-white px-3 py-2">
+      <MdBookmark className="size-6 text-gray-500" />
+    </button>
+  );
+}
+
+function OutfitBadge({ categoryType }: { categoryType: number }) {
+  return (
+    <div className="min-w-fit rounded-[1rem] bg-purple-50 px-4 py-2">
+      <span>{OUTFIT_CATEGORY_LIST[categoryType]}</span>
+    </div>
+  );
+}
+
+function FeedCard() {
+  const { showToast } = useToastActions();
+
+  const handleReportEnd = (reportResult?: ReportResult) => {
+    if (reportResult === undefined) {
+      return;
+    }
+
+    /** TODO: 신고 API 호출 */
+
+    showToast({ type: 'basic', title: `신고되었습니다.` });
+  };
+
+  return (
+    <div className="flex h-full snap-start border border-red-500">
+      <section className="flex h-full w-full flex-col gap-3 p-5">
+        <p className="text-h6">{format(new Date(), 'yyyy년 M월 dd일 eeee', { locale: ko })}</p>
+
+        <div style={{ backgroundImage: `url('${testImage}')` }} className="relative w-full flex-1 rounded-lg bg-gray-200 bg-contain bg-center bg-no-repeat">
+          <ReportButton onReportEnd={handleReportEnd} />
+        </div>
+
+        <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white">
+          <div style={{ backgroundImage: `url('${testImage}')` }} className="size-8 rounded-lg bg-cover bg-center bg-no-repeat" />
+          <p className="flex-1">katie63</p>
+          <button className="rounded-lg border border-purple-50 bg-purple-50 px-3 py-2">구독중</button>
+          <BookmarkButton />
+        </div>
+
+        <div>
+          <ul className="flex flex-row gap-2 overflow-y-scroll whitespace-nowrap">
+            {OUTFIT_STYLE_LIST.slice(0, 6).map((value) => (
+              <li className="rounded-2xl bg-purple-50 px-5 py-2 text-purple-400">{value}</li>
+            ))}
+          </ul>
+        </div>
+
+        <button type="button" className="flex w-full flex-row items-center gap-3 rounded-lg border border-purple-50 bg-white p-3">
+          <OutfitBadge categoryType={0} />
+          <p className="text-left">나이키 조던</p>
+        </button>
+      </section>
+    </div>
+  );
 }
