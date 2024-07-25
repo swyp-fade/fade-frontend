@@ -1,5 +1,6 @@
 import { OUTFIT_CATEGORY_LIST, OUTFIT_STYLE_LIST } from '@/constants';
 import testImage from '@Assets/test_fashion_image.jpg';
+import { ShowNotificationButton } from '@Components/ShowNotificationButton';
 import { useModalActions } from '@Hooks/modal';
 import { useToastActions } from '@Hooks/toast';
 import { useHeader } from '@Hooks/useHeader';
@@ -7,7 +8,7 @@ import { cn } from '@Utils/index';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { motion } from 'framer-motion';
-import { MdBookmark, MdChevronRight, MdOutlineNotificationsNone, MdReport } from 'react-icons/md';
+import { MdBookmark, MdChevronRight, MdReport } from 'react-icons/md';
 import { ReportBottomSheet, ReportResult } from '../voteFAP/components/ReportBottomSheet';
 
 type SubscribeBadgeType = {
@@ -65,7 +66,7 @@ export default function Page() {
           </ul>
         </div>
 
-        <button className="bg-fade-gradient absolute right-5 top-1/2 -translate-y-1/2 px-2 py-4">
+        <button className="absolute right-5 top-1/2 -translate-y-1/2 bg-fade-gradient px-2 py-4">
           <MdChevronRight className="size-6" />
         </button>
       </div>
@@ -78,14 +79,6 @@ export default function Page() {
         <FeedCard />
       </div>
     </div>
-  );
-}
-
-function ShowNotificationButton() {
-  return (
-    <button className="group relative cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
-      <MdOutlineNotificationsNone className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
-    </button>
   );
 }
 
