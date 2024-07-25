@@ -2,6 +2,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import testImage from '@Assets/test_fashion_image.jpg';
 import { Input } from '@Components/ui/Input';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useModalActions } from '@Hooks/modal';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import { DefaultModalProps } from '@Stores/modal';
@@ -10,6 +11,7 @@ import { useTransition } from 'react';
 import { Control, useForm } from 'react-hook-form';
 import { MdCameraAlt, MdChevronLeft } from 'react-icons/md';
 import { z } from 'zod';
+import ResignServiceView from './ResignServiceView';
 
 export default function AccountSetting({ onClose }: DefaultModalProps) {
   return (
@@ -89,6 +91,7 @@ function InitializeAccountForm({ onSubmit }: { onSubmit: (values: InitializeAcco
     </Form>
   );
 }
+
 function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button
@@ -161,10 +164,18 @@ function SexField({ control }: { control: Control<InitializeAccountFormSchema> }
 }
 
 function ResignButton() {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    await showModal({ type: 'fullScreenDialog', Component: ResignServiceView, animateType: 'slideInFromRight' });
+  };
+
   return (
     <div className="space-y-1 p-1">
       <p className="text-h6 font-semibold">회원 탈퇴</p>
-      <button className="font-semibold text-gray-500 underline">페이드 서비스에서 탈퇴하기</button>
+      <button className="font-semibold text-gray-500 underline" onClick={handleClick}>
+        페이드 서비스에서 탈퇴하기
+      </button>
     </div>
   );
 }
