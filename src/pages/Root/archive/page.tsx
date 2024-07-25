@@ -141,7 +141,6 @@ function FAPArchivingView() {
             type="month"
             className="relative whitespace-nowrap rounded-lg bg-gray-100 px-4 py-[.375rem] text-h6"
             value={calenderDate}
-            defaultValue={format(new Date(), 'yyyy-MM')}
             onInput={(e) => updateDate(e.currentTarget.valueAsDate)}
             min={format(MIN_DATE, 'yyyy-MM')}
             max={format(MAX_DATE, 'yyyy-MM')}
@@ -160,6 +159,7 @@ function FAPArchivingView() {
         <ul className="flex flex-row py-5">
           {['일', '월', '화', '수', '목', '금', '토'].map((dayOfWeek, index) => (
             <li
+              key={`dayOfWeek-${index}`}
               className={cn('flex-1 text-center', {
                 ['text-pink-400']: index === 0,
                 ['text-purple-900']: index === 6,
@@ -199,8 +199,8 @@ function AllArchivingView() {
       <div className="grid w-full grid-cols-3 gap-1">
         {Array.from({ length: 13 })
           .fill(0)
-          .map(() => (
-            <div className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg">
+          .map((_, index) => (
+            <div key={`item-${index}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg">
               <div
                 style={{ backgroundImage: `url('${testImage}')` }}
                 className="h-full w-full bg-cover bg-center bg-no-repeat transition-transform group-hover:scale-105"
