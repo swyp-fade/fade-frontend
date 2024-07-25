@@ -10,7 +10,7 @@ type ConfirmProps = {
 export function ConfirmModal({ title, description, onClose }: DefaultModalProps<boolean, ConfirmProps>) {
   return (
     <FlexibleLayout.Root className="h-fit">
-      <FlexibleLayout.Content className="pt-10">
+      <FlexibleLayout.Content className="p-5 pt-10">
         <div className="space-y-8">
           <MdWarning className="mx-auto size-24 text-purple-100" />
 
