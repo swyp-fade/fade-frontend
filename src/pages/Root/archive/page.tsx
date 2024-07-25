@@ -1,11 +1,13 @@
 import testImage from '@Assets/test_fashion_image.jpg';
 import { ShowNotificationButton } from '@Components/ShowNotificationButton';
+import { useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { cn, isBetweenDate } from '@Utils/index';
 import { addMonths, format, getDaysInMonth, getWeeksInMonth, isSameMonth, isSameYear, startOfDay, subMonths } from 'date-fns';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { useRef, useState, useTransition } from 'react';
 import { MdChevronLeft, MdChevronRight, MdSearch } from 'react-icons/md';
+import { FilterType, SelectFilterDialog, SelectFilterDialogProps } from './components/SelectFilterDialog';
 import './dateStyle.css';
 
 const MIN_DATE = new Date('2024-01-01');
@@ -139,7 +141,6 @@ function FAPArchivingView() {
             type="month"
             className="relative whitespace-nowrap rounded-lg bg-gray-100 px-4 py-[.375rem] text-h6"
             value={calenderDate}
-            defaultValue={format(new Date(), 'yyyy-MM')}
             onInput={(e) => updateDate(e.currentTarget.valueAsDate)}
             min={format(MIN_DATE, 'yyyy-MM')}
             max={format(MAX_DATE, 'yyyy-MM')}
@@ -158,6 +159,7 @@ function FAPArchivingView() {
         <ul className="flex flex-row py-5">
           {['일', '월', '화', '수', '목', '금', '토'].map((dayOfWeek, index) => (
             <li
+              key={`dayOfWeek-${index}`}
               className={cn('flex-1 text-center', {
                 ['text-pink-400']: index === 0,
                 ['text-purple-900']: index === 6,
@@ -191,14 +193,14 @@ function AllArchivingView() {
     <div className="w-full border">
       {/* TODO: 나중에 스크롤 애니메이션 달아보기 */}
       <div className="w-full bg-white p-5">
-        <button className="w-full rounded-lg bg-gray-100 py-2">필터</button>
+        <SelectFilterButton />
       </div>
 
       <div className="grid w-full grid-cols-3 gap-1">
         {Array.from({ length: 13 })
           .fill(0)
-          .map(() => (
-            <div className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg">
+          .map((_, index) => (
+            <div key={`item-${index}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg">
               <div
                 style={{ backgroundImage: `url('${testImage}')` }}
                 className="h-full w-full bg-cover bg-center bg-no-repeat transition-transform group-hover:scale-105"
@@ -207,5 +209,38 @@ function AllArchivingView() {
           ))}
       </div>
     </div>
+  );
+}
+
+function SelectFilterButton() {
+  const [filters, setFilters] = useState<FilterType>({
+    gender: null,
+    selectedStyles: [],
+  });
+
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    const selectFilterResult = await showModal<FilterType>({
+      type: 'fullScreenDialog',
+      animateType: 'slideInFromRight',
+      Component: SelectFilterDialog,
+      props: { defaultFilter: filters } as SelectFilterDialogProps,
+    });
+
+    console.log(selectFilterResult);
+
+    setFilters(
+      selectFilterResult || {
+        gender: null,
+        selectedStyles: [],
+      }
+    );
+  };
+
+  return (
+    <button className="w-full rounded-lg bg-gray-100 py-2" onClick={handleClick}>
+      필터
+    </button>
   );
 }
