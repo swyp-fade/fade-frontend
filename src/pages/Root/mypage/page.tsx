@@ -1,9 +1,10 @@
 import testImage from '@Assets/test_fashion_image.jpg';
-import { useConfirm } from '@Hooks/modal';
+import { useConfirm, useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { IconType } from 'react-icons/lib';
 import { MdBook, MdBookmark, MdHowToVote, MdOutlineNotificationsNone, MdPerson } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+import AccountSetting from './components/AccountSetting';
 
 type MyPageMenu = {
   id: number;
@@ -66,7 +67,7 @@ export default function Page() {
           </div>
         </div>
 
-        <button className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-detail">계정 관리</button>
+        <ManageAccountButton />
       </div>
 
       <div className="flex min-h-1 flex-1 flex-col border border-red-400">
@@ -89,6 +90,20 @@ function ShowNotificationButton() {
   return (
     <button className="group relative cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
       <MdOutlineNotificationsNone className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
+    </button>
+  );
+}
+
+function ManageAccountButton() {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    await showModal({ type: 'fullScreenDialog', animateType: 'slideInFromRight', Component: AccountSetting });
+  };
+
+  return (
+    <button className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-detail" onClick={handleClick}>
+      계정 관리
     </button>
   );
 }
