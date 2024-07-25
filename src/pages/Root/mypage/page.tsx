@@ -1,8 +1,9 @@
 import testImage from '@Assets/test_fashion_image.jpg';
+import { ShowNotificationButton } from '@Components/ShowNotificationButton';
 import { useConfirm, useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { IconType } from 'react-icons/lib';
-import { MdBook, MdBookmark, MdHowToVote, MdOutlineNotificationsNone, MdPerson } from 'react-icons/md';
+import { MdBook, MdBookmark, MdHowToVote, MdPerson } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import AccountSetting from './components/AccountSetting';
 
@@ -83,14 +84,6 @@ export default function Page() {
         <LogoutButton />
       </div>
     </div>
-  );
-}
-
-function ShowNotificationButton() {
-  return (
-    <button className="group relative cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
-      <MdOutlineNotificationsNone className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
-    </button>
   );
 }
 

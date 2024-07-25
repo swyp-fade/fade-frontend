@@ -1,10 +1,11 @@
 import testImage from '@Assets/test_fashion_image.jpg';
+import { ShowNotificationButton } from '@Components/ShowNotificationButton';
 import { useHeader } from '@Hooks/useHeader';
 import { cn, isBetweenDate } from '@Utils/index';
 import { addMonths, format, getDaysInMonth, getWeeksInMonth, isSameMonth, isSameYear, startOfDay, subMonths } from 'date-fns';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { useRef, useState, useTransition } from 'react';
-import { MdChevronLeft, MdChevronRight, MdOutlineNotificationsNone, MdSearch } from 'react-icons/md';
+import { MdChevronLeft, MdChevronRight, MdSearch } from 'react-icons/md';
 import './dateStyle.css';
 
 const MIN_DATE = new Date('2024-01-01');
@@ -50,7 +51,7 @@ export default function Page() {
 
   return (
     <div className="flex h-full flex-col">
-      <menu className="sticky top-0 z-10 flex flex-row bg-white px-5">
+      <menu className="sticky top-0 flex flex-row bg-white px-5">
         <li className="flex-1">
           <button className="relative h-full w-full py-3" onClick={() => switchToTab(0)} disabled={isTransitionInProgress}>
             <span className={cn('text-h6 font-semibold text-gray-500 transition-colors', { ['text-current']: isFAPTab })}>FA:P 아카이브</span>
@@ -87,14 +88,6 @@ function SearchButton() {
   return (
     <button className="group cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
       <MdSearch className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
-    </button>
-  );
-}
-
-function ShowNotificationButton() {
-  return (
-    <button className="group cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
-      <MdOutlineNotificationsNone className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
     </button>
   );
 }
