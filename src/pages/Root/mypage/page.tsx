@@ -1,7 +1,9 @@
 import testImage from '@Assets/test_fashion_image.jpg';
+import { useConfirm } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { IconType } from 'react-icons/lib';
 import { MdBook, MdBookmark, MdHowToVote, MdOutlineNotificationsNone, MdPerson } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
 type MyPageMenu = {
   id: number;
@@ -77,10 +79,7 @@ export default function Page() {
           ))}
         </ul>
 
-        <div className="flex flex-col items-center justify-center py-1">
-          <button className="font-semibold underline">로그아웃</button>
-          <p className="text-detail text-gray-500">FADE팀 admin@fade.com</p>
-        </div>
+        <LogoutButton />
       </div>
     </div>
   );
@@ -91,5 +90,26 @@ function ShowNotificationButton() {
     <button className="group relative cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
       <MdOutlineNotificationsNone className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
     </button>
+  );
+}
+
+function LogoutButton() {
+  const navigate = useNavigate();
+  const confirm = useConfirm();
+
+  const handleClick = async () => {
+    const result = await confirm({ title: '로그아웃 하시겠습니까?', description: '언제든 다시 로그인 할 수 있어요.' });
+
+    result && navigate('/auth/signout', { replace: true });
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center py-1">
+      <button className="font-semibold underline" onClick={handleClick}>
+        로그아웃
+      </button>
+
+      <p className="text-detail text-gray-500">FADE팀 admin@fade.com</p>
+    </div>
   );
 }
