@@ -11,6 +11,7 @@ import { motion } from 'framer-motion';
 import { MdBookmark, MdChevronRight, MdReport } from 'react-icons/md';
 import { ReportBottomSheet, ReportResult } from '../voteFAP/components/ReportBottomSheet';
 import { SubscribeListView } from './components/SubscribeListView';
+import { AccountProfileView, AccountProfileViewProps } from '@Components/AccountProfileView';
 
 type SubscribeBadgeType = {
   userId: number;
@@ -150,7 +151,7 @@ function FeedCard() {
 
         <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white">
           <div style={{ backgroundImage: `url('${testImage}')` }} className="size-8 rounded-lg bg-cover bg-center bg-no-repeat" />
-          <p className="flex-1">katie63</p>
+          <AccountIdButton />
           <button className="rounded-lg border border-purple-50 bg-purple-50 px-3 py-2">구독중</button>
           <BookmarkButton />
         </div>
@@ -182,6 +183,25 @@ function ShowSubscribeListViewButton() {
   return (
     <button className="absolute right-5 top-1/2 -translate-y-1/2 bg-fade-gradient px-2 py-4" onClick={handleClick}>
       <MdChevronRight className="size-6" />
+    </button>
+  );
+}
+
+function AccountIdButton() {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    await showModal({
+      type: 'fullScreenDialog',
+      animateType: 'slideInFromRight',
+      Component: AccountProfileView,
+      props: { viewType: 'user' } as AccountProfileViewProps,
+    });
+  };
+
+  return (
+    <button className="flex-1 text-left" onClick={handleClick}>
+      katie63
     </button>
   );
 }
