@@ -38,7 +38,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
 function SubscribeItem() {
   return (
     <div className="fle-row flex items-center gap-3 rounded-lg bg-white p-3">
-      <div style={{ backgroundImage: `url('${testImage}')` }} className="size-10 rounded-lg bg-contain bg-cover bg-center" />
+      <div style={{ backgroundImage: `url('${testImage}')` }} className="size-10 rounded-lg bg-cover bg-center bg-no-repeat" />
       <p className="flex-1">fade1234</p>
       <SubscribeToggleButton />
     </div>
