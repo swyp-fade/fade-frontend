@@ -5,6 +5,7 @@ import { MdEditNote } from 'react-icons/md';
 import { ProfileIntroEditBottomSheet } from './ProfileIntroEditBottomSheet';
 import { Image } from './ui/image';
 import { Avatar } from './ui/avatar';
+import { Grid } from './ui/grid';
 
 export type ProfileViewType = 'owner' | 'user';
 
@@ -37,14 +38,16 @@ export function ProfileDetails({ viewType }: { viewType: ProfileViewType }) {
         </div>
       </div>
 
-      <div className="grid w-full grid-cols-3 gap-1 p-1">
-        {Array.from({ length: 13 })
-          .fill(0)
-          .map((_, index) => (
-            <div key={`item-${index}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg">
-              <Image src={testImage} className="transition-transform group-hover:scale-105" />
-            </div>
-          ))}
+      <div className="p-1">
+        <Grid cols={3}>
+          {Array.from({ length: 13 })
+            .fill(0)
+            .map((_, index) => (
+              <div key={`item-${index}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg">
+                <Image src={testImage} className="transition-transform group-hover:scale-105" />
+              </div>
+            ))}
+        </Grid>
       </div>
     </div>
   );

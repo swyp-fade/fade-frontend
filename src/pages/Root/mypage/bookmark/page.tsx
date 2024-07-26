@@ -12,7 +12,7 @@ export default function Page() {
 
   return (
     <div>
-      <div className="grid w-full grid-cols-3 gap-1 p-1">
+      <Grid />
         {Array.from({ length: 13 })
           .fill(0)
           .map((_, index) => (

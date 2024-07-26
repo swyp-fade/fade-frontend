@@ -19,6 +19,7 @@ import testFashionImage7 from '@Assets/test_fashion_image_7.jpg';
 import testFashionImage8 from '@Assets/test_fashion_image_8.jpg';
 import testFashionImage9 from '@Assets/test_fashion_image_9.jpg';
 import { Image } from '@Components/ui/image';
+import { Grid } from '@Components/ui/grid';
 
 const testFahsionImages = [
   testFashionImage1,
@@ -98,11 +99,11 @@ function VoteHistoryItem() {
 
 function ImageGrid({ images }: { images: string[] }) {
   return (
-    <div className="grid grid-cols-5 grid-rows-2 gap-2 border border-red-500">
+    <Grid cols={5}>
       {images.map((imageURL) => (
         <ImageGridItem key={imageURL} imageURL={imageURL} />
       ))}
-    </div>
+    </Grid>
   );
 }
 
