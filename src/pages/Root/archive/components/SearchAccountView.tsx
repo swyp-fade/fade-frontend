@@ -1,4 +1,5 @@
 import testImage from '@Assets/test_fashion_image.jpg';
+import { Image } from '@Components/ui/image';
 import { useDebounce } from '@Hooks/useDebounce';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
@@ -150,7 +151,7 @@ function AccountItem({ userId, profileURL, accountId, onClick }: { userId: numbe
     <button
       className="group flex flex-1 flex-row items-center gap-3 rounded-lg p-2 touchdevice:active:bg-gray-200 pointerdevice:hover:bg-gray-100 pointerdevice:active:bg-gray-200"
       onClick={() => onClick(userId)}>
-      <div style={{ backgroundImage: `url('${profileURL}')` }} className="size-10 rounded-lg bg-cover bg-center bg-no-repeat" />
+      <Image src={profileURL} className="size-10 rounded-lg" />
       <p>{accountId}</p>
     </button>
   );

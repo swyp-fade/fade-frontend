@@ -1,6 +1,7 @@
 import { OUTFIT_CATEGORY_LIST, OUTFIT_STYLE_LIST } from '@/constants';
 import testImage from '@Assets/test_fashion_image.jpg';
 import { ShowNotificationButton } from '@Components/ShowNotificationButton';
+import { Image } from '@Components/ui/image';
 import { useModalActions } from '@Hooks/modal';
 import { useToastActions } from '@Hooks/toast';
 import { useHeader } from '@Hooks/useHeader';
@@ -60,7 +61,7 @@ export default function Page() {
                 className={cn('boder-gray-200 flex h-full flex-row items-center gap-2 rounded-lg border p-2', {
                   ['border-purple-100 bg-purple-50']: subscribe.userId === 0,
                 })}>
-                <div style={{ backgroundImage: `url('${subscribe.profileURL}')` }} className="size-8 overflow-hidden rounded-lg bg-cover bg-center bg-no-repeat" />
+                <Image src={subscribe.profileURL} className="size-8 overflow-hidden rounded-lg" />
                 <span>{subscribe.accountId}</span>
               </li>
             ))}
@@ -144,12 +145,12 @@ function FeedCard() {
       <section className="flex h-full w-full flex-col gap-3 p-5">
         <p className="text-h6">{format(new Date(), 'yyyy년 M월 dd일 eeee', { locale: ko })}</p>
 
-        <div style={{ backgroundImage: `url('${testImage}')` }} className="relative w-full flex-1 rounded-lg bg-gray-200 bg-contain bg-center bg-no-repeat">
+        <Image src={testImage} className="relative w-full flex-1 rounded-lg bg-gray-200" size="contain">
           <ReportButton onReportEnd={handleReportEnd} />
-        </div>
+        </Image>
 
         <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white">
-          <div style={{ backgroundImage: `url('${testImage}')` }} className="size-8 rounded-lg bg-cover bg-center bg-no-repeat" />
+          <Image src={testImage} className="size-8 rounded-lg" />
           <AccountIdButton />
           <button className="rounded-lg border border-purple-50 bg-purple-50 px-3 py-2">구독중</button>
           <BookmarkButton />

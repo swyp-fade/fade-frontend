@@ -12,6 +12,7 @@ import { Control, useForm } from 'react-hook-form';
 import { MdCameraAlt, MdChevronLeft } from 'react-icons/md';
 import { z } from 'zod';
 import ResignServiceView from './ResignServiceView';
+import { Image } from '@Components/ui/image';
 
 export function AccountSetting({ onClose }: DefaultModalProps) {
   return (
@@ -25,11 +26,11 @@ export function AccountSetting({ onClose }: DefaultModalProps) {
 
       <FlexibleLayout.Content className="flex flex-col p-5">
         <div className="py-10">
-          <div style={{ backgroundImage: `url('${testImage}')` }} className="relative mx-auto size-32 rounded-lg bg-cover bg-center bg-no-repeat">
+          <Image src={testImage} className="relative mx-auto size-32 rounded-lg">
             <button className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 rounded-full bg-gray-100 p-1">
               <MdCameraAlt className="size-5 text-gray-400" />
             </button>
-          </div>
+          </Image>
         </div>
 
         <InitializeAccountForm onSubmit={() => {}} />

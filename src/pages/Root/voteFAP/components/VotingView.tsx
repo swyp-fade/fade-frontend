@@ -16,6 +16,7 @@ import swipeFadeInImage from '@Assets/swipe_fade_in.png';
 import swipeFadeOutImage from '@Assets/swipe_fade_out.png';
 import voteFadeInImage from '@Assets/vote_fade_in.png';
 import voteFadeOutImage from '@Assets/vote_fade_out.png';
+import { Image } from '@Components/ui/image';
 
 const viewVariants: Variants = {
   initial: { opacity: 0 },
@@ -365,11 +366,11 @@ function ReportButton({ shouldBelowZIndex, onReportStart, onReportEnd }: ReportB
 }
 
 function FadeOutCover() {
-  return <div style={{ backgroundImage: `url('${swipeFadeOutImage}')`, backgroundSize: 'cover' }} className="h-[3.2725rem] w-[21.875rem]" />;
+  return <Image src={swipeFadeOutImage} className="h-[3.2725rem] w-[21.875rem]" />;
 }
 
 function FadeInCover() {
-  return <div style={{ backgroundImage: `url('${swipeFadeInImage}')`, backgroundSize: 'cover' }} className="h-[3.2725rem] w-[16.7719rem]" />;
+  return <Image src={swipeFadeInImage} className="h-[3.2725rem] w-[16.7719rem]" />;
 }
 
 type DragControllerProps = {

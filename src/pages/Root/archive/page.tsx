@@ -1,5 +1,6 @@
 import testImage from '@Assets/test_fashion_image.jpg';
 import { ShowNotificationButton } from '@Components/ShowNotificationButton';
+import { Image } from '@Components/ui/image';
 import { useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { cn, isBetweenDate } from '@Utils/index';
@@ -7,10 +8,10 @@ import { addMonths, format, getDaysInMonth, getWeeksInMonth, isSameMonth, isSame
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { MdChevronLeft, MdChevronRight, MdSearch } from 'react-icons/md';
+import { LastFAPModal, LastFAPModalProps } from './components/LastFAPModal';
+import { SearchAccountView } from './components/SearchAccountView';
 import { FilterType, SelectFilterDialog, SelectFilterDialogProps } from './components/SelectFilterDialog';
 import './dateStyle.css';
-import { SearchAccountView } from './components/SearchAccountView';
-import { LastFAPModal, LastFAPModalProps } from './components/LastFAPModal';
 
 const MIN_DATE = new Date('2024-01-01');
 const MAX_DATE = new Date();
@@ -219,10 +220,7 @@ function AllArchivingView() {
           .fill(0)
           .map((_, index) => (
             <div key={`item-${index}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg">
-              <div
-                style={{ backgroundImage: `url('${testImage}')` }}
-                className="h-full w-full bg-cover bg-center bg-no-repeat transition-transform group-hover:scale-105"
-              />
+              <Image src={testImage} className="h-full w-full transition-transform group-hover:scale-105" />
             </div>
           ))}
       </div>

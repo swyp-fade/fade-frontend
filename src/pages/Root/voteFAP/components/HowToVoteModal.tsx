@@ -1,3 +1,4 @@
+import { Image } from '@Components/ui/image';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
 import { cn } from '@Utils/index';
@@ -104,7 +105,7 @@ function CarouselItem({ data, description, type }: CarouselItem) {
   return (
     <li className="flex h-full min-w-full flex-col items-center justify-center">
       <div className="flex flex-1 items-center justify-center">
-        {isImage && <img src={data} className="max-h-[13.125rem] w-full object-contain" />}
+        {isImage && <Image src={data} className="max-h-[13.125rem] w-full" size="contain" />}
         {isLottie && <Lottie loop play animationData={data} className="max-h-full w-full" />}
       </div>
       <p className="whitespace-pre-line text-center">{description}</p>

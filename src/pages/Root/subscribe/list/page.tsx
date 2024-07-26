@@ -1,4 +1,5 @@
 import testImage from '@Assets/test_fashion_image.jpg';
+import { Image } from '@Components/ui/image';
 import { useHeader } from '@Hooks/useHeader';
 import { cn } from '@Utils/index';
 import { MdChevronLeft } from 'react-icons/md';
@@ -33,7 +34,7 @@ function BackButton() {
 function SubscribeItem() {
   return (
     <div className="fle-row flex items-center gap-3 rounded-lg bg-white p-3">
-      <div style={{ backgroundImage: `url('${testImage}')` }} className="size-10 rounded-lg bg-cover bg-center bg-no-repeat" />
+      <Image src={testImage} className="size-10 rounded-lg" />
       <p className="flex-1">fade1234</p>
       <SubscribeToggleButton />
     </div>

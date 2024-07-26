@@ -1,6 +1,7 @@
 import fapBadgeImage from '@Assets/fap_badge.png';
 import fapBgImage from '@Assets/fap_bg.jpg';
 import testImage from '@Assets/test_fashion_image.jpg';
+import { Image } from '@Components/ui/image';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
 import { forwardRef } from 'react';
@@ -38,17 +39,13 @@ export const LastFAPModal = forwardRef<HTMLDivElement, DefaultModalProps<void, L
 
         <FlexibleLayout.Content className="flex flex-col gap-8 p-5">
           <div className="relative mx-auto aspect-[3/4] h-full w-fit">
-            <div
-              style={{ backgroundImage: `url('${testImage}')` }}
-              className="h-full w-full rounded-lg border-2 border-purple-500 bg-gray-100 bg-contain bg-center bg-no-repeat shadow-xl"
-            />
-
-            <div style={{ backgroundImage: `url('${fapBadgeImage}')` }} className="absolute right-3 top-3 size-10 bg-contain bg-center bg-no-repeat" />
+            <Image src={testImage} className="rounded-lg border-2 border-purple-500 bg-gray-100 shadow-xl" />
+            <Image src={fapBadgeImage} className="absolute right-3 top-3 size-10" />
           </div>
 
           <div className="mx-auto flex flex-row items-center gap-3">
             <div className="relative">
-              <div style={{ backgroundImage: `url('${testImage}')` }} className="size-10 rounded-lg bg-gray-100 bg-cover bg-center bg-no-repeat" />
+              <Image src={testImage} className="size-10 rounded-lg bg-gray-100" />
               <FaCrown className="absolute -left-3 -top-4 size-6 -rotate-[25deg] text-yellow-700" />
             </div>
 

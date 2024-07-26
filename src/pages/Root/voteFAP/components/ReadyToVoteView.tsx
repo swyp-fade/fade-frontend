@@ -1,6 +1,7 @@
 import voteStartImage from '@Assets/vote_starting_image.jpg';
 import { useModalActions } from '@Hooks/modal';
 import { HowToVoteModal } from './HowToVoteModal';
+import { Image } from '@Components/ui/image';
 
 export function ReadyToVoteView({ onStartClick }: { onStartClick: () => void }) {
   return (
@@ -12,16 +13,7 @@ export function ReadyToVoteView({ onStartClick }: { onStartClick: () => void }) 
 }
 
 function ReadyToVoteCover() {
-  return (
-    <div
-      className="flex-1 rounded-lg bg-gray-200 shadow-bento"
-      style={{
-        backgroundImage: `url('${voteStartImage}')`,
-        backgroundSize: 'contain',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-      }}></div>
-  );
+  return <Image src={voteStartImage} className="flex-1 rounded-lg bg-gray-200 shadow-bento" size="contain" />;
 }
 
 function HowToVoteButton() {

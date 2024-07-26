@@ -3,6 +3,7 @@ import { useModalActions } from '@Hooks/modal';
 import { cn } from '@Utils/index';
 import { MdEditNote } from 'react-icons/md';
 import { ProfileIntroEditBottomSheet } from './ProfileIntroEditBottomSheet';
+import { Image } from './ui/image';
 
 export type ProfileViewType = 'owner' | 'user';
 
@@ -14,7 +15,7 @@ export function ProfileDetails({ viewType }: { viewType: ProfileViewType }) {
     <div>
       <div className="space-y-5 p-5">
         <div className="flex flex-row items-center gap-3">
-          <div style={{ backgroundImage: `url('${testImage}')` }} className="size-[4.5rem] rounded-lg bg-cover bg-center bg-no-repeat" />
+          <Image src={testImage} className="size-[4.5rem] overflow-hidden rounded-lg" />
 
           <div className="flex flex-1 flex-col justify-center">
             <span className="font-semibold">fade_1234</span>
@@ -40,10 +41,7 @@ export function ProfileDetails({ viewType }: { viewType: ProfileViewType }) {
           .fill(0)
           .map((_, index) => (
             <div key={`item-${index}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg">
-              <div
-                style={{ backgroundImage: `url('${testImage}')` }}
-                className="h-full w-full bg-cover bg-center bg-no-repeat transition-transform group-hover:scale-105"
-              />
+              <Image src={testImage} className="transition-transform group-hover:scale-105" />
             </div>
           ))}
       </div>
