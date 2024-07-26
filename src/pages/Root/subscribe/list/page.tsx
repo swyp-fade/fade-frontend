@@ -1,35 +1,30 @@
 import testImage from '@Assets/test_fashion_image.jpg';
-import { FlexibleLayout } from '@Layouts/FlexibleLayout';
-import { DefaultModalProps } from '@Stores/modal';
+import { useHeader } from '@Hooks/useHeader';
 import { cn } from '@Utils/index';
 import { MdChevronLeft } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
-export function SubscribeListView({ onClose }: DefaultModalProps) {
+export default function Page() {
+  useHeader({ title: '구독 목록', leftSlot: () => <BackButton /> });
+
   return (
-    <FlexibleLayout.Root>
-      <FlexibleLayout.Header>
-        <header className="relative flex items-center justify-center border-b border-b-gray-200 py-2">
-          <BackButton onClick={onClose} />
-          <span className="mx-auto text-h3 font-semibold">구독 목록</span>
-        </header>
-      </FlexibleLayout.Header>
-
-      <FlexibleLayout.Content className="bg-gray-100 p-5">
-        <ul>
-          <li>
-            <SubscribeItem />
-          </li>
-        </ul>
-      </FlexibleLayout.Content>
-    </FlexibleLayout.Root>
+    <div className="relative flex h-full flex-col">
+      <ul>
+        <li>
+          <SubscribeItem />
+        </li>
+      </ul>
+    </div>
   );
 }
 
-function BackButton({ onClick }: { onClick: () => void }) {
+function BackButton() {
+  const navigate = useNavigate();
+
   return (
     <button
-      className="group absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-      onClick={onClick}>
+      className="group cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
+      onClick={() => navigate('/subscribe', { replace: true })}>
       <MdChevronLeft className="size-6 transition-transform group-active:scale-95" />
     </button>
   );

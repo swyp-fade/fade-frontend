@@ -1,46 +1,12 @@
 import testImage from '@Assets/test_fashion_image.jpg';
-import { FlexibleLayout } from '@Layouts/FlexibleLayout';
-import { DefaultModalProps } from '@Stores/modal';
+import { useModalActions } from '@Hooks/modal';
 import { cn } from '@Utils/index';
-import { MdChevronLeft, MdEditNote } from 'react-icons/md';
+import { MdEditNote } from 'react-icons/md';
+import { ProfileIntroEditBottomSheet } from './ProfileIntroEditBottomSheet';
 
-type ProfileViewType = 'owner' | 'user';
-export type AccountProfileViewProps = { viewType: ProfileViewType };
+export type ProfileViewType = 'owner' | 'user';
 
-export function AccountProfileView({ viewType, onClose }: DefaultModalProps<void, AccountProfileViewProps>) {
-  const isOwnerView = viewType === 'owner';
-  const isUserView = viewType === 'user';
-
-  return (
-    <FlexibleLayout.Root>
-      <FlexibleLayout.Header>
-        <header className="relative flex items-center justify-center py-2">
-          <BackButton onClick={() => onClose()} />
-          <span className="mx-auto text-h3 font-semibold">
-            {isUserView && '계정 상세'}
-            {isOwnerView && '내 피드'}
-          </span>
-        </header>
-      </FlexibleLayout.Header>
-
-      <FlexibleLayout.Content>
-        <ProfileDetails viewType={viewType} />
-      </FlexibleLayout.Content>
-    </FlexibleLayout.Root>
-  );
-}
-
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      className="group absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-      onClick={onClick}>
-      <MdChevronLeft className="size-6 transition-transform group-active:scale-95" />
-    </button>
-  );
-}
-
-function ProfileDetails({ viewType }: { viewType: ProfileViewType }) {
+export function ProfileDetails({ viewType }: { viewType: ProfileViewType }) {
   const isOwnerView = viewType === 'owner';
   const isUserView = viewType === 'user';
 
@@ -65,11 +31,7 @@ function ProfileDetails({ viewType }: { viewType: ProfileViewType }) {
         <div className="flex flex-col">
           <p className="whitespace-pre-line">{`NYC, 28\nobsessed with fashion, photography, and love`}</p>
 
-          {isOwnerView && (
-            <button className="group ml-auto cursor-pointer rounded-lg p-1 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
-              <MdEditNote className="size-6 transition-transform group-active:scale-95" />
-            </button>
-          )}
+          {isOwnerView && <EditProfileIntroButton />}
         </div>
       </div>
 
@@ -99,6 +61,20 @@ function SubscribeToggleButton() {
       })}>
       {isSubscribed && '구독중'}
       {!isSubscribed && '구독'}
+    </button>
+  );
+}
+
+function EditProfileIntroButton() {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    await showModal({ type: 'bottomSheet', Component: ProfileIntroEditBottomSheet, props: { defaultProfileIntro: 'hihi' } });
+  };
+
+  return (
+    <button className="group ml-auto cursor-pointer rounded-lg p-1 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100" onClick={handleClick}>
+      <MdEditNote className="size-6 transition-transform group-active:scale-95" />
     </button>
   );
 }

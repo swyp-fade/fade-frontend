@@ -9,9 +9,8 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 import { MdBookmark, MdChevronRight, MdReport } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 import { ReportBottomSheet, ReportResult } from '../voteFAP/components/ReportBottomSheet';
-import { SubscribeListView } from './components/SubscribeListView';
-import { AccountProfileView, AccountProfileViewProps } from '@Components/AccountProfileView';
 
 type SubscribeBadgeType = {
   userId: number;
@@ -51,7 +50,7 @@ export default function Page() {
   useHeader({ title: '구독', rightSlot: () => <ShowNotificationButton /> });
 
   return (
-    <div id="subscribe-page" className="relative flex h-full flex-col">
+    <div className="relative flex h-full flex-col">
       <div className="relative h-fit w-full px-5 py-4">
         <div className="overflow-y-scroll">
           <ul className="flex flex-row gap-3">
@@ -174,33 +173,20 @@ function FeedCard() {
 }
 
 function ShowSubscribeListViewButton() {
-  const { showModal } = useModalActions();
-
-  const handleClick = async () => {
-    showModal({ type: 'fullScreenDialog', animateType: 'slideInFromRight', Component: SubscribeListView });
-  };
+  const navigate = useNavigate();
 
   return (
-    <button className="absolute right-5 top-1/2 -translate-y-1/2 bg-fade-gradient px-2 py-4" onClick={handleClick}>
+    <button className="absolute right-5 top-1/2 -translate-y-1/2 bg-fade-gradient px-2 py-4" onClick={() => navigate('/subscribe/list')}>
       <MdChevronRight className="size-6" />
     </button>
   );
 }
 
 function AccountIdButton() {
-  const { showModal } = useModalActions();
-
-  const handleClick = async () => {
-    await showModal({
-      type: 'fullScreenDialog',
-      animateType: 'slideInFromRight',
-      Component: AccountProfileView,
-      props: { viewType: 'user' } as AccountProfileViewProps,
-    });
-  };
+  const navigate = useNavigate();
 
   return (
-    <button className="flex-1 text-left" onClick={handleClick}>
+    <button className="flex-1 text-left" onClick={() => navigate('/user', { state: { userId: 0 } })}>
       katie63
     </button>
   );
