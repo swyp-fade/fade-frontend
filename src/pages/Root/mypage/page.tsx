@@ -69,7 +69,7 @@ export default function Page() {
 
   const handleMenuClick = ({ path, type }: MyPageMenu) => {
     if (type === 'subpage') {
-      return navigate(path, { replace: true });
+      return navigate(path);
     }
 
     if (type === 'dialog') {
