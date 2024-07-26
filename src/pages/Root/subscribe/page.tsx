@@ -10,6 +10,7 @@ import { ko } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 import { MdBookmark, MdChevronRight, MdReport } from 'react-icons/md';
 import { ReportBottomSheet, ReportResult } from '../voteFAP/components/ReportBottomSheet';
+import { SubscribeListView } from './components/SubscribeListView';
 
 type SubscribeBadgeType = {
   userId: number;
@@ -49,7 +50,7 @@ export default function Page() {
   useHeader({ title: '구독', rightSlot: () => <ShowNotificationButton /> });
 
   return (
-    <div className="flex h-full flex-col">
+    <div id="subscribe-page" className="relative flex h-full flex-col">
       <div className="relative h-fit w-full px-5 py-4">
         <div className="overflow-y-scroll">
           <ul className="flex flex-row gap-3">
@@ -66,9 +67,7 @@ export default function Page() {
           </ul>
         </div>
 
-        <button className="absolute right-5 top-1/2 -translate-y-1/2 bg-fade-gradient px-2 py-4">
-          <MdChevronRight className="size-6" />
-        </button>
+        <ShowSubscribeListViewButton />
       </div>
 
       {/* croll-snap-type: y mandatory; */}
@@ -170,5 +169,19 @@ function FeedCard() {
         </button>
       </section>
     </div>
+  );
+}
+
+function ShowSubscribeListViewButton() {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    showModal({ type: 'fullScreenDialog', animateType: 'slideInFromRight', Component: SubscribeListView });
+  };
+
+  return (
+    <button className="absolute right-5 top-1/2 -translate-y-1/2 bg-fade-gradient px-2 py-4" onClick={handleClick}>
+      <MdChevronRight className="size-6" />
+    </button>
   );
 }
