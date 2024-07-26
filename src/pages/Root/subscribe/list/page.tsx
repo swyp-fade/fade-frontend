@@ -5,7 +5,7 @@ import { MdChevronLeft } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
 export default function Page() {
-  useHeader({ title: '구독 목록', rightSlot: () => <BackButton /> });
+  useHeader({ title: '구독 목록', leftSlot: () => <BackButton /> });
 
   return (
     <div className="relative flex h-full flex-col">
@@ -23,7 +23,7 @@ function BackButton() {
 
   return (
     <button
-      className="group absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
+      className="group cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
       onClick={() => navigate('/subscribe', { replace: true })}>
       <MdChevronLeft className="size-6 transition-transform group-active:scale-95" />
     </button>
