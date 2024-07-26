@@ -5,7 +5,7 @@ import { useHeader } from '@Hooks/useHeader';
 import { IconType } from 'react-icons/lib';
 import { MdBook, MdBookmark, MdHowToVote, MdPerson } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
-import AccountSetting from './components/AccountSetting';
+import AccountSetting from './_components/AccountSetting';
 
 type MenuType = 'subpage' | 'dialog';
 
