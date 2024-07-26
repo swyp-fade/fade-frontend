@@ -19,7 +19,7 @@ export function Image({ children, src, className, alt, size = 'cover' }: PropsWi
     prefetchImages([src])
       .then(() => setImageURL(src))
       .catch(() => setIsError(true));
-  }, []);
+  }, [src]);
 
   return (
     <div
