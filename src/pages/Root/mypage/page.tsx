@@ -5,7 +5,8 @@ import { useHeader } from '@Hooks/useHeader';
 import { IconType } from 'react-icons/lib';
 import { MdBook, MdBookmark, MdHowToVote, MdPerson } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
-import AccountSetting from './components/AccountSetting';
+import { AccountSetting } from './_components/AccountSetting';
+import { ServicePolicyDialog } from './_components/ServicePolicyDialog';
 
 type MenuType = 'subpage' | 'dialog';
 
@@ -61,11 +62,19 @@ const mypageMenus: MyPageMenu[] = [
 ];
 
 export default function Page() {
+  const { showModal } = useModalActions();
   const navigate = useNavigate();
+
   useHeader({ title: '마이페이지', rightSlot: () => <ShowNotificationButton /> });
 
   const handleMenuClick = ({ path, type }: MyPageMenu) => {
-    type === 'subpage' && navigate(path, { replace: true });
+    if (type === 'subpage') {
+      return navigate(path, { replace: true });
+    }
+
+    if (type === 'dialog') {
+      showModal({ type: 'fullScreenDialog', animateType: 'slideInFromRight', Component: ServicePolicyDialog });
+    }
   };
 
   return (

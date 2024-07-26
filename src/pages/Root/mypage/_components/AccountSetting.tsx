@@ -13,7 +13,7 @@ import { MdCameraAlt, MdChevronLeft } from 'react-icons/md';
 import { z } from 'zod';
 import ResignServiceView from './ResignServiceView';
 
-export default function AccountSetting({ onClose }: DefaultModalProps) {
+export function AccountSetting({ onClose }: DefaultModalProps) {
   return (
     <FlexibleLayout.Root>
       <FlexibleLayout.Header>
