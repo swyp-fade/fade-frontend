@@ -1,6 +1,8 @@
 import testImage from '@Assets/test_fashion_image.jpg';
+import { useModalActions } from '@Hooks/modal';
 import { cn } from '@Utils/index';
 import { MdEditNote } from 'react-icons/md';
+import { ProfileIntroEditBottomSheet } from './ProfileIntroEditBottomSheet';
 
 export type ProfileViewType = 'owner' | 'user';
 
@@ -29,11 +31,7 @@ export function ProfileDetails({ viewType }: { viewType: ProfileViewType }) {
         <div className="flex flex-col">
           <p className="whitespace-pre-line">{`NYC, 28\nobsessed with fashion, photography, and love`}</p>
 
-          {isOwnerView && (
-            <button className="group ml-auto cursor-pointer rounded-lg p-1 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
-              <MdEditNote className="size-6 transition-transform group-active:scale-95" />
-            </button>
-          )}
+          {isOwnerView && <EditProfileIntroButton />}
         </div>
       </div>
 
@@ -63,6 +61,20 @@ function SubscribeToggleButton() {
       })}>
       {isSubscribed && '구독중'}
       {!isSubscribed && '구독'}
+    </button>
+  );
+}
+
+function EditProfileIntroButton() {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    await showModal({ type: 'bottomSheet', Component: ProfileIntroEditBottomSheet, props: { defaultProfileIntro: 'hihi' } });
+  };
+
+  return (
+    <button className="group ml-auto cursor-pointer rounded-lg p-1 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100" onClick={handleClick}>
+      <MdEditNote className="size-6 transition-transform group-active:scale-95" />
     </button>
   );
 }
