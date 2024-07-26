@@ -5,11 +5,12 @@ import { useHeader } from '@Hooks/useHeader';
 import { cn, isBetweenDate } from '@Utils/index';
 import { addMonths, format, getDaysInMonth, getWeeksInMonth, isSameMonth, isSameYear, startOfDay, subMonths } from 'date-fns';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
-import { useRef, useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { MdChevronLeft, MdChevronRight, MdSearch } from 'react-icons/md';
 import { FilterType, SelectFilterDialog, SelectFilterDialogProps } from './components/SelectFilterDialog';
 import './dateStyle.css';
 import { SearchAccountView } from './components/SearchAccountView';
+import { LastFAPModal, LastFAPModalProps } from './components/LastFAPModal';
 
 const MIN_DATE = new Date('2024-01-01');
 const MAX_DATE = new Date();
@@ -31,6 +32,8 @@ export default function Page() {
     rightSlot: () => <ShowNotificationButton />,
   });
 
+  const { showModal } = useModalActions();
+
   const startTransition = useTransition()[1];
 
   const [isTransitionInProgress, setIsTransitionInProgress] = useState(false);
@@ -39,6 +42,14 @@ export default function Page() {
 
   const isFAPTab = currentTabId === 0;
   const isAllTab = currentTabId === 1;
+
+  useEffect(() => {
+    showModal({
+      type: 'component',
+      Component: LastFAPModal,
+      props: { feed: { id: 0, imageURL: testImage }, user: { id: 0, accountId: 'fade_test', profileURL: testImage } } as LastFAPModalProps,
+    });
+  }, []);
 
   const switchToTab = (newTabId: number) => {
     const isSwitchToFAP = currentTabId - newTabId > 0;
