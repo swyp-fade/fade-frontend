@@ -9,6 +9,7 @@ import { useRef, useState, useTransition } from 'react';
 import { MdChevronLeft, MdChevronRight, MdSearch } from 'react-icons/md';
 import { FilterType, SelectFilterDialog, SelectFilterDialogProps } from './components/SelectFilterDialog';
 import './dateStyle.css';
+import { SearchAccountView } from './components/SearchAccountView';
 
 const MIN_DATE = new Date('2024-01-01');
 const MAX_DATE = new Date();
@@ -87,8 +88,14 @@ export default function Page() {
 }
 
 function SearchButton() {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    await showModal({ type: 'fullScreenDialog', animateType: 'slideInFromRight', Component: SearchAccountView });
+  };
+
   return (
-    <button className="group cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
+    <button className="group cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100" onClick={handleClick}>
       <MdSearch className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
     </button>
   );
