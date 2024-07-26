@@ -7,6 +7,7 @@ import { PropsWithChildren, useState } from 'react';
 import { MdChevronRight } from 'react-icons/md';
 import { TermOfPIPA } from './TermOfPIPA';
 import { TermOfService } from './TermOfService';
+import { Button } from '@Components/ui/button';
 
 type AgreementList = {
   tos: boolean /** 이용약관 */;
@@ -89,14 +90,9 @@ export default function AgreementsView({ onAgree }: { onAgree: () => void }) {
             </ToggleTosButton>
           </div>
 
-          <button
-            className="group w-full rounded-lg bg-purple-500 py-3 text-xl font-semibold text-white transition-colors disabled:bg-gray-300 disabled:text-gray-500"
-            disabled={!hasAllAgreement}
-            onClick={() => onAgree()}>
-            <span className="inline-block transition-transform touchdevice:group-active:scale-95 pointerdevice:group-hover:scale-105 pointerdevice:group-active:scale-95">
-              다음
-            </span>
-          </button>
+          <Button className="w-full text-xl" disabled={!hasAllAgreement} onClick={() => onAgree()}>
+            다음
+          </Button>
         </section>
       </FlexibleLayout.Footer>
     </FlexibleLayout.Root>

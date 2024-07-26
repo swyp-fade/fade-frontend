@@ -12,6 +12,7 @@ import { LastFAPModal, LastFAPModalProps } from './components/LastFAPModal';
 import { SearchAccountView } from './components/SearchAccountView';
 import { FilterType, SelectFilterDialog, SelectFilterDialogProps } from './components/SelectFilterDialog';
 import './dateStyle.css';
+import { Button } from '@Components/ui/button';
 
 const MIN_DATE = new Date('2024-01-01');
 const MAX_DATE = new Date();
@@ -107,9 +108,9 @@ function SearchButton() {
   };
 
   return (
-    <button className="group cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100" onClick={handleClick}>
-      <MdSearch className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
-    </button>
+    <Button variants="ghost" onClick={handleClick}>
+      <MdSearch className="size-6" />
+    </Button>
   );
 }
 
@@ -145,13 +146,14 @@ function FAPArchivingView() {
   return (
     <div className="flex flex-1 flex-col p-5">
       <div className="relative flex justify-center rounded-lg border border-gray-200 py-2">
-        {/* TODO: disabled css 처리 */}
-        <button
-          className="group absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-          onClick={() => updateDate(subMonths(calenderDate, 1))}
-          disabled={isMinDate}>
-          <MdChevronLeft className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
-        </button>
+        <Button
+          variants="ghost"
+          size="icon"
+          className="absolute left-1 top-1/2 -translate-y-1/2"
+          disabled={isMinDate}
+          onClick={() => updateDate(subMonths(calenderDate, 1))}>
+          <MdChevronLeft className="size-6" />
+        </Button>
 
         {/* 나중에 Date Picker 진짜 바꿔야겠다 ... 개열받네 */}
         <div id="date_picker">
@@ -166,12 +168,14 @@ function FAPArchivingView() {
           />
         </div>
 
-        <button
-          className="group absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-          onClick={() => updateDate(addMonths(calenderDate, 1))}
-          disabled={isMaxDate}>
-          <MdChevronRight className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
-        </button>
+        <Button
+          variants="ghost"
+          size="icon"
+          className="absolute right-1 top-1/2 -translate-y-1/2"
+          disabled={isMaxDate}
+          onClick={() => updateDate(addMonths(calenderDate, 1))}>
+          <MdChevronRight className="size-6" />
+        </Button>
       </div>
 
       <div>
@@ -255,8 +259,8 @@ function SelectFilterButton() {
   };
 
   return (
-    <button className="w-full rounded-lg bg-gray-100 py-2" onClick={handleClick}>
+    <Button variants="secondary" className="w-full bg-gray-100 text-gray-900" onClick={handleClick}>
       필터
-    </button>
+    </Button>
   );
 }

@@ -17,6 +17,7 @@ import swipeFadeOutImage from '@Assets/swipe_fade_out.png';
 import voteFadeInImage from '@Assets/vote_fade_in.png';
 import voteFadeOutImage from '@Assets/vote_fade_out.png';
 import { Image } from '@Components/ui/image';
+import { Button } from '@Components/ui/button';
 
 const viewVariants: Variants = {
   initial: { opacity: 0 },
@@ -294,6 +295,7 @@ function VoteCandidateCard({ feedId, imageURL, isCurrentCard }: VoteCandidateCar
 
   const handleReportEnd = (reportResult?: ReportResult) => {
     setIsReporting(false);
+    setIsDragging(false);
 
     if (reportResult === undefined) {
       return;
@@ -350,18 +352,19 @@ function ReportButton({ shouldBelowZIndex, onReportStart, onReportEnd }: ReportB
   };
 
   return (
-    <motion.button
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className={cn('group absolute right-4 top-4 z-[2] cursor-pointer rounded-lg bg-white px-2 py-1', {
+      className={cn('absolute right-4 top-4 z-[2]', {
         ['z-1']: shouldBelowZIndex,
-      })}
-      onClick={() => handleReportClick()}>
-      <div className="flex flex-row items-center gap-1 transition-transform group-active:scale-95">
-        <MdReport className="size-[1.125rem]" />
-        <span>신고하기</span>
-      </div>
-    </motion.button>
+      })}>
+      <Button variants="white" className="px-2 py-1 font-normal" onClick={() => handleReportClick()}>
+        <div className="flex flex-row items-center justify-center gap-1">
+          <MdReport className="inline-block size-[1.125rem]" />
+          <span>신고하기</span>
+        </div>
+      </Button>
+    </motion.div>
   );
 }
 

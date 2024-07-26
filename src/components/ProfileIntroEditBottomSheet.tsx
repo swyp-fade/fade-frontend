@@ -2,6 +2,7 @@ import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
 import { forwardRef, useState } from 'react';
 import { MdClose } from 'react-icons/md';
+import { Button } from './ui/button';
 
 type ProfileIntroEditBottomSheetProps = { defaultProfileIntro: string };
 
@@ -15,9 +16,9 @@ export const ProfileIntroEditBottomSheet = forwardRef<HTMLDivElement, DefaultMod
         <FlexibleLayout.Header>
           <header className="relative flex flex-row items-center justify-between px-5 pt-4">
             <p className="text-xl font-semibold">프로필 소개 편집</p>
-            <button type="button" onClick={() => onClose()} className="group rounded-lg p-1 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
-              <MdClose className="size-6 text-gray-600 transition-transform group-active:scale-95" />
-            </button>
+            <Button variants="ghost" size="icon" onClick={() => onClose()}>
+              <MdClose className="size-6 text-gray-600" />
+            </Button>
           </header>
         </FlexibleLayout.Header>
 
@@ -36,9 +37,9 @@ export const ProfileIntroEditBottomSheet = forwardRef<HTMLDivElement, DefaultMod
 
         <FlexibleLayout.Footer>
           <div className="flex p-4">
-            <button type="button" className="group flex-1 rounded-lg bg-purple-500 py-2 text-xl text-white transition-colors" onClick={() => onClose()}>
-              <span className="inline-block transition-transform group-active:scale-95">완료</span>
-            </button>
+            <Button className="w-full text-xl" onClick={() => onClose()}>
+              완료
+            </Button>
           </div>
         </FlexibleLayout.Footer>
       </FlexibleLayout.Root>

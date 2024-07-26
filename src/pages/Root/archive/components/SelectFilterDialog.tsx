@@ -1,10 +1,11 @@
 import { OUTFIT_STYLE_LIST } from '@/constants';
+import { BackButton } from '@Components/ui/button';
+import { Button } from '@Components/ui/button';
 import { ToggleButton } from '@Components/ui/toogleButton';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
 import { OutfitStyle } from '@Types/outfitStyle';
 import { useState } from 'react';
-import { MdChevronLeft } from 'react-icons/md';
 
 export type GenderType = 'men' | 'women';
 export type FilterType = { gender: GenderType | null; selectedStyles: OutfitStyle[] };
@@ -74,31 +75,19 @@ export function SelectFilterDialog({ defaultFilter, onClose }: DefaultModalProps
 
       <FlexibleLayout.Footer>
         <div className="p-5">
-          <button className="w-full rounded-lg bg-black py-2 text-h4 text-white" onClick={handleCTAClick}>
+          <Button variants="secondary" className="w-full text-xl" onClick={handleCTAClick}>
             적용
-          </button>
+          </Button>
         </div>
       </FlexibleLayout.Footer>
     </FlexibleLayout.Root>
   );
 }
 
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      className="group absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-      onClick={onClick}>
-      <MdChevronLeft className="size-6 transition-transform group-active:scale-95" />
-    </button>
-  );
-}
-
 function ResetButton({ onClick }: { onClick: () => void }) {
   return (
-    <button
-      className="group absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-      onClick={onClick}>
+    <Button variants="ghost" size="icon" className="absolute right-3 top-1/2 -translate-y-1/2 font-normal" onClick={onClick}>
       <span className="text-gray-600">초기화</span>
-    </button>
+    </Button>
   );
 }

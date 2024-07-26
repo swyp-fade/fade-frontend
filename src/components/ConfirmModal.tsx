@@ -1,6 +1,7 @@
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
 import { MdWarning } from 'react-icons/md';
+import { Button } from './ui/button';
 
 type ConfirmProps = {
   title: string;
@@ -23,13 +24,13 @@ export function ConfirmModal({ title, description, onClose }: DefaultModalProps<
 
       <FlexibleLayout.Footer>
         <div className="flex gap-3 p-4">
-          <button type="button" className="group flex-1 rounded-lg bg-gray-200 py-2 text-xl font-semibold text-black transition-colors" onClick={() => onClose(false)}>
-            <span className="inline-block transition-transform group-active:scale-95">취소</span>
-          </button>
+          <Button type="button" variants="ghost" className="flex-1 text-lg" onClick={() => onClose(false)}>
+            취소
+          </Button>
 
-          <button type="button" className="group flex-1 rounded-lg bg-pink-400 py-2 text-xl font-semibold text-white transition-colors" onClick={() => onClose(true)}>
-            <span className="inline-block transition-transform group-active:scale-95">확인</span>
-          </button>
+          <Button type="button" variants="destructive" className="flex-1 text-lg" onClick={() => onClose(true)}>
+            확인
+          </Button>
         </div>
       </FlexibleLayout.Footer>
     </FlexibleLayout.Root>

@@ -1,5 +1,6 @@
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { FadeLogo } from '@Components/FadeLogo';
+import { Button } from '@Components/ui/button';
 import { Input } from '@Components/ui/Input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthActions } from '@Hooks/auth';
@@ -98,14 +99,9 @@ function InitializeAccountForm({ onSubmit }: { onSubmit: (values: InitializeAcco
             <SexField control={form.control} />
           </div>
 
-          <button
-            className="group w-full self-end rounded-lg bg-purple-500 py-3 text-xl font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
-            disabled={!couldSubmit}
-            aria-disabled={!couldSubmit}>
-            <span className="inline-block transition-transform group-aria-[disabled=false]:touchdevice:group-active:scale-95 group-aria-[disabled=false]:pointerdevice:group-hover:scale-105 group-aria-[disabled=false]:pointerdevice:group-active:scale-95">
-              FADE 시작하기
-            </span>
-          </button>
+          <Button type="submit" className="text-xl" disabled={!couldSubmit}>
+            FADE 시작하기
+          </Button>
         </fieldset>
       </form>
     </Form>

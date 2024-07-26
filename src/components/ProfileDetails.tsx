@@ -6,6 +6,7 @@ import { ProfileIntroEditBottomSheet } from './ProfileIntroEditBottomSheet';
 import { Image } from './ui/image';
 import { Avatar } from './ui/avatar';
 import { Grid } from './ui/grid';
+import { Button } from './ui/button';
 
 export type ProfileViewType = 'owner' | 'user';
 
@@ -75,8 +76,8 @@ function EditProfileIntroButton() {
   };
 
   return (
-    <button className="group ml-auto cursor-pointer rounded-lg p-1 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100" onClick={handleClick}>
-      <MdEditNote className="size-6 transition-transform group-active:scale-95" />
-    </button>
+    <Button variants="ghost" size="icon" className="ml-auto w-fit" onClick={handleClick}>
+      <MdEditNote className="size-6" />
+    </Button>
   );
 }

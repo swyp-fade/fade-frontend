@@ -1,11 +1,13 @@
+import { BackButton } from '@Components/ui/button';
+import { Button } from '@Components/ui/button';
+import { useConfirm } from '@Hooks/modal';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
-import * as RadioGroup from '@radix-ui/react-radio-group';
-import { PropsWithChildren, useState } from 'react';
-import { motion } from 'framer-motion';
-import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 import { cn } from '@Utils/index';
-import { useConfirm } from '@Hooks/modal';
+import * as RadioGroup from '@radix-ui/react-radio-group';
+import { motion } from 'framer-motion';
+import { PropsWithChildren, useState } from 'react';
+import { MdChevronRight } from 'react-icons/md';
 
 const resignReasonTexts = [
   '서비스를 더 이상 이용하지 않아요.',
@@ -49,7 +51,7 @@ export default function ResignServiceView({ onClose }: DefaultModalProps) {
   return (
     <FlexibleLayout.Root>
       <FlexibleLayout.Header>
-        <header className="relative px-5 py-4">
+        <header className="relative py-2">
           <BackButton onClick={onClose} />
           <p className="text-center text-2xl font-semibold">계정 관리</p>
         </header>
@@ -68,28 +70,13 @@ export default function ResignServiceView({ onClose }: DefaultModalProps) {
 
       <FlexibleLayout.Footer>
         <div className="p-5">
-          <button
-            onClick={handleCTAClick}
-            disabled={wouldCTADisabled}
-            className={cn('w-full rounded-lg bg-black py-2 text-h5 text-white transition-colors disabled:bg-gray-200 disabled:text-gray-400', {
-              ['bg-pink-600']: isConfirmView,
-            })}>
+          <Button variants={isConfirm ? 'destructive' : 'secondary'} onClick={handleCTAClick} disabled={wouldCTADisabled} className={cn('w-full text-lg')}>
             {isSelectView && '다음'}
             {isConfirmView && 'FADE에서 탈퇴하기'}
-          </button>
+          </Button>
         </div>
       </FlexibleLayout.Footer>
     </FlexibleLayout.Root>
-  );
-}
-
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      className="group absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-      onClick={onClick}>
-      <MdChevronLeft className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
-    </button>
   );
 }
 

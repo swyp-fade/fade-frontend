@@ -1,5 +1,6 @@
 import testImage from '@Assets/test_fashion_image.jpg';
 import { ShowNotificationButton } from '@Components/ShowNotificationButton';
+import { Avatar } from '@Components/ui/avatar';
 import { useConfirm, useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { IconType } from 'react-icons/lib';
@@ -7,8 +8,6 @@ import { MdBook, MdBookmark, MdHowToVote, MdPerson } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { AccountSetting } from './_components/AccountSetting';
 import { ServicePolicyDialog } from './_components/ServicePolicyDialog';
-import { Image } from '@Components/ui/image';
-import { Avatar } from '@Components/ui/avatar';
 
 type MenuType = 'subpage' | 'dialog';
 

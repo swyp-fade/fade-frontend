@@ -1,12 +1,13 @@
 import testImage from '@Assets/test_fashion_image.jpg';
+import { BackButton } from '@Components/ui/button';
 import { Avatar } from '@Components/ui/avatar';
 import { useHeader } from '@Hooks/useHeader';
 import { cn } from '@Utils/index';
-import { MdChevronLeft } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
 export default function Page() {
-  useHeader({ title: '구독 목록', leftSlot: () => <BackButton /> });
+  const navigate = useNavigate();
+  useHeader({ title: '구독 목록', leftSlot: () => <BackButton className="left-0" onClick={() => navigate('/subscribe', { replace: true })} /> });
 
   return (
     <div className="relative flex h-full flex-col">
@@ -16,18 +17,6 @@ export default function Page() {
         </li>
       </ul>
     </div>
-  );
-}
-
-function BackButton() {
-  const navigate = useNavigate();
-
-  return (
-    <button
-      className="group cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-      onClick={() => navigate('/subscribe', { replace: true })}>
-      <MdChevronLeft className="size-6 transition-transform group-active:scale-95" />
-    </button>
   );
 }
 

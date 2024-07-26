@@ -1,4 +1,5 @@
 import testImage from '@Assets/test_fashion_image.jpg';
+import { Grid } from '@Components/ui/grid';
 import { Image } from '@Components/ui/image';
 import { useHeader } from '@Hooks/useHeader';
 import { MdChevronLeft } from 'react-icons/md';
@@ -12,7 +13,7 @@ export default function Page() {
 
   return (
     <div>
-      <Grid />
+      <Grid cols={3}>
         {Array.from({ length: 13 })
           .fill(0)
           .map((_, index) => (
@@ -20,7 +21,7 @@ export default function Page() {
               <Image src={testImage} className="h-full w-full transition-transform group-hover:scale-105" />
             </div>
           ))}
-      </div>
+      </Grid>
     </div>
   );
 }

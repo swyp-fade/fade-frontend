@@ -1,5 +1,8 @@
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import testImage from '@Assets/test_fashion_image.jpg';
+import { BackButton } from '@Components/ui/button';
+import { Button } from '@Components/ui/button';
+import { Image } from '@Components/ui/image';
 import { Input } from '@Components/ui/Input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useModalActions } from '@Hooks/modal';
@@ -9,16 +12,15 @@ import { DefaultModalProps } from '@Stores/modal';
 import { cn } from '@Utils/index';
 import { useTransition } from 'react';
 import { Control, useForm } from 'react-hook-form';
-import { MdCameraAlt, MdChevronLeft } from 'react-icons/md';
+import { MdCameraAlt } from 'react-icons/md';
 import { z } from 'zod';
 import ResignServiceView from './ResignServiceView';
-import { Image } from '@Components/ui/image';
 
 export function AccountSetting({ onClose }: DefaultModalProps) {
   return (
     <FlexibleLayout.Root>
       <FlexibleLayout.Header>
-        <header className="relative px-5 py-4">
+        <header className="relative py-2">
           <BackButton onClick={onClose} />
           <p className="text-center text-2xl font-semibold">계정 관리</p>
         </header>
@@ -79,27 +81,12 @@ function InitializeAccountForm({ onSubmit }: { onSubmit: (values: InitializeAcco
             <ResignButton />
           </div>
 
-          <button
-            className="group w-full self-end rounded-lg bg-purple-500 py-3 text-xl font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
-            disabled={!couldSubmit}
-            aria-disabled={!couldSubmit}>
-            <span className="inline-block transition-transform group-aria-[disabled=false]:touchdevice:group-active:scale-95 group-aria-[disabled=false]:pointerdevice:group-hover:scale-105 group-aria-[disabled=false]:pointerdevice:group-active:scale-95">
-              FADE 시작하기
-            </span>
-          </button>
+          <Button className="text-xl" disabled={!couldSubmit}>
+            완료
+          </Button>
         </fieldset>
       </form>
     </Form>
-  );
-}
-
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      className="group absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-      onClick={onClick}>
-      <MdChevronLeft className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
-    </button>
   );
 }
 

@@ -2,6 +2,7 @@ import fapBadgeImage from '@Assets/fap_badge.png';
 import fapBgImage from '@Assets/fap_bg.jpg';
 import testImage from '@Assets/test_fashion_image.jpg';
 import { Avatar } from '@Components/ui/avatar';
+import { Button } from '@Components/ui/button';
 import { Image } from '@Components/ui/image';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
@@ -53,9 +54,9 @@ export const LastFAPModal = forwardRef<HTMLDivElement, DefaultModalProps<void, L
             <span className="text-h6 font-semibold">{user.accountId}</span>
           </div>
 
-          <button className="rounded-lg bg-black py-2 text-h5 font-semibold text-white" onClick={handleClick}>
+          <Button variants="secondary" className="text-xl" onClick={handleClick}>
             보러가기
-          </button>
+          </Button>
         </FlexibleLayout.Content>
       </FlexibleLayout.Root>
     );
@@ -64,10 +65,10 @@ export const LastFAPModal = forwardRef<HTMLDivElement, DefaultModalProps<void, L
 
 function CloseButton({ onClick }: { onClick: () => void }) {
   return (
-    <button
-      className="group absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 transition-colors touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-200"
-      onClick={onClick}>
-      <MdClose className="size-6 text-gray-500 transition-transform group-active:scale-95" />
-    </button>
+    <div className="group absolute right-3 top-1/2 -translate-y-1/2" onClick={onClick}>
+      <Button variants="ghost" className="icon">
+        <MdClose className="size-6 text-gray-500" />
+      </Button>
+    </div>
   );
 }

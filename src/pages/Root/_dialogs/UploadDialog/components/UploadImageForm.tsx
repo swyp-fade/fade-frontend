@@ -1,5 +1,6 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { OUTFIT_CATEGORY_LIST, OUTFIT_STYLE_MAP } from '@/constants';
+import { Button } from '@Components/ui/button';
 import { ToggleButton } from '@Components/ui/toogleButton';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useModalActions } from '@Hooks/modal';
@@ -146,22 +147,16 @@ function Header({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <header className="relative px-5 py-4">
-      <button
-        type="button"
-        className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-        onClick={onClose}>
-        <MdClose className="size-6 transition-transform group-active:scale-95" />
-      </button>
+    <header className="relative py-2">
+      <Button variants="ghost" size="icon" className="absolute left-2 top-1/2 -translate-y-1/2" onClick={onClose}>
+        <MdClose className="size-6" />
+      </Button>
 
       <p className="text-center text-2xl font-semibold">사진 업로드</p>
 
-      <button
-        type="button"
-        className="group absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 transition-transform touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-        onClick={handleInfoClick}>
-        <MdInfoOutline className="size-6 transition-transform group-active:scale-95" />
-      </button>
+      <Button variants="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2" onClick={handleInfoClick}>
+        <MdInfoOutline className="size-6" />
+      </Button>
     </header>
   );
 }
@@ -169,11 +164,9 @@ function Header({ onClose }: { onClose: () => void }) {
 function UploadButton({ disabled }: { disabled: boolean }) {
   return (
     <div className="flex p-4">
-      <button
-        className="group flex-1 rounded-lg bg-black py-2 text-xl text-white transition-colors disabled:bg-gray-200 disabled:text-gray-400 disabled:pointerdevice:cursor-not-allowed"
-        disabled={disabled}>
-        <span className="inline-block transition-transform group-active:scale-95">업로드</span>
-      </button>
+      <Button type="submit" variants="secondary" className="w-full text-lg" disabled={disabled}>
+        업로드
+      </Button>
     </div>
   );
 }
