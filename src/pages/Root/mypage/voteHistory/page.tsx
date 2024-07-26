@@ -1,10 +1,12 @@
+import fadeInImage from '@Assets/vote_fade_in.png';
 import { useHeader } from '@Hooks/useHeader';
+import { cn } from '@Utils/index';
+import { format } from 'date-fns';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { MdChevronLeft } from 'react-icons/md';
-import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import fadeInImage from '@Assets/vote_fade_in.png';
-import { cn } from '@Utils/index';
+import './dateStyle.css';
 
 import testFashionImage1 from '@Assets/test_fashion_image.jpg';
 import testFashionImage10 from '@Assets/test_fashion_image_10.jpg';
@@ -38,7 +40,12 @@ export default function Page() {
   return (
     <div className="flex h-full flex-col">
       <div className="flex flex-row items-center gap-3 border border-red-500 bg-white px-5 py-3">
-        <input type="date" className="flex-1" />
+        <input
+          id="datePicker"
+          type="date"
+          className="relative flex-1 appearance-none rounded-lg border-none bg-gray-100 bg-none px-3 py-1 outline-none"
+          defaultValue={format(new Date(), 'yyyy-MM-dd')}
+        />
         <FadeInModeToggleButton isFadeInMode={isFadeInMode} onToggle={() => setIsFadeInMode((prev) => !prev)} />
       </div>
 
