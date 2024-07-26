@@ -12,6 +12,7 @@ import { motion } from 'framer-motion';
 import { MdBookmark, MdChevronRight, MdReport } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { ReportBottomSheet, ReportResult } from '../voteFAP/components/ReportBottomSheet';
+import { Avatar } from '@Components/ui/avatar';
 
 type SubscribeBadgeType = {
   userId: number;
@@ -61,7 +62,7 @@ export default function Page() {
                 className={cn('boder-gray-200 flex h-full flex-row items-center gap-2 rounded-lg border p-2', {
                   ['border-purple-100 bg-purple-50']: subscribe.userId === 0,
                 })}>
-                <Image src={subscribe.profileURL} className="size-8 overflow-hidden rounded-lg" />
+                <Avatar src={subscribe.profileURL} size="32" />
                 <span>{subscribe.accountId}</span>
               </li>
             ))}
@@ -150,7 +151,7 @@ function FeedCard() {
         </Image>
 
         <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white">
-          <Image src={testImage} className="size-8 rounded-lg" />
+          <Avatar src={testImage} size="32" />
           <AccountIdButton />
           <button className="rounded-lg border border-purple-50 bg-purple-50 px-3 py-2">구독중</button>
           <BookmarkButton />

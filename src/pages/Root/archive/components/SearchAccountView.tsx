@@ -1,5 +1,5 @@
 import testImage from '@Assets/test_fashion_image.jpg';
-import { Image } from '@Components/ui/image';
+import { Avatar } from '@Components/ui/avatar';
 import { useDebounce } from '@Hooks/useDebounce';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
@@ -151,7 +151,7 @@ function AccountItem({ userId, profileURL, accountId, onClick }: { userId: numbe
     <button
       className="group flex flex-1 flex-row items-center gap-3 rounded-lg p-2 touchdevice:active:bg-gray-200 pointerdevice:hover:bg-gray-100 pointerdevice:active:bg-gray-200"
       onClick={() => onClick(userId)}>
-      <Image src={profileURL} className="size-10 rounded-lg" />
+      <Avatar src={profileURL} size="40" />
       <p>{accountId}</p>
     </button>
   );

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { AccountSetting } from './_components/AccountSetting';
 import { ServicePolicyDialog } from './_components/ServicePolicyDialog';
 import { Image } from '@Components/ui/image';
+import { Avatar } from '@Components/ui/avatar';
 
 type MenuType = 'subpage' | 'dialog';
 
@@ -81,7 +82,7 @@ export default function Page() {
   return (
     <div className="flex h-full flex-col bg-gray-100">
       <div className="flex flex-col items-center justify-center gap-5 rounded-b-2xl bg-white pb-5 pt-10">
-        <Image src={testImage} className="size-32 rounded-lg" />
+        <Avatar src={testImage} size="124" />
 
         <div className="flex flex-col items-center justify-center gap-1">
           <p className="text-h4 font-semibold">안녕하세요, FADE_1234님!</p>

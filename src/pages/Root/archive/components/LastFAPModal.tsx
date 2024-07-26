@@ -1,6 +1,7 @@
 import fapBadgeImage from '@Assets/fap_badge.png';
 import fapBgImage from '@Assets/fap_bg.jpg';
 import testImage from '@Assets/test_fashion_image.jpg';
+import { Avatar } from '@Components/ui/avatar';
 import { Image } from '@Components/ui/image';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
@@ -45,7 +46,7 @@ export const LastFAPModal = forwardRef<HTMLDivElement, DefaultModalProps<void, L
 
           <div className="mx-auto flex flex-row items-center gap-3">
             <div className="relative">
-              <Image src={testImage} className="size-10 rounded-lg bg-gray-100" />
+              <Avatar src={testImage} size="40" />
               <FaCrown className="absolute -left-3 -top-4 size-6 -rotate-[25deg] text-yellow-700" />
             </div>
 

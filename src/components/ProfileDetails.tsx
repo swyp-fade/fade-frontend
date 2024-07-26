@@ -4,6 +4,7 @@ import { cn } from '@Utils/index';
 import { MdEditNote } from 'react-icons/md';
 import { ProfileIntroEditBottomSheet } from './ProfileIntroEditBottomSheet';
 import { Image } from './ui/image';
+import { Avatar } from './ui/avatar';
 
 export type ProfileViewType = 'owner' | 'user';
 
@@ -15,7 +16,7 @@ export function ProfileDetails({ viewType }: { viewType: ProfileViewType }) {
     <div>
       <div className="space-y-5 p-5">
         <div className="flex flex-row items-center gap-3">
-          <Image src={testImage} className="size-[4.5rem] overflow-hidden rounded-lg" />
+          <Avatar src={testImage} size="72" />
 
           <div className="flex flex-1 flex-col justify-center">
             <span className="font-semibold">fade_1234</span>
