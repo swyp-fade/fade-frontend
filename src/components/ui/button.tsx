@@ -1,0 +1,54 @@
+import { cn } from '@Utils/index';
+import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
+import { MdChevronLeft } from 'react-icons/md';
+
+type ButtonVariant = 'primary' | 'secondary' | 'white' | 'destructive' | 'ghost' | 'simple';
+type ButtonSize = 'default' | 'icon';
+
+interface ButtonProps {
+  variants?: ButtonVariant;
+  size?: ButtonSize;
+}
+
+export function Button({
+  variants = 'primary',
+  size = 'default',
+  className,
+  children,
+  ...props
+}: PropsWithChildren<ButtonProps> & ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      type="button"
+      className={cn(
+        'group flex items-center justify-center rounded-lg font-semibold transition-colors disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400',
+        {
+          ['bg-purple-500 text-white']: variants === 'primary',
+          ['bg-black text-white']: variants === 'secondary',
+          ['bg-white text-gray-900']: variants === 'white',
+          ['bg-pink-400 text-white']: variants === 'destructive',
+          [`disabled:bg-transparent aria-[disabled='false']:touchdevice:active:bg-gray-100 aria-[disabled='false']:pointerdevice:hover:bg-gray-100`]:
+            variants === 'ghost',
+        },
+        {
+          ['p-[.625rem]']: size === 'default',
+          ['p-2']: size === 'icon',
+        },
+        className
+      )}
+      aria-disabled={props.disabled || false}
+      {...props}>
+      <span className="inline-block transition-transform group-aria-[disabled='false']:touchdevice:group-active:scale-90 group-aria-[disabled='false']:pointerdevice:group-active:scale-90">
+        {children}
+      </span>
+    </button>
+  );
+}
+
+export function BackButton({ className, onClick }: { className?: string; onClick: () => void }) {
+  return (
+    <Button variants="ghost" size="icon" className={cn('absolute left-3 top-1/2 -translate-y-1/2', className)} onClick={onClick}>
+      <MdChevronLeft className="size-6" />
+    </Button>
+  );
+}
