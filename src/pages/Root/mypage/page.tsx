@@ -7,13 +7,27 @@ import { MdBook, MdBookmark, MdHowToVote, MdPerson } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import AccountSetting from './components/AccountSetting';
 
-type MyPageMenu = {
+type MenuType = 'subpage' | 'dialog';
+
+interface TMyPageMenuBase {
   id: number;
-  type: 'subpage' | 'dialog';
+  type: MenuType;
   path: string | null;
   IconComponent: IconType;
   name: string;
-};
+}
+
+interface TMyPageMenuSubpage extends TMyPageMenuBase {
+  type: 'subpage';
+  path: string;
+}
+
+interface TMyPageMenuDialog extends TMyPageMenuBase {
+  type: 'dialog';
+  path: null;
+}
+
+type MyPageMenu = TMyPageMenuSubpage | TMyPageMenuDialog;
 
 const mypageMenus: MyPageMenu[] = [
   {
@@ -47,10 +61,11 @@ const mypageMenus: MyPageMenu[] = [
 ];
 
 export default function Page() {
+  const navigate = useNavigate();
   useHeader({ title: '마이페이지', rightSlot: () => <ShowNotificationButton /> });
 
   const handleMenuClick = ({ path, type }: MyPageMenu) => {
-    console.log({ path, type });
+    type === 'subpage' && navigate(path, { replace: true });
   };
 
   return (
