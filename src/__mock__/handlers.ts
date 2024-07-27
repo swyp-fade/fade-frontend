@@ -43,7 +43,7 @@ export const handlers = [
    * MSW는 fetch 정책 상 Header에 Set-Cookie를 지정해주는 대신
    * document.cookie로 지정해주기 때문에, HttpOnly 속성을 넣으면 안 된다(😇)
    */
-  http.post(`${BASE_URL}/auth/refresh`, async ({ cookies }) => {
+  http.post(`${BASE_URL}/auth/token`, async ({ cookies }) => {
     const { refreshToken } = cookies;
 
     await delay(NETWORK_DELAY);
