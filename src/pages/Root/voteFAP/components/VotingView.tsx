@@ -1,4 +1,6 @@
-import { useModalActions } from '@Hooks/modal';
+import { ReportButton } from '@Components/ReportButton';
+import { SubscribeButton } from '@Components/SubscribeButton';
+import { Image } from '@Components/ui/image';
 import { useToastActions } from '@Hooks/toast';
 import { requestGetVoteCandidates, requestSendVoteResult } from '@Services/vote';
 import { SwipeDirection, useVotingStore, VoteCandidateCardType } from '@Stores/vote';
@@ -8,17 +10,13 @@ import { cn, generateAnonName, prefetchImages } from '@Utils/index';
 import { isAxiosError } from 'axios';
 import { AnimatePresence, motion, MotionValue, useMotionValue, useTransform, Variants } from 'framer-motion';
 import { useEffect, useLayoutEffect, useState, useTransition } from 'react';
-import { MdBookmark, MdReport } from 'react-icons/md';
+import { MdBookmark } from 'react-icons/md';
 import { RandomAvatar } from './RandomAvatar';
-import { ReportBottomSheet, ReportResult } from './ReportBottomSheet';
 
 import swipeFadeInImage from '@Assets/swipe_fade_in.png';
 import swipeFadeOutImage from '@Assets/swipe_fade_out.png';
 import voteFadeInImage from '@Assets/vote_fade_in.png';
 import voteFadeOutImage from '@Assets/vote_fade_out.png';
-import { Image } from '@Components/ui/image';
-import { Button } from '@Components/ui/button';
-import { SubscribeButton } from '@Components/SubscribeButton';
 
 const viewVariants: Variants = {
   initial: { opacity: 0 },
@@ -292,19 +290,10 @@ function VoteCandidateCard({ feedId, imageURL, isCurrentCard }: VoteCandidateCar
   const isLeftBoundary = dragOffBoundary === 'left';
   const isRightBoundary = dragOffBoundary === 'right';
 
-  const { showToast } = useToastActions();
-
-  const handleReportEnd = (reportResult?: ReportResult) => {
+  const handleReportEnd = () => {
     setIsReporting(false);
     setIsDragging(false);
 
-    if (reportResult === undefined) {
-      return;
-    }
-
-    /** TODO: 신고 API 호출 */
-
-    showToast({ type: 'basic', title: `${feedId} 신고되었습니다.` });
     handleSelect('left');
   };
 
@@ -319,7 +308,16 @@ function VoteCandidateCard({ feedId, imageURL, isCurrentCard }: VoteCandidateCar
         backgroundPosition: 'center',
       }}
       className="relative flex-1 rounded-lg bg-gray-200 shadow-bento">
-      {isCurrentCard && <ReportButton shouldBelowZIndex={isDragging || isReporting} onReportStart={() => setIsDragging(true)} onReportEnd={handleReportEnd} />}
+      {isCurrentCard && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className={cn('absolute right-4 top-4 z-[2]', {
+            ['z-1']: isDragging || isReporting,
+          })}>
+          <ReportButton feedId={feedId} onReportEnd={handleReportEnd} />
+        </motion.div>
+      )}
 
       <motion.div style={{ opacity: computedOpacity }} className="absolute inset-0 grid place-items-center rounded-lg bg-purple-500">
         {isLeftBoundary && <FadeOutCover />}
@@ -332,39 +330,6 @@ function VoteCandidateCard({ feedId, imageURL, isCurrentCard }: VoteCandidateCar
         onDragStart={() => setIsDragging(true)}
         onDragEnd={() => setIsDragging(false)}
       />
-    </motion.div>
-  );
-}
-
-type ReportButtonProps = { shouldBelowZIndex: boolean; onReportStart: () => void; onReportEnd: (result: ReportResult | undefined) => void };
-
-function ReportButton({ shouldBelowZIndex, onReportStart, onReportEnd }: ReportButtonProps) {
-  const { showModal } = useModalActions();
-
-  const handleReportClick = async () => {
-    onReportStart();
-    const reportResult = await startReportFlow();
-    onReportEnd(reportResult);
-  };
-
-  const startReportFlow = async () => {
-    // TODO: Report에 사진 ID? 유저 ID? 넘겨주긴 해야 함
-    return await showModal<ReportResult>({ type: 'bottomSheet', Component: ReportBottomSheet });
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className={cn('absolute right-4 top-4 z-[2]', {
-        ['z-1']: shouldBelowZIndex,
-      })}>
-      <Button variants="white" className="px-2 py-1 font-normal" onClick={() => handleReportClick()}>
-        <div className="flex flex-row items-center justify-center gap-1">
-          <MdReport className="inline-block size-[1.125rem]" />
-          <span>신고하기</span>
-        </div>
-      </Button>
     </motion.div>
   );
 }

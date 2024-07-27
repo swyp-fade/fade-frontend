@@ -1,19 +1,17 @@
 import { OUTFIT_CATEGORY_LIST, OUTFIT_STYLE_LIST } from '@/constants';
 import testImage from '@Assets/test_fashion_image.jpg';
+import { ReportButton } from '@Components/ReportButton';
 import { ShowNotificationButton } from '@Components/ShowNotificationButton';
+import { SubscribeButton } from '@Components/SubscribeButton';
+import { Avatar } from '@Components/ui/avatar';
 import { Image } from '@Components/ui/image';
-import { useModalActions } from '@Hooks/modal';
-import { useToastActions } from '@Hooks/toast';
 import { useHeader } from '@Hooks/useHeader';
 import { cn } from '@Utils/index';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { motion } from 'framer-motion';
-import { MdBookmark, MdChevronRight, MdReport } from 'react-icons/md';
+import { MdBookmark, MdChevronRight } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
-import { ReportBottomSheet, ReportResult } from '../voteFAP/components/ReportBottomSheet';
-import { Avatar } from '@Components/ui/avatar';
-import { SubscribeButton } from '@Components/SubscribeButton';
 
 type SubscribeBadgeType = {
   userId: number;
@@ -84,35 +82,6 @@ export default function Page() {
   );
 }
 
-type ReportButtonProps = { onReportEnd: (result: ReportResult | undefined) => void };
-
-function ReportButton({ onReportEnd }: ReportButtonProps) {
-  const { showModal } = useModalActions();
-
-  const handleReportClick = async () => {
-    const reportResult = await startReportFlow();
-    onReportEnd(reportResult);
-  };
-
-  const startReportFlow = async () => {
-    // TODO: Report에 사진 ID? 유저 ID? 넘겨주긴 해야 함
-    return await showModal<ReportResult>({ type: 'bottomSheet', Component: ReportBottomSheet });
-  };
-
-  return (
-    <motion.button
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className={cn('group absolute right-4 top-4 cursor-pointer rounded-lg bg-white px-2 py-1')}
-      onClick={() => handleReportClick()}>
-      <div className="flex flex-row items-center gap-1 transition-transform group-active:scale-95">
-        <MdReport className="size-[1.125rem]" />
-        <span>신고하기</span>
-      </div>
-    </motion.button>
-  );
-}
-
 function BookmarkButton() {
   return (
     <button className="rounded-lg border bg-white px-3 py-2">
@@ -130,25 +99,15 @@ function OutfitBadge({ categoryType }: { categoryType: number }) {
 }
 
 function FeedCard() {
-  const { showToast } = useToastActions();
-
-  const handleReportEnd = (reportResult?: ReportResult) => {
-    if (reportResult === undefined) {
-      return;
-    }
-
-    /** TODO: 신고 API 호출 */
-
-    showToast({ type: 'basic', title: `신고되었습니다.` });
-  };
-
   return (
     <div className="flex h-full snap-start border border-red-500">
       <section className="flex h-full w-full flex-col gap-3 p-5">
         <p className="text-h6">{format(new Date(), 'yyyy년 M월 dd일 eeee', { locale: ko })}</p>
 
         <Image src={testImage} className="relative w-full flex-1 rounded-lg bg-gray-200" size="contain">
-          <ReportButton onReportEnd={handleReportEnd} />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={cn('absolute right-4 top-4')}>
+            <ReportButton feedId={0} />
+          </motion.div>
         </Image>
 
         <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white">
