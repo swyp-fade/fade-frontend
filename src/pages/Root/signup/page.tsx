@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import AgreementsView from './components/AgreementsView';
-import InitializeAccountView from './components/InitializeAccountView';
+import AccountInitializeView from './components/AccountInitializeView';
 
 type SignUpLocaitonState = { accessToken: string };
 
@@ -25,7 +25,7 @@ export default function Page() {
       )}
       {hasAgreements && (
         <motion.div key="view-2" initial={{ opacity: 0, y: '12px' }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: '12px' }} className="h-full">
-          <InitializeAccountView accessToken={accessToken} />
+          <AccountInitializeView accessToken={accessToken} />
         </motion.div>
       )}
     </AnimatePresence>
