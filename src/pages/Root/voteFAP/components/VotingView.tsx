@@ -3,8 +3,9 @@ import { SubscribeButton } from '@Components/SubscribeButton';
 import { Image } from '@Components/ui/image';
 import { useToastActions } from '@Hooks/toast';
 import { requestGetVoteCandidates, requestSendVoteResult } from '@Services/vote';
-import { SwipeDirection, useVotingStore, VoteCandidateCardType } from '@Stores/vote';
+import { SwipeDirection, useVotingStore } from '@Stores/vote';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { TVoteCandidateCard } from '@Types/model';
 import { ServiceErrorResponse } from '@Types/serviceError';
 import { cn, generateAnonName, prefetchImages } from '@Utils/index';
 import { isAxiosError } from 'axios';
@@ -80,9 +81,9 @@ export function VotingView({ onSubmitDone }: { onSubmitDone: () => void }) {
     prefetchImages([swipeFadeInImage, swipeFadeOutImage, voteFadeInImage, voteFadeOutImage]);
 
     /** viewCards 설정 */
-    const { voteCandidates } = response.data;
+    const { voteCandidates } = response;
 
-    const voteCandidateCards: VoteCandidateCardType[] = voteCandidates.map((voteCandidate) => ({
+    const voteCandidateCards: TVoteCandidateCard[] = voteCandidates.map((voteCandidate) => ({
       ...voteCandidate,
       anonName: generateAnonName(),
     }));
@@ -272,7 +273,7 @@ function VoteCandidateCards() {
   );
 }
 
-type VoteCandidateCardProps = { isCurrentCard: boolean } & VoteCandidateCardType;
+type VoteCandidateCardProps = { isCurrentCard: boolean } & TVoteCandidateCard;
 
 function VoteCandidateCard({ feedId, imageURL, isCurrentCard }: VoteCandidateCardProps) {
   const handleSelect = useVotingStore((state) => state.handleSelect);
