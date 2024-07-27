@@ -70,7 +70,7 @@ export const OutfitItemSheet = forwardRef<HTMLDivElement, DefaultModalProps<Outf
           </header>
         </FlexibleLayout.Header>
 
-        <FlexibleLayout.Content className="flex flex-col gap-3">
+        <FlexibleLayout.Content className="flex flex-col gap-3 p-5">
           <div className="flex flex-row gap-3">
             <CategorySelect categoryId={outfitField.categoryId} onSelect={(categoryId) => updateOutfitField({ categoryId })} />
             <BrandNameField value={outfitField.brandName} disabled={outfitField.categoryId === -1} onChange={(brandName) => updateOutfitField({ brandName })} />
