@@ -1,4 +1,4 @@
-import { UserDetail } from '@Types/User';
+import { UserDetail } from '@Types/model';
 import { getPayloadFromJWT } from '@Utils/index';
 import { create } from 'zustand';
 
@@ -8,11 +8,13 @@ export type AuthStore = {
   csrfToken: string | null;
   iat: Date | null;
   exp: Date | null;
+  isAuthentication: boolean;
 
   setUser: ({ user }: { user: UserDetail }) => void;
   setAccessToken: ({ accessToken }: { accessToken: string }) => void;
   setCSRFToken: ({ csrfToken }: { csrfToken: string }) => void;
   setTokens: ({ accessToken, csrfToken }: { accessToken: string; csrfToken: string }) => void;
+  setIsAuthentication: ({ isAuthentication }: { isAuthentication: boolean }) => void;
   setAuthFromToken: ({ accessToken }: { accessToken: string }) => void;
 
   resetAuth: () => void;
@@ -50,14 +52,23 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     get().setCSRFToken({ csrfToken });
   },
 
+  setIsAuthentication({ isAuthentication }) {
+    set({ isAuthentication });
+  },
+
   setAuthFromToken({ accessToken }) {
     const { id, username: accountId, genderType, exp, iat } = getPayloadFromJWT(accessToken);
 
     const newUser: Partial<UserDetail> = { id: +id, accountId, genderType };
-    set(({ user }) => ({ user: { ...(user || {}), newUser }, exp, iat }));
+    set(({ user }) => ({
+      isAuthentication: true,
+      user: { ...user, ...newUser },
+      exp,
+      iat,
+    }));
   },
 
   resetAuth() {
-    set({ user: initialUserDetail, accessToken: null, csrfToken: null, iat: null, exp: null });
+    set({ user: initialUserDetail, isAuthentication: false, accessToken: null, csrfToken: null, iat: null, exp: null });
   },
 }));

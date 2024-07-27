@@ -1,3 +1,4 @@
+import { UserDetail } from '@Types/model';
 import { ServiceErrorResponse } from '@Types/serviceError';
 import { HttpStatusCode } from 'axios';
 import { addDays } from 'date-fns';
@@ -31,11 +32,11 @@ const testFahsionImages = [
 const NETWORK_DELAY = 1000;
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const userData = {
-  id: 'c7b3d8e0-5e0b-4b0f-8b3a-3b9f4b3d3b3d',
-  email: 'test_email@fadeapp.site',
-  // accountId: '',
-  accountId: 'test_accountId',
+const userData: UserDetail = {
+  id: 0,
+  accountId: 'fade_1234',
+  genderType: 'MALE',
+  profileImageURL: testFashionImage1,
 };
 
 export const handlers = [
