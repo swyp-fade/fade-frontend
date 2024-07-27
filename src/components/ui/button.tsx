@@ -12,6 +12,8 @@ interface ButtonProps {
   interactive?: ButtonInteractive;
 }
 
+/** TODO: button 요소 자체가 disabled 될 땐 조건부 interactive가 안 먹힘 ref로 감시해야 하나?  */
+
 export function Button({
   variants = 'primary',
   size = 'default',
