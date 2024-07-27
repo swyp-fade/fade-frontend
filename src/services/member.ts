@@ -7,3 +7,14 @@ type UpdateUserDetailsResponse = '';
 export async function requestUpdateUserDetails(payload: UpdateUserDetailsPayload) {
   return await axios.put<UpdateUserDetailsResponse>(`/member/me`, payload);
 }
+
+type RequestSubscribeMemberPayload = { toMemberId: number; wouldSubscribe: boolean };
+type RequestSubscribeMemberResponse = null;
+
+export async function requestSubscribeMember({ toMemberId, wouldSubscribe }: RequestSubscribeMemberPayload) {
+  if (wouldSubscribe) {
+    return await axios.post<RequestSubscribeMemberResponse>(`/subscribe/${toMemberId}`, {});
+  }
+
+  return await axios.delete<RequestSubscribeMemberResponse>(`/subscribe/${toMemberId}`, {});
+}
