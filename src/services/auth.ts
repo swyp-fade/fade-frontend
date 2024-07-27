@@ -16,11 +16,11 @@ type RefreshTokenResponse = AuthTokens;
 
 /** RefreshToken으로 AccessToken을 요청 */
 export async function requestRefreshToken() {
-  return await axios.post<RefreshTokenResponse>('/auth/refresh');
+  return await axios.post<RefreshTokenResponse>('/auth/token');
 }
 
 export const enum SignUpType {
-  KAKAO = 'kakao',
+  KAKAO = 'KAKAO',
 }
 
 type SignUpPayload = { signUpType: SignUpType; accessToken: string; accountId: string; gender: string };
@@ -28,7 +28,11 @@ type SignUpResponse = AuthTokens;
 
 /** 회원가입 요청 */
 export async function requestSignUp(payload: SignUpPayload) {
-  return await axios.post<SignUpResponse>(`/auth/social-login/KAKAO/signup`, payload);
+  return await axios.post<SignUpResponse>(`/auth/social-login/${payload.signUpType}/signup`, {
+    socialAccessToken: payload.accessToken,
+    username: payload.accountId,
+    genderType: payload.gender,
+  });
 }
 
 type SignInWithCodePayload = { authorizationCode: string };
