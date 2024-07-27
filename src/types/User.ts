@@ -1,4 +1,4 @@
-export type GenderType = 'men' | 'women';
+export type GenderType = 'MALE' | 'FEMALE';
 
 export interface User {
   id: string;
@@ -20,5 +20,5 @@ export interface UserDetail {
 
 export type AuthTokens = {
   accessToken: string;
-  csrfToken: string;
+  // csrfToken: string; // 보류
 };
