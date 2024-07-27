@@ -3,7 +3,7 @@ import { ServiceErrorResponse } from '@Types/serviceError';
 import { HttpStatusCode } from 'axios';
 import { addDays, getMonth, getYear } from 'date-fns';
 import { HttpResponse, delay, http } from 'msw';
-import { createAccessToken, createRefreshToken, generateDummyFeedData, generateTVoteCandidateDummyData } from './utils';
+import { createAccessToken, createRefreshToken, generateDummyFashionFeed, generateDummyFeedData, generateTVoteCandidateDummyData } from './utils';
 
 import testFashionImage1 from '@Assets/test_fashion_image.jpg';
 import testFashionImage10 from '@Assets/test_fashion_image_10.jpg';
@@ -265,5 +265,16 @@ export const handlers = [
     const feeds = generateDummyFeedData(getYear(selectedDate), getMonth(selectedDate));
 
     return HttpResponse.json({ feeds }, { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/feeds`, async ({ request }) => {
+    const { searchParams } = new URL(request.url);
+    const nextCursor = searchParams.get('nextCursor')!;
+
+    await delay(NETWORK_DELAY);
+
+    const result = generateDummyFashionFeed(12, +nextCursor);
+
+    return HttpResponse.json({ ...result }, { status: HttpStatusCode.Ok });
   }),
 ];

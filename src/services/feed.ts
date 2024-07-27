@@ -1,5 +1,8 @@
 import { axios } from '@Libs/axios';
-import { TFAPArchivingFeed, TFAPArchivingFeedAPI } from '@Types/model';
+import { FilterType } from '@Pages/Root/archive/components/SelectFilterDialog';
+import { TAllFashionFeed, TAllFashionFeedAPI, TFAPArchivingFeed, TFAPArchivingFeedAPI } from '@Types/model';
+import { InfiniteResponse } from '@Types/response';
+import { objectToQueryParam } from '@Utils/index';
 
 type OutfitField = {
   categoryId: number;
@@ -39,5 +42,23 @@ export async function requestFAPArchiving({ selectedDate }: FAPArchivingPayload)
           ...feed,
         })),
       }) as FAPArchivingResponse
+  );
+}
+
+type GetAllFashionFeedPayload = { filters: FilterType; nextCursor: number };
+type GetAllFashionFeedResponseAPI = InfiniteResponse<{ feeds: TAllFashionFeedAPI[] }>;
+type GetAllFashionFeedResponse = InfiniteResponse<{ feeds: TAllFashionFeed[] }>;
+
+export async function requestGetAllFashionFeed({ filters, nextCursor }: GetAllFashionFeedPayload) {
+  return await axios.get<GetAllFashionFeedResponseAPI>(`/feeds?limit=12&nextCursor=${nextCursor}&${objectToQueryParam(filters)}`).then(
+    ({ data: { feeds, nextCursor } }) =>
+      ({
+        nextCursor,
+        feeds: feeds.map(({ id, styleIds, ...feed }) => ({
+          feedId: id,
+          styleIds: styleIds.map(({ id }) => id),
+          ...feed,
+        })),
+      }) as GetAllFashionFeedResponse
   );
 }
