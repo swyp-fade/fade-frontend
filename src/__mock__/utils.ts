@@ -1,4 +1,4 @@
-import { TFAPArchivingFeedAPI, TOutfitItem, TStyleId, TVoteCandidateAPI, UserDetail } from '@Types/model';
+import { TAllFashionFeedAPI, TFAPArchivingFeedAPI, TOutfitItem, TStyleId, TVoteCandidateAPI, UserDetail } from '@Types/model';
 import { addDays, addHours } from 'date-fns';
 
 import testFashionImage1 from '@Assets/test_fashion_image.jpg';
@@ -11,6 +11,7 @@ import testFashionImage6 from '@Assets/test_fashion_image_6.jpg';
 import testFashionImage7 from '@Assets/test_fashion_image_7.jpg';
 import testFashionImage8 from '@Assets/test_fashion_image_8.jpg';
 import testFashionImage9 from '@Assets/test_fashion_image_9.jpg';
+import { InfiniteResponse } from '@Types/response';
 
 const testFahsionImages = [
   testFashionImage1,
@@ -155,3 +156,46 @@ export const generateDummyFeedData = (year: number, month: number): TFAPArchivin
 
   return result;
 };
+
+function generateRandomDate(start: Date, end: Date): Date {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
+function generateRandomOutfit(): TOutfitItem {
+  return {
+    id: Math.floor(Math.random() * 1000),
+    brandName: ['Nike', 'Adidas', 'Gucci', 'Zara', 'H&M'][Math.floor(Math.random() * 5)],
+    details: `Item details ${Math.random().toString(36).substring(7)}`,
+    categoryId: Math.floor(Math.random() * 10) + 1,
+  };
+}
+
+function generateRandomStyleId(): TStyleId {
+  return { id: Math.floor(Math.random() * 100) + 1 };
+}
+
+function generateRandomFeed(id: number): TAllFashionFeedAPI {
+  return {
+    id,
+    memberId: Math.floor(Math.random() * 1000) + 1,
+    imageURL: testFahsionImages[getRandomNumber(0, testFahsionImages.length - 1)],
+    styleIds: Array(Math.floor(Math.random() * 5) + 1)
+      .fill(null)
+      .map(generateRandomStyleId),
+    outfits: Array(Math.floor(Math.random() * 5) + 1)
+      .fill(null)
+      .map(generateRandomOutfit),
+    createdAt: generateRandomDate(new Date(2020, 0, 1), new Date()),
+  };
+}
+
+export function generateDummyFashionFeed(count: number = 10, startCursor: number = 0): InfiniteResponse<{ feeds: TAllFashionFeedAPI[] }> {
+  const feeds = Array(count)
+    .fill(null)
+    .map((_, index) => generateRandomFeed(startCursor + index + 1));
+
+  return {
+    feeds,
+    nextCursor: startCursor + count,
+  };
+}
