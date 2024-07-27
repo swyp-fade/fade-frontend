@@ -21,12 +21,12 @@ export function GenderField({ control }: GenderFieldProps) {
           <FormControl>
             <RadioGroup.Root defaultValue="men" className="flex w-full flex-row gap-5" value={field.value} onValueChange={field.onChange}>
               <RadioGroup.Item
-                value="men"
+                value="MALE"
                 className="flex flex-1 items-center justify-center rounded-lg bg-gray-200 py-3 text-black transition-colors data-[state=checked]:bg-violet-500 data-[state=checked]:text-white">
                 <p>남자</p>
               </RadioGroup.Item>
               <RadioGroup.Item
-                value="women"
+                value="FEMALE"
                 className="flex flex-1 items-center justify-center rounded-lg bg-gray-200 py-3 text-black transition-colors data-[state=checked]:bg-violet-500 data-[state=checked]:text-white">
                 <p>여자</p>
               </RadioGroup.Item>

@@ -1,26 +1,12 @@
+import { TVoteCandidateCard, TVoteResult } from '@Types/model';
 import { generateRandomId } from '@Utils/index';
 import { create } from 'zustand';
 
-export type VoteCandidateCardType = {
-  feedId: number;
-  userId: number;
-  imageURL: string;
-  anonName: string;
-};
-
 export type SwipeDirection = 'left' | 'right';
-
-export type VoteType = 'FADE_IN' | 'FADE_OUT';
-
-export type VoteResultItem = {
-  feedId: number;
-  voteType: VoteType;
-};
-
 interface VotingState {
   cycleId: string; // 현재 투표 사이클 Id
-  viewCards: VoteCandidateCardType[]; // 현재 투표 선택지
-  voteResults: VoteResultItem[]; // 투표 결과를 담아놓는 곳
+  viewCards: TVoteCandidateCard[]; // 현재 투표 선택지
+  voteResults: TVoteResult[]; // 투표 결과를 담아놓는 곳
   hasVotedToday: boolean; // 오늘 투표를 진행했는지?
   isVotingInProgress: boolean; // 현재 투표 중인지?
   votingCountToday: number; // 오늘 투표한 횟수
@@ -28,8 +14,8 @@ interface VotingState {
   swipeDirection: SwipeDirection; // 애니메이션을 위한 스와이프 방향
 
   generateNewCycleId: () => void;
-  setViewCards: (viewCards: VoteCandidateCardType[]) => void;
-  updateVoteResult: (voteResult: VoteResultItem) => void;
+  setViewCards: (viewCards: TVoteCandidateCard[]) => void;
+  updateVoteResult: (voteResult: TVoteResult) => void;
   clearVoteResults: () => void;
   setHasVotedToday: (hasVoted: boolean) => void;
   setIsVotingInProgress: (isInProgress: boolean) => void;

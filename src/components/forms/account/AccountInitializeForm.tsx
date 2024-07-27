@@ -35,7 +35,7 @@ export function AccountInitializeForm({ accessToken, onSubmited }: AccountInitia
     resolver: zodResolver(accountInitializeSchema),
     defaultValues: {
       accountId: '',
-      gender: 'men',
+      gender: 'MALE',
     },
     mode: 'onChange',
   });

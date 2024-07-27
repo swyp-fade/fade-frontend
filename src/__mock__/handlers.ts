@@ -1,8 +1,9 @@
+import { TFeed, UserDetail } from '@Types/model';
 import { ServiceErrorResponse } from '@Types/serviceError';
 import { HttpStatusCode } from 'axios';
 import { addDays } from 'date-fns';
 import { HttpResponse, delay, http } from 'msw';
-import { createAccessToken, createRefreshToken } from './utils';
+import { createAccessToken, createRefreshToken, generateTVoteCandidateDummyData } from './utils';
 
 import testFashionImage1 from '@Assets/test_fashion_image.jpg';
 import testFashionImage10 from '@Assets/test_fashion_image_10.jpg';
@@ -31,11 +32,11 @@ const testFahsionImages = [
 const NETWORK_DELAY = 1000;
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const userData = {
-  id: 'c7b3d8e0-5e0b-4b0f-8b3a-3b9f4b3d3b3d',
-  email: 'test_email@fadeapp.site',
-  // accountId: '',
-  accountId: 'test_accountId',
+const userData: UserDetail = {
+  id: 0,
+  accountId: 'fade_1234',
+  genderType: 'MALE',
+  profileImageURL: testFashionImage1,
 };
 
 export const handlers = [
@@ -43,7 +44,7 @@ export const handlers = [
    * MSW는 fetch 정책 상 Header에 Set-Cookie를 지정해주는 대신
    * document.cookie로 지정해주기 때문에, HttpOnly 속성을 넣으면 안 된다(😇)
    */
-  http.post(`${BASE_URL}/auth/refresh`, async ({ cookies }) => {
+  http.post(`${BASE_URL}/auth/token`, async ({ cookies }) => {
     const { refreshToken } = cookies;
 
     await delay(NETWORK_DELAY);
@@ -222,16 +223,34 @@ export const handlers = [
   http.get(`${BASE_URL}/vote/candidates`, async () => {
     await delay(NETWORK_DELAY);
 
-    const voteCandidates = testFahsionImages.map((image) => ({
-      feedId: Math.floor(Math.random() * 100),
-      userId: Math.floor(Math.random() * 100),
-      imageURL: image,
-    }));
-
-    return HttpResponse.json({ voteCandidates }, { status: HttpStatusCode.Ok });
+    return HttpResponse.json({ feeds: generateTVoteCandidateDummyData(10) }, { status: HttpStatusCode.Ok });
   }),
 
   http.post(`${BASE_URL}/vote/candidates`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.post(`${BASE_URL}/subscribe/:toMemberId`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.delete(`${BASE_URL}/subscribe/:toMemberId`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.post(`${BASE_URL}/bookmark/:feedId`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.delete(`${BASE_URL}/bookmark/:feedId`, async () => {
     await delay(NETWORK_DELAY);
 
     return new HttpResponse('', { status: HttpStatusCode.Ok });

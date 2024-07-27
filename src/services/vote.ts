@@ -1,20 +1,22 @@
 import { axios } from '@Libs/axios';
-import { VoteResultItem } from '@Stores/vote';
+import { TFeed, TVoteCandidate, TVoteResult } from '@Types/model';
 
-/** TODO: 모델로 옮기기 */
-export type VoteCandidate = {
-  feedId: number;
-  userId: number;
-  imageURL: string;
-};
-
-type GetVoteCandidatesResponse = { voteCandidates: VoteCandidate[] };
+type GetVoteCandidatesAPIResponse = { feeds: TFeed[] };
+type GetVoteCandidatesResponse = { voteCandidates: TVoteCandidate[] };
 
 export async function requestGetVoteCandidates() {
-  return await axios.get<GetVoteCandidatesResponse>('/vote/candidates');
+  return await axios.get<GetVoteCandidatesAPIResponse>('/vote/candidates').then(
+    ({ data: { feeds } }) =>
+      ({
+        voteCandidates: feeds.map(({ id, ...feed }) => ({
+          feedId: id,
+          ...feed,
+        })),
+      }) as GetVoteCandidatesResponse
+  );
 }
 
-type SendVoteResultPayload = VoteResultItem[];
+type SendVoteResultPayload = TVoteResult[];
 
 export async function requestSendVoteResult(voteItems: SendVoteResultPayload) {
   return await axios.post('/vote/candidates', { voteItems });
