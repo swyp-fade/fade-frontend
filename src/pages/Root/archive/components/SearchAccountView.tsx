@@ -1,10 +1,13 @@
 import testImage from '@Assets/test_fashion_image.jpg';
+import { BackButton } from '@Components/ui/button';
+import { Avatar } from '@Components/ui/avatar';
+import { Button } from '@Components/ui/button';
 import { useDebounce } from '@Hooks/useDebounce';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { MdCancel, MdChevronLeft, MdClose, MdSearch, MdWarning } from 'react-icons/md';
+import { MdCancel, MdClose, MdSearch, MdWarning } from 'react-icons/md';
 import { VscLoading } from 'react-icons/vsc';
 
 interface TSearchResultItem {
@@ -61,16 +64,6 @@ export function SearchAccountView({ onClose }: DefaultModalProps) {
   );
 }
 
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      className="group absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-      onClick={onClick}>
-      <MdChevronLeft className="size-6 transition-transform group-active:scale-95" />
-    </button>
-  );
-}
-
 function SearchInput({
   value,
   isPending,
@@ -104,21 +97,18 @@ function SearchInput({
 
       <AnimatePresence>
         {hasValue && (
-          <motion.button
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0 }}
-            className="group cursor-pointer rounded-lg touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-            onClick={handleClear}>
-            <MdCancel className="size-5 text-gray-600 transition-transform group-active:scale-95" />
-          </motion.button>
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+            <Button variants="ghost" onClick={handleClear} className="p-0">
+              <MdCancel className="size-5 text-gray-600" />
+            </Button>
+          </motion.div>
         )}
       </AnimatePresence>
 
-      <button className="group cursor-pointer rounded-lg touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100" onClick={onSubmit}>
+      <Button variants="ghost" className="p-0" onClick={onSubmit}>
         {isPending && <VscLoading className="size-6 animate-spin text-gray-600" />}
-        {!isPending && <MdSearch className="size-6 text-gray-600 transition-transform group-active:scale-95" />}
-      </button>
+        {!isPending && <MdSearch className="size-6 text-gray-600" />}
+      </Button>
     </div>
   );
 }
@@ -150,7 +140,7 @@ function AccountItem({ userId, profileURL, accountId, onClick }: { userId: numbe
     <button
       className="group flex flex-1 flex-row items-center gap-3 rounded-lg p-2 touchdevice:active:bg-gray-200 pointerdevice:hover:bg-gray-100 pointerdevice:active:bg-gray-200"
       onClick={() => onClick(userId)}>
-      <div style={{ backgroundImage: `url('${profileURL}')` }} className="size-10 rounded-lg bg-cover bg-center bg-no-repeat" />
+      <Avatar src={profileURL} size="40" />
       <p>{accountId}</p>
     </button>
   );
@@ -172,9 +162,9 @@ function SearchResultList({ matchedUsers }: { matchedUsers: SearchResults }) {
           <li key={`search-histroy-${userDetail.accountId}`} className="flex flex-row items-center gap-3">
             <AccountItem {...userDetail} onClick={(userId) => console.log({ userId })} />
 
-            <button className="group cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
-              <MdClose className="size-3 text-gray-500 transition-transform group-active:scale-95" />
-            </button>
+            <Button variants="ghost" className="p-2">
+              <MdClose className="size-3 text-gray-500" />
+            </Button>
           </li>
         ))}
       </ul>

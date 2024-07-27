@@ -1,4 +1,5 @@
 import { OUTFIT_CATEGORY_LIST } from '@/constants';
+import { Button } from '@Components/ui/button';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import * as Select from '@radix-ui/react-select';
 import { DefaultModalProps } from '@Stores/modal';
@@ -64,13 +65,14 @@ export const OutfitItemSheet = forwardRef<HTMLDivElement, DefaultModalProps<Outf
               {isAddSheet && '착장 정보 추가'}
               {isEditSheet && '착장 정보 편집'}
             </p>
-            <button type="button" onClick={() => onClose()} className="group rounded-lg p-1 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
-              <MdClose className="size-6 text-gray-600 transition-transform group-active:scale-95" />
-            </button>
+
+            <Button variants="ghost" size="icon" onClick={() => onClose()}>
+              <MdClose className="size-6 text-gray-600" />
+            </Button>
           </header>
         </FlexibleLayout.Header>
 
-        <FlexibleLayout.Content className="flex flex-col gap-3">
+        <FlexibleLayout.Content className="flex flex-col gap-3 p-5">
           <div className="flex flex-row gap-3">
             <CategorySelect categoryId={outfitField.categoryId} onSelect={(categoryId) => updateOutfitField({ categoryId })} />
             <BrandNameField value={outfitField.brandName} disabled={outfitField.categoryId === -1} onChange={(brandName) => updateOutfitField({ brandName })} />

@@ -1,5 +1,6 @@
 import testImage from '@Assets/test_fashion_image.jpg';
 import { ShowNotificationButton } from '@Components/ShowNotificationButton';
+import { Avatar } from '@Components/ui/avatar';
 import { useConfirm, useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { IconType } from 'react-icons/lib';
@@ -80,7 +81,7 @@ export default function Page() {
   return (
     <div className="flex h-full flex-col bg-gray-100">
       <div className="flex flex-col items-center justify-center gap-5 rounded-b-2xl bg-white pb-5 pt-10">
-        <div style={{ backgroundImage: `url('${testImage}')` }} className="size-32 rounded-lg bg-cover bg-center bg-no-repeat" />
+        <Avatar src={testImage} size="124" />
 
         <div className="flex flex-col items-center justify-center gap-1">
           <p className="text-h4 font-semibold">안녕하세요, FADE_1234님!</p>

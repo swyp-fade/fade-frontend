@@ -1,7 +1,9 @@
+import testImage from '@Assets/test_fashion_image.jpg';
+import { Grid } from '@Components/ui/grid';
+import { Image } from '@Components/ui/image';
 import { useHeader } from '@Hooks/useHeader';
 import { MdChevronLeft } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
-import testImage from '@Assets/test_fashion_image.jpg';
 
 export default function Page() {
   useHeader({
@@ -11,18 +13,15 @@ export default function Page() {
 
   return (
     <div>
-      <div className="grid w-full grid-cols-3 gap-1 p-1">
+      <Grid cols={3}>
         {Array.from({ length: 13 })
           .fill(0)
           .map((_, index) => (
             <div key={`item-${index}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg">
-              <div
-                style={{ backgroundImage: `url('${testImage}')` }}
-                className="h-full w-full bg-cover bg-center bg-no-repeat transition-transform group-hover:scale-105"
-              />
+              <Image src={testImage} className="h-full w-full transition-transform group-hover:scale-105" />
             </div>
           ))}
-      </div>
+      </Grid>
     </div>
   );
 }

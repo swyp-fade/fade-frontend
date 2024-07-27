@@ -1,12 +1,12 @@
 import { OUTFIT_STYLE_LIST } from '@/constants';
-import { ToggleButton } from '@Components/ui/toogleButton';
+import { ItemBadge } from '@Components/ItemBadge';
+import { BackButton, Button } from '@Components/ui/button';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
 import { OutfitStyle } from '@Types/outfitStyle';
-import { useState } from 'react';
-import { MdChevronLeft } from 'react-icons/md';
+import { GenderType } from '@Types/User';
+import { PropsWithChildren, useState } from 'react';
 
-export type GenderType = 'men' | 'women';
 export type FilterType = { gender: GenderType | null; selectedStyles: OutfitStyle[] };
 export type SelectFilterDialogProps = { defaultFilter: FilterType };
 
@@ -40,10 +40,10 @@ export function SelectFilterDialog({ defaultFilter, onClose }: DefaultModalProps
             <ul className="flex flex-row flex-wrap gap-x-2 gap-y-3">
               {(['men', 'women'] as GenderType[]).map((gender) => (
                 <li key={gender}>
-                  <ToggleButton selected={selectedGender === gender} onSelect={(isSelected) => (isSelected ? setSelectedGender(gender) : setSelectedGender(null))}>
+                  <ItemToggleButton isSelected={selectedGender === gender} onToggle={(isSelected) => setSelectedGender(isSelected ? gender : null)}>
                     {gender === 'men' && '남자'}
                     {gender === 'women' && '여자'}
-                  </ToggleButton>
+                  </ItemToggleButton>
                 </li>
               ))}
             </ul>
@@ -54,17 +54,14 @@ export function SelectFilterDialog({ defaultFilter, onClose }: DefaultModalProps
             <ul className="flex flex-row flex-wrap gap-x-2 gap-y-3">
               {OUTFIT_STYLE_LIST.map((outfitStyle, index) => (
                 <li key={outfitStyle}>
-                  <ToggleButton
-                    selected={selectedStyles.includes(index)}
-                    onSelect={(isSelected) => {
-                      if (isSelected) {
-                        setSelectedStyles((prevStyles) => [...prevStyles, index]);
-                      } else {
-                        setSelectedStyles((prevStyles) => prevStyles.filter((value) => value !== index));
-                      }
+                  <ItemToggleButton
+                    isSelected={selectedStyles.includes(index)}
+                    onToggle={(isSelected) => {
+                      isSelected && setSelectedStyles((prevStyles) => [...prevStyles, index]);
+                      !isSelected && setSelectedStyles((prevStyles) => prevStyles.filter((value) => value !== index));
                     }}>
                     {outfitStyle}
-                  </ToggleButton>
+                  </ItemToggleButton>
                 </li>
               ))}
             </ul>
@@ -74,31 +71,34 @@ export function SelectFilterDialog({ defaultFilter, onClose }: DefaultModalProps
 
       <FlexibleLayout.Footer>
         <div className="p-5">
-          <button className="w-full rounded-lg bg-black py-2 text-h4 text-white" onClick={handleCTAClick}>
+          <Button variants="secondary" className="w-full text-xl" onClick={handleCTAClick}>
             적용
-          </button>
+          </Button>
         </div>
       </FlexibleLayout.Footer>
     </FlexibleLayout.Root>
   );
 }
 
-function BackButton({ onClick }: { onClick: () => void }) {
+function ResetButton({ onClick }: { onClick: () => void }) {
   return (
-    <button
-      className="group absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-      onClick={onClick}>
-      <MdChevronLeft className="size-6 transition-transform group-active:scale-95" />
-    </button>
+    <Button variants="ghost" size="icon" className="absolute right-3 top-1/2 -translate-y-1/2 font-normal" onClick={onClick}>
+      <span className="text-gray-600">초기화</span>
+    </Button>
   );
 }
 
-function ResetButton({ onClick }: { onClick: () => void }) {
+interface TItemToogleButton {
+  isSelected: boolean;
+  onToggle: (newValue: boolean) => void;
+}
+
+type ItemToggleButtonProps = PropsWithChildren<TItemToogleButton>;
+
+function ItemToggleButton({ isSelected, onToggle, children }: ItemToggleButtonProps) {
   return (
-    <button
-      className="group absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-      onClick={onClick}>
-      <span className="text-gray-600">초기화</span>
+    <button type="button" onClick={() => onToggle(!isSelected)}>
+      <ItemBadge variants={isSelected ? 'primary' : 'default'}>{children}</ItemBadge>
     </button>
   );
 }

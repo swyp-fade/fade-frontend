@@ -18,6 +18,8 @@ import testFashionImage6 from '@Assets/test_fashion_image_6.jpg';
 import testFashionImage7 from '@Assets/test_fashion_image_7.jpg';
 import testFashionImage8 from '@Assets/test_fashion_image_8.jpg';
 import testFashionImage9 from '@Assets/test_fashion_image_9.jpg';
+import { Image } from '@Components/ui/image';
+import { Grid } from '@Components/ui/grid';
 
 const testFahsionImages = [
   testFashionImage1,
@@ -80,7 +82,7 @@ function FadeInModeToggleButton({ isFadeInMode, onToggle }: { isFadeInMode: bool
       })}
       onClick={() => onToggle()}>
       <motion.div layout className="rounded-3xl bg-white px-3 py-2">
-        <div style={{ backgroundImage: `url('${fadeInImage}')` }} className="h-[.75rem] w-[3.875rem] bg-contain bg-center bg-no-repeat" />
+        <Image src={fadeInImage} className="h-[.75rem] w-[3.875rem]" />
       </motion.div>
     </button>
   );
@@ -97,11 +99,11 @@ function VoteHistoryItem() {
 
 function ImageGrid({ images }: { images: string[] }) {
   return (
-    <div className="grid grid-cols-5 grid-rows-2 gap-2 border border-red-500">
+    <Grid cols={5}>
       {images.map((imageURL) => (
         <ImageGridItem key={imageURL} imageURL={imageURL} />
       ))}
-    </div>
+    </Grid>
   );
 }
 

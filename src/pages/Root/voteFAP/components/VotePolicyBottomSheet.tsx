@@ -1,3 +1,4 @@
+import { Button } from '@Components/ui/button';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
 import { forwardRef } from 'react';
@@ -23,9 +24,9 @@ export const VotePolicyBottomSheet = forwardRef<HTMLDivElement, DefaultModalProp
 
       <FlexibleLayout.Footer>
         <div className="flex p-4">
-          <button type="button" className="group flex-1 rounded-lg bg-gray-200 py-2 text-xl text-black transition-colors" onClick={onClose}>
-            <span className="inline-block transition-transform group-active:scale-95">확인</span>
-          </button>
+          <Button variants="secondary" className="w-full text-xl" onClick={onClose}>
+            확인
+          </Button>
         </div>
       </FlexibleLayout.Footer>
     </FlexibleLayout.Root>

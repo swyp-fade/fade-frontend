@@ -23,12 +23,12 @@ export const enum SignUpType {
   KAKAO = 'kakao',
 }
 
-type SignUpPayload = { signUpType: SignUpType; accessToken: string; accountId: string; sex: string };
+type SignUpPayload = { signUpType: SignUpType; accessToken: string; accountId: string; gender: string };
 type SignUpResponse = AuthTokens;
 
 /** 회원가입 요청 */
-export async function requestSignUp({ signUpType, accessToken, accountId, sex }: SignUpPayload) {
-  return await axios.post<SignUpResponse>(`/auth/social-login/KAKAO/signup`, { signUpType, accessToken, accountId, sex });
+export async function requestSignUp(payload: SignUpPayload) {
+  return await axios.post<SignUpResponse>(`/auth/social-login/KAKAO/signup`, payload);
 }
 
 type SignInWithCodePayload = { authorizationCode: string };

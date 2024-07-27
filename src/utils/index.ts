@@ -228,6 +228,19 @@ export async function prefetchImages(images: string[]): Promise<void> {
     )
   );
 }
+
+export async function prefetchImageAndGetObjectUrl(src: string): Promise<string> {
+  try {
+    const response = await fetch(src);
+    const blob = await response.blob();
+
+    return URL.createObjectURL(blob);
+  } catch (error) {
+    console.error('Error fetching image:', error);
+    throw error;
+  }
+}
+
 export function isBetweenDate(pre: Date, cur: Date, post: Date) {
   return sameOrAfter(cur, pre) && sameOrBefore(cur, post);
 }

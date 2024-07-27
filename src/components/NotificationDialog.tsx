@@ -11,7 +11,8 @@ import {
 import { cn, getRelativeTimeLabel } from '@Utils/index';
 import { subDays, subMonths } from 'date-fns';
 import { FaCrown } from 'react-icons/fa6';
-import { MdCancel, MdChevronLeft, MdChevronRight, MdDelete, MdReport } from 'react-icons/md';
+import { MdCancel, MdChevronRight, MdDelete, MdReport } from 'react-icons/md';
+import { BackButton } from './ui/button';
 
 const testNotis: TNotification[] = [
   {
@@ -73,7 +74,7 @@ export function NotificationDialog({ onClose }: DefaultModalProps) {
   return (
     <FlexibleLayout.Root>
       <FlexibleLayout.Header>
-        <header className="relative px-5 py-4">
+        <header className="relative py-2">
           <BackButton onClick={onClose} />
           <p className="text-center text-2xl font-semibold">알림</p>
         </header>
@@ -89,16 +90,6 @@ export function NotificationDialog({ onClose }: DefaultModalProps) {
         <p className="text-detail text-gray-500">알림은 한 달이 지나면 자동으로 사라져요!</p>
       </FlexibleLayout.Content>
     </FlexibleLayout.Root>
-  );
-}
-
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-      onClick={onClick}>
-      <MdChevronLeft className="size-6 transition-transform group-active:scale-95" />
-    </button>
   );
 }
 
