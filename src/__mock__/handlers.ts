@@ -1,9 +1,9 @@
-import { TFeed, UserDetail } from '@Types/model';
+import { UserDetail } from '@Types/model';
 import { ServiceErrorResponse } from '@Types/serviceError';
 import { HttpStatusCode } from 'axios';
-import { addDays } from 'date-fns';
+import { addDays, getMonth, getYear } from 'date-fns';
 import { HttpResponse, delay, http } from 'msw';
-import { createAccessToken, createRefreshToken, generateTVoteCandidateDummyData } from './utils';
+import { createAccessToken, createRefreshToken, generateDummyFeedData, generateTVoteCandidateDummyData } from './utils';
 
 import testFashionImage1 from '@Assets/test_fashion_image.jpg';
 import testFashionImage10 from '@Assets/test_fashion_image_10.jpg';
@@ -254,5 +254,16 @@ export const handlers = [
     await delay(NETWORK_DELAY);
 
     return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/archiving`, async ({ request }) => {
+    const { searchParams } = new URL(request.url);
+    const selectedDate = searchParams.get('selectedDate')!;
+
+    await delay(NETWORK_DELAY);
+
+    const feeds = generateDummyFeedData(getYear(selectedDate), getMonth(selectedDate));
+
+    return HttpResponse.json({ feeds }, { status: HttpStatusCode.Ok });
   }),
 ];

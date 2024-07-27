@@ -16,8 +16,13 @@ export interface TFeed {
   id: number;
   memberId: number;
   imageURL: string;
-  styleIds: number[];
+  styleIds: TStyleId[];
   outfits: TOutfitItem[];
+  createdAt: Date;
+}
+
+export interface TStyleId {
+  id: number;
 }
 
 export interface TOutfitItem {
@@ -27,8 +32,15 @@ export interface TOutfitItem {
   categoryId: number;
 }
 
-export interface TVoteCandidate extends Omit<TFeed, 'id'> {
+export interface TVoteCandidateAPI extends Omit<TFeed, 'id'> {
   feedId: number;
+  isSubscribed: boolean;
+  isBookmarked: boolean;
+}
+
+export interface TVoteCandidate extends Omit<TFeed, 'id' | 'styleIds'> {
+  feedId: number;
+  styleIds: number[];
   isSubscribed: boolean;
   isBookmarked: boolean;
 }
@@ -44,8 +56,34 @@ export interface TVoteResult {
 
 export type VoteType = 'FADE_IN' | 'FADE_OUT';
 
+export interface TFAPArchivingFeed extends Omit<TFeed, 'id' | 'styleIds'> {
+  feedId: number;
+  accountId: string;
+
+  isSubscribed: boolean;
+  isBookmarked: boolean;
+
+  outfits: TOutfitItem[];
+  styleIds: number[];
+
+  createdAt: Date;
+}
+
+export interface TFAPArchivingFeedAPI extends TFeed {
+  accountId: string;
+
+  isSubscribed: boolean;
+  isBookmarked: boolean;
+
+  outfits: TOutfitItem[];
+  styleIds: TStyleId[];
+
+  createdAt: Date;
+}
+
 /**
  * TFeed
  *  TVoteCandidate
  *    TVoteCandidateCard
+ *  TFAPArchivingFeed
  */

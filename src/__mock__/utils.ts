@@ -1,4 +1,4 @@
-import { TOutfitItem, TVoteCandidate, UserDetail } from '@Types/model';
+import { TFAPArchivingFeedAPI, TOutfitItem, TStyleId, TVoteCandidateAPI, UserDetail } from '@Types/model';
 import { addDays, addHours } from 'date-fns';
 
 import testFashionImage1 from '@Assets/test_fashion_image.jpg';
@@ -75,11 +75,11 @@ function createRandomOutfitItem(index: number): TOutfitItem {
   };
 }
 
-function createRandomTVoteCandidate(): TVoteCandidate {
+function createRandomTVoteCandidate(): TVoteCandidateAPI {
   const styleIdsLength = getRandomNumber(1, 6);
   const outfitsLength = getRandomNumber(1, 5);
 
-  const styleIds = Array.from({ length: styleIdsLength }, () => getRandomNumber(0, 10));
+  const styleIds = Array.from({ length: styleIdsLength }, () => ({ id: getRandomNumber(0, 10) }));
   const outfits = Array.from({ length: outfitsLength }, (_, index) => createRandomOutfitItem(index + 1));
 
   return {
@@ -90,9 +90,68 @@ function createRandomTVoteCandidate(): TVoteCandidate {
     outfits,
     isSubscribed: getRandomBoolean(),
     isBookmarked: getRandomBoolean(),
+    createdAt: new Date(),
   };
 }
 
-export function generateTVoteCandidateDummyData(size: number): TVoteCandidate[] {
+export function generateTVoteCandidateDummyData(size: number): TVoteCandidateAPI[] {
   return Array.from({ length: size }, () => createRandomTVoteCandidate());
 }
+const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+const randomBool = () => Math.random() < 0.5;
+const randomString = (length: number) =>
+  Array(length)
+    .fill(null)
+    .map(() => String.fromCharCode(randomInt(97, 122)))
+    .join('');
+
+// StyleId 생성 함수
+const generateStyleIds = (): TStyleId[] => {
+  const count = randomInt(1, 6);
+  return Array(count)
+    .fill(null)
+    .map(() => ({ id: randomInt(0, 10) }));
+};
+
+// OutfitItem 생성 함수
+const generateOutfitItems = (): TOutfitItem[] => {
+  const count = randomInt(1, 5);
+  return Array(count)
+    .fill(null)
+    .map((_, index) => ({
+      id: index + 1,
+      brandName: randomString(randomInt(3, 7)),
+      details: randomString(15),
+      categoryId: randomInt(1, 7),
+    }));
+};
+
+// 단일 TFAPArchivingFeedAPI 아이템 생성 함수
+const generateFeedItem = (date: Date): TFAPArchivingFeedAPI => ({
+  id: randomInt(1, 100),
+  memberId: randomInt(1, 1000),
+  imageURL: testFahsionImages[getRandomNumber(0, testFahsionImages.length - 1)],
+  styleIds: generateStyleIds(),
+  outfits: generateOutfitItems(),
+  createdAt: date,
+  accountId: `account${randomInt(1, 1000)}`,
+  isSubscribed: randomBool(),
+  isBookmarked: randomBool(),
+});
+
+// 주어진 월에 대한 TFAPArchivingFeedAPI 더미 데이터 생성 함수
+export const generateDummyFeedData = (year: number, month: number): TFAPArchivingFeedAPI[] => {
+  const result: TFAPArchivingFeedAPI[] = [];
+  const today = new Date();
+  const lastDayOfMonth = new Date(year, month, 0).getDate();
+
+  // 해당 월의 모든 날짜에 대해 더미 데이터 생성
+  for (let day = 1; day <= lastDayOfMonth; day++) {
+    const currentDate = new Date(year, month - 1, day);
+    if (currentDate < today) {
+      result.push(generateFeedItem(currentDate));
+    }
+  }
+
+  return result;
+};

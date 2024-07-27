@@ -1,4 +1,5 @@
 import { axios } from '@Libs/axios';
+import { TFAPArchivingFeed, TFAPArchivingFeedAPI } from '@Types/model';
 
 type OutfitField = {
   categoryId: number;
@@ -22,4 +23,21 @@ export async function requestBookmarkFeed({ feedId, wouldBookmark }: BookmarkFee
   }
 
   return await axios.delete<BookmarkFeedResponse>(`/bookmark/${feedId}`, {});
+}
+
+type FAPArchivingPayload = { selectedDate: string };
+type FAPArchivingResponseAPI = { feeds: TFAPArchivingFeedAPI[] };
+type FAPArchivingResponse = { feeds: TFAPArchivingFeed[] };
+
+export async function requestFAPArchiving({ selectedDate }: FAPArchivingPayload) {
+  return await axios.get<FAPArchivingResponseAPI>(`/archiving?selectedDate=${selectedDate}`).then(
+    ({ data: { feeds } }) =>
+      ({
+        feeds: feeds.map(({ id, styleIds, ...feed }) => ({
+          feedId: id,
+          styleIds: styleIds.map(({ id }) => id),
+          ...feed,
+        })),
+      }) as FAPArchivingResponse
+  );
 }
