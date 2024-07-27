@@ -22,6 +22,10 @@ export function ReportButton({ feedId, onReportEnd }: ReportButtonProps) {
   const handleReportClick = async () => {
     const reportResult = await startReportFlow();
 
+    if (!reportResult) {
+      return;
+    }
+
     reportFeed(
       { feedId },
       {
