@@ -29,6 +29,8 @@ export interface TOutfitItem {
 
 export interface TVoteCandidate extends Omit<TFeed, 'id'> {
   feedId: number;
+  isSubscribed: boolean;
+  isBookmarked: boolean;
 }
 
 export interface TVoteCandidateCard extends TVoteCandidate {
