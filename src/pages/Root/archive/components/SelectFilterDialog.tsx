@@ -4,9 +4,9 @@ import { BackButton, Button } from '@Components/ui/button';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
 import { OutfitStyle } from '@Types/outfitStyle';
+import { GenderType } from '@Types/User';
 import { PropsWithChildren, useState } from 'react';
 
-export type GenderType = 'men' | 'women';
 export type FilterType = { gender: GenderType | null; selectedStyles: OutfitStyle[] };
 export type SelectFilterDialogProps = { defaultFilter: FilterType };
 
