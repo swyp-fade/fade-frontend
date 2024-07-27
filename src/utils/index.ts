@@ -270,3 +270,25 @@ export function getRelativeTimeLabel(date: Date) {
     return rtf.format(diffMonths, 'month');
   }
 }
+
+export function objectToQueryParam(obj: object) {
+  const params = [];
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (value === 0 || (value && (!Array.isArray(value) || value.length > 0))) {
+      let paramValue;
+
+      if (Array.isArray(value)) {
+        paramValue = value.join(',');
+      } else if (typeof value === 'object') {
+        paramValue = JSON.stringify(value);
+      } else {
+        paramValue = value;
+      }
+
+      params.push(`${encodeURIComponent(key)}=${encodeURIComponent(paramValue)}`);
+    }
+  }
+
+  return params.length > 0 ? params.join('&') : '';
+}
