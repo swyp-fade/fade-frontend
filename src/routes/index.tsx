@@ -20,7 +20,12 @@ const SignUpPage = lazy(() => import('@Pages/Root/signup/page').then((module) =>
 const ArchivePage = lazy(() => import('@Pages/Root/archive/page').then((module) => ({ default: module.default })));
 const VoteFAPPage = lazy(() => import('@Pages/Root/voteFAP/page').then((module) => ({ default: module.default })));
 const SubscribePage = lazy(() => import('@Pages/Root/subscribe/page').then((module) => ({ default: module.default })));
+const SubscribeListPage = lazy(() => import('@Pages/Root/subscribe/list/page').then((module) => ({ default: module.default })));
 const MyPage = lazy(() => import('@Pages/Root/mypage/page').then((module) => ({ default: module.default })));
+const MyPageFeed = lazy(() => import('@Pages/Root/mypage/feed/page').then((module) => ({ default: module.default })));
+const MyPageVoteHistory = lazy(() => import('@Pages/Root/mypage/voteHistory/page').then((module) => ({ default: module.default })));
+const MyPageBookmark = lazy(() => import('@Pages/Root/mypage/bookmark/page').then((module) => ({ default: module.default })));
+const UserFeedPage = lazy(() => import('@Pages/Root/user/page').then((module) => ({ default: module.default })));
 
 /** Auth */
 const KakaoCallback = lazy(() => import('@Pages/Auth/KakaoCallback').then((module) => ({ default: module.default })));
@@ -47,8 +52,17 @@ export const routesFromElements = createRoutesFromElements(
           }>
           <Route path="archive" element={<ArchivePage />} />
           <Route path="vote-fap" element={<VoteFAPPage />} />
-          <Route path="subscribe" element={<SubscribePage />} />
-          <Route path="mypage" element={<MyPage />} />
+          <Route path="subscribe">
+            <Route index element={<SubscribePage />} />
+            <Route path="list" element={<SubscribeListPage />} />
+          </Route>
+          <Route path="mypage">
+            <Route index element={<MyPage />} />
+            <Route path="feed" element={<MyPageFeed />} />
+            <Route path="vote-history" element={<MyPageVoteHistory />} />
+            <Route path="bookmark" element={<MyPageBookmark />} />
+          </Route>
+          <Route path="user" element={<UserFeedPage />} />
         </Route>
       </Route>
     </Route>

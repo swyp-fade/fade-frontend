@@ -228,6 +228,19 @@ export async function prefetchImages(images: string[]): Promise<void> {
     )
   );
 }
+
+export async function prefetchImageAndGetObjectUrl(src: string): Promise<string> {
+  try {
+    const response = await fetch(src);
+    const blob = await response.blob();
+
+    return URL.createObjectURL(blob);
+  } catch (error) {
+    console.error('Error fetching image:', error);
+    throw error;
+  }
+}
+
 export function isBetweenDate(pre: Date, cur: Date, post: Date) {
   return sameOrAfter(cur, pre) && sameOrBefore(cur, post);
 }
@@ -238,4 +251,21 @@ export function sameOrBefore(d1 = new Date(), d2 = new Date()) {
 
 export function sameOrAfter(d1 = new Date(), d2 = new Date()) {
   return isSameYear(d1, d2) && isSameMonth(d1, d2) ? true : isAfter(d1, d2) ? true : false;
+}
+
+export function getRelativeTimeLabel(date: Date) {
+  const rtf = new Intl.RelativeTimeFormat('ko', { numeric: 'auto' });
+  const now = new Date();
+  const diffTime = date.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const diffWeeks = Math.ceil(diffDays / 7);
+  const diffMonths = Math.ceil(diffDays / 30);
+
+  if (Math.abs(diffDays) < 7) {
+    return rtf.format(diffDays, 'day');
+  } else if (Math.abs(diffWeeks) < 4) {
+    return rtf.format(diffWeeks, 'week');
+  } else {
+    return rtf.format(diffMonths, 'month');
+  }
 }

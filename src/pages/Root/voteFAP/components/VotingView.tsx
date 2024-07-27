@@ -1,4 +1,6 @@
-import { useModalActions } from '@Hooks/modal';
+import { ReportButton } from '@Components/ReportButton';
+import { SubscribeButton } from '@Components/SubscribeButton';
+import { Image } from '@Components/ui/image';
 import { useToastActions } from '@Hooks/toast';
 import { requestGetVoteCandidates, requestSendVoteResult } from '@Services/vote';
 import { SwipeDirection, useVotingStore, VoteCandidateCardType } from '@Stores/vote';
@@ -8,9 +10,8 @@ import { cn, generateAnonName, prefetchImages } from '@Utils/index';
 import { isAxiosError } from 'axios';
 import { AnimatePresence, motion, MotionValue, useMotionValue, useTransform, Variants } from 'framer-motion';
 import { useEffect, useLayoutEffect, useState, useTransition } from 'react';
-import { MdBookmark, MdReport } from 'react-icons/md';
+import { MdBookmark } from 'react-icons/md';
 import { RandomAvatar } from './RandomAvatar';
-import { ReportBottomSheet, ReportResult } from './ReportBottomSheet';
 
 import swipeFadeInImage from '@Assets/swipe_fade_in.png';
 import swipeFadeOutImage from '@Assets/swipe_fade_out.png';
@@ -289,18 +290,10 @@ function VoteCandidateCard({ feedId, imageURL, isCurrentCard }: VoteCandidateCar
   const isLeftBoundary = dragOffBoundary === 'left';
   const isRightBoundary = dragOffBoundary === 'right';
 
-  const { showToast } = useToastActions();
-
-  const handleReportEnd = (reportResult?: ReportResult) => {
+  const handleReportEnd = () => {
     setIsReporting(false);
+    setIsDragging(false);
 
-    if (reportResult === undefined) {
-      return;
-    }
-
-    /** TODO: 신고 API 호출 */
-
-    showToast({ type: 'basic', title: `${feedId} 신고되었습니다.` });
     handleSelect('left');
   };
 
@@ -315,7 +308,16 @@ function VoteCandidateCard({ feedId, imageURL, isCurrentCard }: VoteCandidateCar
         backgroundPosition: 'center',
       }}
       className="relative flex-1 rounded-lg bg-gray-200 shadow-bento">
-      {isCurrentCard && <ReportButton shouldBelowZIndex={isDragging || isReporting} onReportStart={() => setIsDragging(true)} onReportEnd={handleReportEnd} />}
+      {isCurrentCard && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className={cn('absolute right-4 top-4 z-[2]', {
+            ['z-1']: isDragging || isReporting,
+          })}>
+          <ReportButton feedId={feedId} onReportEnd={handleReportEnd} />
+        </motion.div>
+      )}
 
       <motion.div style={{ opacity: computedOpacity }} className="absolute inset-0 grid place-items-center rounded-lg bg-purple-500">
         {isLeftBoundary && <FadeOutCover />}
@@ -332,44 +334,12 @@ function VoteCandidateCard({ feedId, imageURL, isCurrentCard }: VoteCandidateCar
   );
 }
 
-type ReportButtonProps = { shouldBelowZIndex: boolean; onReportStart: () => void; onReportEnd: (result: ReportResult | undefined) => void };
-
-function ReportButton({ shouldBelowZIndex, onReportStart, onReportEnd }: ReportButtonProps) {
-  const { showModal } = useModalActions();
-
-  const handleReportClick = async () => {
-    onReportStart();
-    const reportResult = await startReportFlow();
-    onReportEnd(reportResult);
-  };
-
-  const startReportFlow = async () => {
-    // TODO: Report에 사진 ID? 유저 ID? 넘겨주긴 해야 함
-    return await showModal<ReportResult>({ type: 'bottomSheet', Component: ReportBottomSheet });
-  };
-
-  return (
-    <motion.button
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className={cn('group absolute right-4 top-4 z-[2] cursor-pointer rounded-lg bg-white px-2 py-1', {
-        ['z-1']: shouldBelowZIndex,
-      })}
-      onClick={() => handleReportClick()}>
-      <div className="flex flex-row items-center gap-1 transition-transform group-active:scale-95">
-        <MdReport className="size-[1.125rem]" />
-        <span>신고하기</span>
-      </div>
-    </motion.button>
-  );
-}
-
 function FadeOutCover() {
-  return <div style={{ backgroundImage: `url('${swipeFadeOutImage}')`, backgroundSize: 'cover' }} className="h-[3.2725rem] w-[21.875rem]" />;
+  return <Image src={swipeFadeOutImage} className="h-[3.2725rem] w-[21.875rem]" />;
 }
 
 function FadeInCover() {
-  return <div style={{ backgroundImage: `url('${swipeFadeInImage}')`, backgroundSize: 'cover' }} className="h-[3.2725rem] w-[16.7719rem]" />;
+  return <Image src={swipeFadeInImage} className="h-[3.2725rem] w-[16.7719rem]" />;
 }
 
 type DragControllerProps = {
@@ -414,14 +384,15 @@ function DragController({ x, onDragStart, onDragEnd, onDragOffBoundary }: DragCo
   );
 }
 
-function SubscribeButton() {
+function UserDetailCard() {
   const anonName = useVotingStore(({ viewCards }) => viewCards.at(-1)?.anonName || '');
 
   return (
     <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white px-3 py-2 shadow-bento">
       <RandomAvatar />
       <AnimatedUsername name={anonName} />
-      <button className="rounded-lg border border-gray-200 px-4 py-1">구독</button>
+      {/* <button className="rounded-lg border border-gray-200 px-4 py-1">구독</button> */}
+      <SubscribeButton initialSubscribedStatus={false} userId={0} onToggle={(value) => console.log(value)} />
     </div>
   );
 }
@@ -463,7 +434,7 @@ function VotingTools() {
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <SubscribeButton />
+      <UserDetailCard />
 
       <div className="flex flex-row gap-3">
         <VoteButton type="fadeOut" onClick={() => handleSelect('left')} />

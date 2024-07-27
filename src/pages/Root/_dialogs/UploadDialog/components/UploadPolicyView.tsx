@@ -1,3 +1,4 @@
+import { Button } from '@Components/ui/button';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { MdClose } from 'react-icons/md';
 
@@ -5,7 +6,7 @@ export function PolicyView({ onDegreePolicy, onAgreePolicy }: { onDegreePolicy: 
   return (
     <FlexibleLayout.Root>
       <FlexibleLayout.Header>
-        <header className="relative px-5 py-4">
+        <header className="relative py-2">
           <CloseButton onClick={() => onDegreePolicy()} />
           <p className="text-center text-2xl font-semibold">사진 업로드 정책</p>
         </header>
@@ -31,22 +32,18 @@ export function PolicyView({ onDegreePolicy, onAgreePolicy }: { onDegreePolicy: 
 
 function CloseButton({ onClick }: { onClick: () => void }) {
   return (
-    <button
-      className="group absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-      onClick={onClick}>
-      <MdClose className="size-6 transition-transform group-active:scale-95" />
-    </button>
+    <Button variants="ghost" className="absolute left-4 top-1/2 -translate-y-1/2" onClick={onClick}>
+      <MdClose className="size-6" />
+    </Button>
   );
 }
 
 function AgreeButton({ onClick }: { onClick: () => void }) {
   return (
     <div className="flex p-4">
-      <button
-        className="group flex-1 rounded-lg bg-black py-2 text-xl text-white transition-colors disabled:bg-gray-200 disabled:text-gray-400 disabled:pointerdevice:cursor-not-allowed"
-        onClick={onClick}>
-        <span className="inline-block transition-transform group-active:scale-95">동의하고 계속하기</span>
-      </button>
+      <Button variants="secondary" className="w-full text-xl" onClick={onClick}>
+        동의하고 계속하기
+      </Button>
     </div>
   );
 }

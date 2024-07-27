@@ -1,12 +1,13 @@
+import { ShowNotificationButton } from '@Components/ShowNotificationButton';
 import { useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { useVotingStore } from '@Stores/vote';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
-import { MdInfoOutline, MdOutlineNotificationsNone } from 'react-icons/md';
+import { MdInfoOutline } from 'react-icons/md';
 import { VoteController } from './components/VoteController';
 import { VotePolicyBottomSheet } from './components/VotePolicyBottomSheet';
+import { Button } from '@Components/ui/button';
 
 export default function Page() {
   useHeader({
@@ -57,26 +58,8 @@ function ShowVotePolicyButton() {
   };
 
   return (
-    <button className="group cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100" onClick={showVotePolicyModal}>
-      <MdInfoOutline className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
-    </button>
-  );
-}
-
-function ShowNotificationButton() {
-  const [isOpened, setIsOpened] = useState(false);
-
-  return (
-    <button
-      className="group relative cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100"
-      onClick={() => setIsOpened(!isOpened)}>
-      <MdOutlineNotificationsNone className="size-6 transition-transform touchdevice:group-active:scale-95 pointerdevice:group-active:scale-95" />
-
-      {isOpened && (
-        <div className="absolute right-4 top-full flex min-w-max rounded border bg-white p-5">
-          <p>흐으음..</p>
-        </div>
-      )}
-    </button>
+    <Button variants="ghost" size="icon" onClick={showVotePolicyModal}>
+      <MdInfoOutline className="size-6" />
+    </Button>
   );
 }

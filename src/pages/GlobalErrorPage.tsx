@@ -7,7 +7,7 @@ export default function GlobalErrorPage() {
   return (
     <FlexibleLayout.Root>
       <FlexibleLayout.Header>
-        <header className="relative px-5 py-4">
+        <header className="relative py-2">
           <p className="text-center text-2xl font-semibold">FADE</p>
         </header>
       </FlexibleLayout.Header>
