@@ -1,4 +1,5 @@
 import { BackButton, Button } from '@Components/ui/button';
+import { Textarea } from '@Components/ui/textarea';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
 import { cn } from '@Utils/index';
@@ -112,21 +113,10 @@ function SelectReportTypeList({ onSelect }: { onSelect: (selectType: ReportType)
 }
 
 function InputReportDetail({ details, reportType, onChange }: { details: string; reportType: ReportType; onChange: (value: string) => void }) {
-  const textLength = details.length;
-
   return (
     <div>
       <p className="mb-2 font-semibold">{REPORT_TYPE_TEXT[reportType]}</p>
-      <div className="flex h-[10rem] w-full resize-none flex-col rounded-lg bg-gray-100 p-3">
-        <textarea
-          className="h-full w-full resize-none bg-transparent align-text-top outline-none transition-colors disabled:bg-gray-300 disabled:text-gray-500"
-          placeholder="신고 내용을 입력해주세요."
-          value={details}
-          onChange={(e) => onChange(e.target.value)}
-          maxLength={200}
-        />
-        <p className="text-right text-xs text-gray-400">{textLength > 200 ? 200 : textLength} / 200</p>
-      </div>
+      <Textarea className="h-[10rem]" placeholder="신고 내용을 입력해주세요." value={details} onChange={(value) => onChange(value)} maxLength={200} />
       <p className="text-xs text-gray-500">※ 신고한 사진은 회원님의 피드에 더이상 노출되지 않습니다.</p>
       <p className="text-xs text-gray-500">※ 신고 5회 누적 시 사진이 삭제됩니다.</p>
     </div>

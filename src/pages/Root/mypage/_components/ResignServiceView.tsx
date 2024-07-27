@@ -1,5 +1,5 @@
-import { BackButton } from '@Components/ui/button';
-import { Button } from '@Components/ui/button';
+import { BackButton, Button } from '@Components/ui/button';
+import { Textarea } from '@Components/ui/textarea';
 import { useConfirm } from '@Hooks/modal';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
@@ -89,8 +89,6 @@ function ResignReasonSelectView({
   isOtherSelected: boolean;
   onReasonUpdate: (fields: Partial<TResignReason>) => void;
 }) {
-  const textLength = resignReason.detail?.length || 0;
-
   return (
     <div className="p-5">
       <p className="text-h3 font-semibold">탈퇴 사유를 선택해주세요</p>
@@ -99,19 +97,14 @@ function ResignReasonSelectView({
           <ResignReasonItem value={String(index)} reason={resignReasonText} />
         ))}
 
-        <div
-          className="group flex h-20 w-full resize-none flex-col rounded-lg bg-gray-100 p-3 transition-colors aria-disabled:bg-gray-300"
-          aria-disabled={!isOtherSelected}>
-          <textarea
-            className="h-full w-full resize-none bg-transparent align-text-top outline-none transition-colors disabled:bg-gray-300 disabled:text-gray-500"
-            placeholder="상세 사유를 입력해주세요."
-            value={resignReason.detail || ''}
-            onChange={(e) => onReasonUpdate({ detail: e.target.value })}
-            maxLength={100}
-            disabled={!isOtherSelected}
-          />
-          <p className="text-right text-xs text-gray-400">{textLength > 100 ? 100 : textLength} / 100</p>
-        </div>
+        <Textarea
+          className="h-20"
+          placeholder="상세 사유를 입력해주세요."
+          value={resignReason.detail || ''}
+          onChange={(detail) => onReasonUpdate({ detail })}
+          maxLength={100}
+          disabled={!isOtherSelected}
+        />
       </RadioGroup.Root>
     </div>
   );

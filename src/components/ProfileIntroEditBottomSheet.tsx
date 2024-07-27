@@ -3,13 +3,13 @@ import { DefaultModalProps } from '@Stores/modal';
 import { forwardRef, useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import { Button } from './ui/button';
+import { Textarea } from './ui/textarea';
 
 type ProfileIntroEditBottomSheetProps = { defaultProfileIntro: string };
 
 export const ProfileIntroEditBottomSheet = forwardRef<HTMLDivElement, DefaultModalProps<void, ProfileIntroEditBottomSheetProps>>(
   ({ defaultProfileIntro, onClose }: DefaultModalProps<void, ProfileIntroEditBottomSheetProps>, ref) => {
     const [profileIntro, setProfileIntro] = useState(defaultProfileIntro);
-    const textLength = profileIntro.length;
 
     return (
       <FlexibleLayout.Root ref={ref} className="h-fit">
@@ -23,16 +23,7 @@ export const ProfileIntroEditBottomSheet = forwardRef<HTMLDivElement, DefaultMod
         </FlexibleLayout.Header>
 
         <FlexibleLayout.Content className="p-5">
-          <div className="flex h-[10.25rem] w-full resize-none flex-col rounded-lg bg-gray-100 p-3">
-            <textarea
-              className="h-full w-full resize-none bg-transparent align-text-top outline-none transition-colors disabled:bg-gray-300 disabled:text-gray-500"
-              placeholder="멋지게 나를 소개해 보아요!"
-              value={profileIntro}
-              onChange={(e) => setProfileIntro(e.target.value)}
-              maxLength={150}
-            />
-            <p className="text-right text-xs text-gray-400">{textLength > 150 ? 150 : textLength} / 200</p>
-          </div>
+          <Textarea placeholder="멋지게 나를 소개해 보아요!" className="h-[10.25rem]" value={profileIntro} onChange={(value) => setProfileIntro(value)} maxLength={150} />
         </FlexibleLayout.Content>
 
         <FlexibleLayout.Footer>
