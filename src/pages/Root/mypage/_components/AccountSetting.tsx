@@ -1,22 +1,22 @@
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import testImage from '@Assets/test_fashion_image.jpg';
+import { AccountEditForm } from '@Components/forms/account/AccountEditForm';
 import { BackButton } from '@Components/ui/button';
-import { Button } from '@Components/ui/button';
-import { Image } from '@Components/ui/image';
-import { Input } from '@Components/ui/Input';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useModalActions } from '@Hooks/modal';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
-import * as RadioGroup from '@radix-ui/react-radio-group';
 import { DefaultModalProps } from '@Stores/modal';
-import { cn } from '@Utils/index';
-import { useTransition } from 'react';
-import { Control, useForm } from 'react-hook-form';
-import { MdCameraAlt } from 'react-icons/md';
-import { z } from 'zod';
-import ResignServiceView from './ResignServiceView';
+import { UserDetail } from '@Types/User';
+import testImage from '@Assets/test_fashion_image.jpg';
 
 export function AccountSetting({ onClose }: DefaultModalProps) {
+  /** TODO: 유저 정보 가져오기 */
+
+  const userDetails: UserDetail = {
+    accountId: 'fade_1234',
+    email: 'dd@dd.com',
+    id: 0,
+    profileImageId: 0,
+    profileImageURL: testImage,
+    gender: 'men',
+  };
+
   return (
     <FlexibleLayout.Root>
       <FlexibleLayout.Header>
@@ -26,144 +26,9 @@ export function AccountSetting({ onClose }: DefaultModalProps) {
         </header>
       </FlexibleLayout.Header>
 
-      <FlexibleLayout.Content className="flex flex-col p-5">
-        <div className="py-10">
-          <Image src={testImage} className="relative mx-auto size-32 rounded-lg">
-            <button className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 rounded-full bg-gray-100 p-1">
-              <MdCameraAlt className="size-5 text-gray-400" />
-            </button>
-          </Image>
-        </div>
-
-        <InitializeAccountForm onSubmit={() => {}} />
+      <FlexibleLayout.Content className="flex flex-col p-5 pt-10">
+        <AccountEditForm defaultUserDetails={userDetails} onSubmited={() => {}} />
       </FlexibleLayout.Content>
     </FlexibleLayout.Root>
-  );
-}
-
-const accountIdRegExp = new RegExp(/^[a-zA-Z0-9._]{4,15}$/);
-
-const formSchema = z.object({
-  accountId: z.string().regex(accountIdRegExp, '사용할 수 없는 ID입니다.'),
-  sex: z.enum(['men', 'women'], { message: '성별을 선택해주세요.' }),
-});
-
-type InitializeAccountFormSchema = z.infer<typeof formSchema>;
-
-function InitializeAccountForm({ onSubmit }: { onSubmit: (values: InitializeAccountFormSchema) => void }) {
-  const [pending, startTransition] = useTransition();
-
-  const form = useForm<InitializeAccountFormSchema>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      accountId: '',
-      sex: 'men',
-    },
-    mode: 'onChange',
-  });
-
-  const { isValid, errors } = form.formState;
-  const couldSubmit = isValid && !pending;
-
-  function handleSubmitAfterValidation(values: InitializeAccountFormSchema) {
-    startTransition(() => {
-      onSubmit(values);
-    });
-  }
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmitAfterValidation)} className="flex-1 space-y-8">
-        <fieldset className="flex h-full flex-col gap-5" disabled={pending}>
-          <div className="flex flex-1 flex-col gap-5">
-            <AccountIdField control={form.control} invalid={!!errors?.accountId} />
-            <SexField control={form.control} />
-            <ResignButton />
-          </div>
-
-          <Button className="text-xl" disabled={!couldSubmit}>
-            완료
-          </Button>
-        </fieldset>
-      </form>
-    </Form>
-  );
-}
-
-function AccountIdField({ control, invalid }: { control: Control<InitializeAccountFormSchema>; invalid: boolean }) {
-  return (
-    <FormField
-      control={control}
-      name="accountId"
-      render={({ field }) => (
-        <FormItem className="space-y-1">
-          <p className="text-h6 font-semibold">계정 ID</p>
-          <FormControl>
-            <Input placeholder="계정 ID" {...field} className="peer aria-[invalid=true]:border-pink-400" />
-          </FormControl>
-
-          <div className="pl-1 text-xs text-gray-600">
-            {invalid && <FormMessage className="text-xs text-pink-400" />}
-            {!invalid && field.value === '' && <p>사용할 계정 ID를 입력해주세요.</p>}
-            {!invalid && field.value !== '' && <p>사용할 수 있는 ID입니다.</p>}
-
-            <ul className={cn('list-disc pl-5', { ['text-pink-400']: invalid })}>
-              <li>영문자, 숫자, 마침표 및 밑줄만 사용 가능</li>
-              <li>최소 4자, 최대 30자</li>
-            </ul>
-          </div>
-        </FormItem>
-      )}
-    />
-  );
-}
-
-function SexField({ control }: { control: Control<InitializeAccountFormSchema> }) {
-  return (
-    <FormField
-      control={control}
-      name="sex"
-      render={({ field }) => (
-        <FormItem className="space-y-1">
-          <p className="text-h6 font-semibold">성별</p>
-
-          <FormControl>
-            <RadioGroup.Root defaultValue="men" className="flex w-full flex-row gap-5" value={field.value} onValueChange={field.onChange}>
-              <RadioGroup.Item
-                value="men"
-                className="flex flex-1 items-center justify-center rounded-lg bg-gray-200 py-3 text-black transition-colors data-[state=checked]:bg-violet-500 data-[state=checked]:text-white">
-                <p>남자</p>
-              </RadioGroup.Item>
-              <RadioGroup.Item
-                value="women"
-                className="flex flex-1 items-center justify-center rounded-lg bg-gray-200 py-3 text-black transition-colors data-[state=checked]:bg-violet-500 data-[state=checked]:text-white">
-                <p>여자</p>
-              </RadioGroup.Item>
-            </RadioGroup.Root>
-          </FormControl>
-
-          <p className="pl-1 text-xs text-gray-600">성별을 선택해주세요. 사진의 필터링에 활용되니 사실과 같게 선택해주세요!</p>
-
-          <FormMessage className="text-pink-400" />
-        </FormItem>
-      )}
-    />
-  );
-}
-
-function ResignButton() {
-  const { showModal } = useModalActions();
-
-  const handleClick = async () => {
-    await showModal({ type: 'fullScreenDialog', Component: ResignServiceView, animateType: 'slideInFromRight' });
-  };
-
-  return (
-    <div className="space-y-1 p-1">
-      <p className="text-h6 font-semibold">회원 탈퇴</p>
-      <button className="font-semibold text-gray-500 underline" onClick={handleClick}>
-        페이드 서비스에서 탈퇴하기
-      </button>
-    </div>
   );
 }
