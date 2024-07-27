@@ -3,7 +3,7 @@ import { ServiceErrorResponse } from '@Types/serviceError';
 import { HttpStatusCode } from 'axios';
 import { addDays } from 'date-fns';
 import { HttpResponse, delay, http } from 'msw';
-import { createAccessToken, createRefreshToken } from './utils';
+import { createAccessToken, createRefreshToken, generateTVoteCandidateDummyData } from './utils';
 
 import testFashionImage1 from '@Assets/test_fashion_image.jpg';
 import testFashionImage10 from '@Assets/test_fashion_image_10.jpg';
@@ -223,46 +223,34 @@ export const handlers = [
   http.get(`${BASE_URL}/vote/candidates`, async () => {
     await delay(NETWORK_DELAY);
 
-    const feeds = testFahsionImages.map(
-      (image) =>
-        ({
-          id: Math.floor(Math.random() * 100),
-          memberId: Math.floor(Math.random() * 100),
-          imageURL: image,
-          styleIds: [0, 1, 2, 3, 4],
-          outfits: [
-            {
-              id: 0,
-              brandName: '나이키',
-              categoryId: 0,
-              details: '공홈',
-            },
-            {
-              id: 1,
-              brandName: '나이키1',
-              categoryId: 1,
-              details: '공홈1',
-            },
-            {
-              id: 2,
-              brandName: '나이키2',
-              categoryId: 2,
-              details: '공홈2',
-            },
-            {
-              id: 3,
-              brandName: '나이키3',
-              categoryId: 3,
-              details: '공홈3',
-            },
-          ],
-        }) as TFeed
-    );
-
-    return HttpResponse.json({ feeds }, { status: HttpStatusCode.Ok });
+    return HttpResponse.json({ feeds: generateTVoteCandidateDummyData(10) }, { status: HttpStatusCode.Ok });
   }),
 
   http.post(`${BASE_URL}/vote/candidates`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.post(`${BASE_URL}/subscribe/:toMemberId`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.delete(`${BASE_URL}/subscribe/:toMemberId`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.post(`${BASE_URL}/bookmark/:feedId`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.delete(`${BASE_URL}/bookmark/:feedId`, async () => {
     await delay(NETWORK_DELAY);
 
     return new HttpResponse('', { status: HttpStatusCode.Ok });
