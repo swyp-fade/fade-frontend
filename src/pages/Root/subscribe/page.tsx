@@ -1,5 +1,6 @@
 import { OUTFIT_CATEGORY_LIST, OUTFIT_STYLE_LIST } from '@/constants';
 import testImage from '@Assets/test_fashion_image.jpg';
+import { ItemBadge } from '@Components/ItemBadge';
 import { ReportButton } from '@Components/ReportButton';
 import { ShowNotificationButton } from '@Components/ShowNotificationButton';
 import { SubscribeButton } from '@Components/SubscribeButton';
@@ -90,13 +91,13 @@ function BookmarkButton() {
   );
 }
 
-function OutfitBadge({ categoryType }: { categoryType: number }) {
-  return (
-    <div className="min-w-fit rounded-[1rem] bg-purple-50 px-4 py-2">
-      <span>{OUTFIT_CATEGORY_LIST[categoryType]}</span>
-    </div>
-  );
-}
+// function OutfitBadge({ categoryType }: { categoryType: number }) {
+//   return (
+//     <div className="min-w-fit rounded-[1rem] bg-purple-50 px-4 py-2">
+//       <span>{OUTFIT_CATEGORY_LIST[categoryType]}</span>
+//     </div>
+//   );
+// }
 
 function FeedCard() {
   return (
@@ -119,14 +120,16 @@ function FeedCard() {
 
         <div>
           <ul className="flex flex-row gap-2 overflow-y-scroll whitespace-nowrap">
-            {OUTFIT_STYLE_LIST.slice(0, 6).map((value) => (
-              <li className="rounded-2xl bg-purple-50 px-5 py-2 text-purple-400">{value}</li>
+            {OUTFIT_STYLE_LIST.slice(0, 6).map((value, index) => (
+              <ItemBadge key={`test-badge-${index}`} variants="primary">
+                {value}
+              </ItemBadge>
             ))}
           </ul>
         </div>
 
         <button type="button" className="flex w-full flex-row items-center gap-3 rounded-lg border border-purple-50 bg-white p-3">
-          <OutfitBadge categoryType={0} />
+          <ItemBadge variants="primary">{OUTFIT_CATEGORY_LIST[0]}</ItemBadge>
           <p className="text-left">나이키 조던</p>
         </button>
       </section>

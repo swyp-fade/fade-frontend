@@ -1,11 +1,10 @@
 import { OUTFIT_STYLE_LIST } from '@/constants';
-import { BackButton } from '@Components/ui/button';
-import { Button } from '@Components/ui/button';
-import { ToggleButton } from '@Components/ui/toogleButton';
+import { ItemBadge } from '@Components/ItemBadge';
+import { BackButton, Button } from '@Components/ui/button';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
 import { OutfitStyle } from '@Types/outfitStyle';
-import { useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 
 type SelectStyleViewProp = { defaultStyles: OutfitStyle[] };
 
@@ -23,17 +22,14 @@ export const SelectStyleView = ({ defaultStyles = [], onClose }: DefaultModalPro
         <ul className="flex flex-row flex-wrap gap-x-2 gap-y-3">
           {OUTFIT_STYLE_LIST.map((outfitStyle, index) => (
             <li key={outfitStyle}>
-              <ToggleButton
-                selected={selectedStyles.includes(index)}
-                onSelect={(isSelected) => {
-                  if (isSelected) {
-                    setSelectedStyles((prevStyles) => [...prevStyles, index]);
-                  } else {
-                    setSelectedStyles((prevStyles) => prevStyles.filter((value) => value !== index));
-                  }
+              <OutfitStyleToggleButton
+                isSelected={selectedStyles.includes(index)}
+                onToggle={(isSelected) => {
+                  isSelected && setSelectedStyles((prevStyles) => [...prevStyles, index]);
+                  !isSelected && setSelectedStyles((prevStyles) => prevStyles.filter((value) => value !== index));
                 }}>
                 {outfitStyle}
-              </ToggleButton>
+              </OutfitStyleToggleButton>
             </li>
           ))}
         </ul>
@@ -62,5 +58,20 @@ function DoneSelectStylesButton({ onClick }: { onClick: () => void }) {
         스타일 선택 완료
       </Button>
     </div>
+  );
+}
+
+interface TOutfitStyleToogleButton {
+  isSelected: boolean;
+  onToggle: (newValue: boolean) => void;
+}
+
+type OutfitStyleToggleButtonProps = PropsWithChildren<TOutfitStyleToogleButton>;
+
+function OutfitStyleToggleButton({ isSelected, onToggle, children }: OutfitStyleToggleButtonProps) {
+  return (
+    <button type="button" onClick={() => onToggle(!isSelected)}>
+      <ItemBadge variants={isSelected ? 'primary' : 'default'}>{children}</ItemBadge>
+    </button>
   );
 }

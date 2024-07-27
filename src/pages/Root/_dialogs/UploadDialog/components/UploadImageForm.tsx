@@ -1,7 +1,7 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { OUTFIT_CATEGORY_LIST, OUTFIT_STYLE_MAP } from '@/constants';
+import { ItemBadge } from '@Components/ItemBadge';
 import { Button } from '@Components/ui/button';
-import { ToggleButton } from '@Components/ui/toogleButton';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useModalActions } from '@Hooks/modal';
 import { useToastActions } from '@Hooks/toast';
@@ -250,21 +250,13 @@ function OutfitItemCard({
 
   return (
     <button type="button" className="flex w-full flex-row gap-3 rounded-lg border border-purple-50 bg-white p-3" onClick={handleClick}>
-      <OutfitBadge categoryType={outfitItem.categoryId} />
+      <ItemBadge variants="primary">{OUTFIT_CATEGORY_LIST[outfitItem.categoryId]}</ItemBadge>
 
       <div className="flex w-full flex-col gap-1">
         <p className="text-left">{outfitItem.brandName}</p>
         <p className="text-left text-sm text-gray-500">{outfitItem.details}</p>
       </div>
     </button>
-  );
-}
-
-function OutfitBadge({ categoryType }: { categoryType: number }) {
-  return (
-    <div className="min-w-fit rounded-[1rem] border border-purple-100 bg-purple-50 px-5 py-3">
-      <span>{OUTFIT_CATEGORY_LIST[categoryType]}</span>
-    </div>
   );
 }
 /* #endregion */
@@ -309,7 +301,7 @@ function SelectStylesField({ selectedStyles, control }: { selectedStyles: Outfit
             <ul className="flex flex-row flex-wrap gap-x-2 gap-y-3">
               {selectedStyles.map((selectedStyle) => (
                 <li key={selectedStyle}>
-                  <ToggleButton selected={true}>{OUTFIT_STYLE_MAP[selectedStyle]}</ToggleButton>
+                  <ItemBadge variants="primary">{OUTFIT_STYLE_MAP[selectedStyle]}</ItemBadge>
                 </li>
               ))}
             </ul>
