@@ -19,7 +19,8 @@ export const useAuthActions = () => {
 
   const signIn = useCallback(
     ({ accessToken, csrfToken }: AuthTokens) => {
-      setTokens({ accessToken, csrfToken });
+      /** NOTE: CSRF Token 보류 */
+      setTokens({ accessToken, csrfToken: csrfToken || '' });
       setAuthFromToken({ accessToken });
     },
     [setTokens, setAuthFromToken]

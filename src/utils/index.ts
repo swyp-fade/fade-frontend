@@ -1,5 +1,6 @@
 import { LoaderResponse, LoaderResponseStatus } from '@Types/loaderResponse';
 import { ServiceErrorResponse } from '@Types/serviceError';
+import { GenderType } from '@Types/User';
 import { isAxiosError } from 'axios';
 import { type ClassValue, clsx } from 'clsx';
 import { isAfter, isBefore, isSameMonth, isSameYear } from 'date-fns';
@@ -13,8 +14,8 @@ export function cn(...inputs: ClassValue[]) {
 export function getPayloadFromJWT(jwt: string) {
   return JSON.parse(atob(jwt.split('.')[1]).replaceAll('\\', '')) as {
     id: string;
-    accountId: string;
-    email: string;
+    username: string; // accountId
+    genderType: GenderType;
     exp: Date;
     iat: Date;
   };

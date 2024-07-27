@@ -11,14 +11,12 @@ export interface User {
 
 export interface UserDetail {
   id: number;
-  email: string;
   accountId: string;
-  profileImageId: number;
-  profileImageURL: string;
-  gender?: GenderType;
+  profileImageURL?: string;
+  genderType?: GenderType;
 }
 
 export type AuthTokens = {
   accessToken: string;
-  // csrfToken: string; // 보류
+  csrfToken?: string; // 보류
 };
