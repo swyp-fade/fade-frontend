@@ -30,6 +30,7 @@ export function ReportButton({ feedId, onReportEnd }: ReportButtonProps) {
       { feedId },
       {
         onSuccess() {
+          showToast({ type: 'basic', title: `${feedId}번 피드를 신고하였습니다.` });
           onReportEnd && onReportEnd(reportResult);
         },
         onError() {

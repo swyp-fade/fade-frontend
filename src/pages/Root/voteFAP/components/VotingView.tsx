@@ -1,7 +1,9 @@
 import { ReportButton } from '@Components/ReportButton';
 import { SubscribeButton } from '@Components/SubscribeButton';
+import { Button } from '@Components/ui/button';
 import { Image } from '@Components/ui/image';
 import { useToastActions } from '@Hooks/toast';
+import { requestBookmarkFeed } from '@Services/feed';
 import { requestGetVoteCandidates, requestSendVoteResult } from '@Services/vote';
 import { SwipeDirection, useVotingStore } from '@Stores/vote';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -300,15 +302,8 @@ function VoteCandidateCard({ feedId, imageURL, isCurrentCard }: VoteCandidateCar
 
   return (
     <motion.div
-      style={{
-        x: computedX,
-        rotate: computedRotate,
-        backgroundImage: `url('${imageURL}')`,
-        backgroundSize: 'contain',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-      }}
-      className="relative flex-1 rounded-lg bg-gray-200 shadow-bento">
+      style={{ x: computedX, rotate: computedRotate, backgroundImage: `url('${imageURL}')` }}
+      className="relative flex-1 rounded-lg bg-gray-200 bg-contain bg-center bg-no-repeat shadow-bento">
       {isCurrentCard && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -387,13 +382,14 @@ function DragController({ x, onDragStart, onDragEnd, onDragOffBoundary }: DragCo
 
 function UserDetailCard() {
   const anonName = useVotingStore(({ viewCards }) => viewCards.at(-1)?.anonName || '');
+  const isSubscribed = useVotingStore(({ viewCards }) => viewCards.at(-1)?.isSubscribed || false);
+  const memberId = useVotingStore(({ viewCards }) => viewCards.at(-1)?.memberId || -1);
 
   return (
     <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white px-3 py-2 shadow-bento">
       <RandomAvatar />
       <AnimatedUsername name={anonName} />
-      {/* <button className="rounded-lg border border-gray-200 px-4 py-1">구독</button> */}
-      <SubscribeButton initialSubscribedStatus={false} userId={0} onToggle={(value) => console.log(value)} />
+      <SubscribeButton initialSubscribedStatus={isSubscribed} userId={memberId} onToggle={(value) => console.log(value)} />
     </div>
   );
 }
@@ -432,6 +428,8 @@ function AnimatedUsername({ name }: { name: string }) {
 
 function VotingTools() {
   const handleSelect = useVotingStore((state) => state.handleSelect);
+  const feedId = useVotingStore(({ viewCards }) => viewCards.at(-1)?.feedId || -1);
+  const isBookmarked = useVotingStore(({ viewCards }) => viewCards.at(-1)?.isBookmarked || false);
 
   return (
     <div className="flex w-full flex-col gap-3">
@@ -440,7 +438,7 @@ function VotingTools() {
       <div className="flex flex-row gap-3">
         <VoteButton type="fadeOut" onClick={() => handleSelect('left')} />
         <VoteButton type="fadeIn" onClick={() => handleSelect('right')} />
-        <BookmarkButton />
+        <BookmarkButton feedId={feedId} defaultBookmarkStatus={isBookmarked} />
       </div>
     </div>
   );
@@ -470,10 +468,57 @@ function VoteButton({ type, onClick }: VoteButtonProps) {
   );
 }
 
-function BookmarkButton() {
+interface TBookmarkButton {
+  feedId: number;
+  defaultBookmarkStatus: boolean;
+}
+
+type BookmarkButtonProps = TBookmarkButton;
+
+function BookmarkButton({ feedId, defaultBookmarkStatus }: BookmarkButtonProps) {
+  const [isBookmarked, setIsBookmarked] = useState(defaultBookmarkStatus);
+  const { showToast } = useToastActions();
+
+  const { mutate: bookmarkFeed, isPending } = useMutation({
+    mutationKey: ['bookmarkFeed'],
+    mutationFn: requestBookmarkFeed,
+  });
+
+  useEffect(() => {
+    setIsBookmarked(defaultBookmarkStatus);
+  }, [defaultBookmarkStatus]);
+
+  const handleClick = () => {
+    setIsBookmarked((prev) => !prev);
+
+    bookmarkFeed(
+      {
+        feedId,
+        wouldBookmark: !defaultBookmarkStatus,
+      },
+      {
+        onError() {
+          setIsBookmarked((prev) => !prev);
+          showToast({ type: 'error', title: '북마크에 실패했어요.' });
+        },
+      }
+    );
+  };
+
   return (
-    <button className="rounded-lg bg-white p-3 shadow-bento">
-      <MdBookmark className="size-6 text-gray-600" />
-    </button>
+    <Button
+      variants="white"
+      interactive="onlyScale"
+      className={cn('shadow-bento', {
+        ['bg-purple-500']: isBookmarked,
+      })}
+      disabled={isPending}
+      onClick={handleClick}>
+      <MdBookmark
+        className={cn('size-6 text-gray-600 transition-colors', {
+          ['text-white']: isBookmarked,
+        })}
+      />
+    </Button>
   );
 }
