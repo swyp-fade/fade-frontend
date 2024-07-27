@@ -1,4 +1,4 @@
-import { UserDetail } from '@Types/model';
+import { TFeed, UserDetail } from '@Types/model';
 import { ServiceErrorResponse } from '@Types/serviceError';
 import { HttpStatusCode } from 'axios';
 import { addDays } from 'date-fns';
@@ -223,13 +223,43 @@ export const handlers = [
   http.get(`${BASE_URL}/vote/candidates`, async () => {
     await delay(NETWORK_DELAY);
 
-    const voteCandidates = testFahsionImages.map((image) => ({
-      feedId: Math.floor(Math.random() * 100),
-      userId: Math.floor(Math.random() * 100),
-      imageURL: image,
-    }));
+    const feeds = testFahsionImages.map(
+      (image) =>
+        ({
+          id: Math.floor(Math.random() * 100),
+          memberId: Math.floor(Math.random() * 100),
+          imageURL: image,
+          styleIds: [0, 1, 2, 3, 4],
+          outfits: [
+            {
+              id: 0,
+              brandName: '나이키',
+              categoryId: 0,
+              details: '공홈',
+            },
+            {
+              id: 1,
+              brandName: '나이키1',
+              categoryId: 1,
+              details: '공홈1',
+            },
+            {
+              id: 2,
+              brandName: '나이키2',
+              categoryId: 2,
+              details: '공홈2',
+            },
+            {
+              id: 3,
+              brandName: '나이키3',
+              categoryId: 3,
+              details: '공홈3',
+            },
+          ],
+        }) as TFeed
+    );
 
-    return HttpResponse.json({ voteCandidates }, { status: HttpStatusCode.Ok });
+    return HttpResponse.json({ feeds }, { status: HttpStatusCode.Ok });
   }),
 
   http.post(`${BASE_URL}/vote/candidates`, async () => {
