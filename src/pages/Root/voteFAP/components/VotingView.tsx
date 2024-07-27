@@ -18,6 +18,7 @@ import voteFadeInImage from '@Assets/vote_fade_in.png';
 import voteFadeOutImage from '@Assets/vote_fade_out.png';
 import { Image } from '@Components/ui/image';
 import { Button } from '@Components/ui/button';
+import { SubscribeButton } from '@Components/SubscribeButton';
 
 const viewVariants: Variants = {
   initial: { opacity: 0 },
@@ -418,14 +419,15 @@ function DragController({ x, onDragStart, onDragEnd, onDragOffBoundary }: DragCo
   );
 }
 
-function SubscribeButton() {
+function UserDetailCard() {
   const anonName = useVotingStore(({ viewCards }) => viewCards.at(-1)?.anonName || '');
 
   return (
     <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white px-3 py-2 shadow-bento">
       <RandomAvatar />
       <AnimatedUsername name={anonName} />
-      <button className="rounded-lg border border-gray-200 px-4 py-1">구독</button>
+      {/* <button className="rounded-lg border border-gray-200 px-4 py-1">구독</button> */}
+      <SubscribeButton initialSubscribedStatus={false} userId={0} onToggle={(value) => console.log(value)} />
     </div>
   );
 }
@@ -467,7 +469,7 @@ function VotingTools() {
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <SubscribeButton />
+      <UserDetailCard />
 
       <div className="flex flex-row gap-3">
         <VoteButton type="fadeOut" onClick={() => handleSelect('left')} />

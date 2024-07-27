@@ -1,12 +1,12 @@
 import testImage from '@Assets/test_fashion_image.jpg';
 import { useModalActions } from '@Hooks/modal';
-import { cn } from '@Utils/index';
 import { MdEditNote } from 'react-icons/md';
 import { ProfileIntroEditBottomSheet } from './ProfileIntroEditBottomSheet';
-import { Image } from './ui/image';
+import { SubscribeButton } from './SubscribeButton';
 import { Avatar } from './ui/avatar';
-import { Grid } from './ui/grid';
 import { Button } from './ui/button';
+import { Grid } from './ui/grid';
+import { Image } from './ui/image';
 
 export type ProfileViewType = 'owner' | 'user';
 
@@ -29,7 +29,7 @@ export function ProfileDetails({ viewType }: { viewType: ProfileViewType }) {
             </div>
           </div>
 
-          {isUserView && <SubscribeToggleButton />}
+          {isUserView && <SubscribeButton userId={0} initialSubscribedStatus={true} onToggle={() => {}} size="lg" />}
         </div>
 
         <div className="flex flex-col">
@@ -51,20 +51,6 @@ export function ProfileDetails({ viewType }: { viewType: ProfileViewType }) {
         </Grid>
       </div>
     </div>
-  );
-}
-
-function SubscribeToggleButton() {
-  const isSubscribed = true;
-
-  return (
-    <button
-      className={cn('h-fit w-[5rem] whitespace-nowrap rounded-lg border border-gray-200 bg-white py-2 transition-colors', {
-        ['border-purple-50 bg-purple-50']: isSubscribed,
-      })}>
-      {isSubscribed && '구독중'}
-      {!isSubscribed && '구독'}
-    </button>
   );
 }
 

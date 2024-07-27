@@ -13,6 +13,7 @@ import { MdBookmark, MdChevronRight, MdReport } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { ReportBottomSheet, ReportResult } from '../voteFAP/components/ReportBottomSheet';
 import { Avatar } from '@Components/ui/avatar';
+import { SubscribeButton } from '@Components/SubscribeButton';
 
 type SubscribeBadgeType = {
   userId: number;
@@ -153,7 +154,7 @@ function FeedCard() {
         <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white">
           <Avatar src={testImage} size="32" />
           <AccountIdButton />
-          <button className="rounded-lg border border-purple-50 bg-purple-50 px-3 py-2">구독중</button>
+          <SubscribeButton userId={0} initialSubscribedStatus={true} onToggle={() => {}} />
           <BookmarkButton />
         </div>
 
