@@ -2,17 +2,20 @@ import { cn } from '@Utils/index';
 import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { MdChevronLeft } from 'react-icons/md';
 
-type ButtonVariant = 'primary' | 'secondary' | 'white' | 'destructive' | 'ghost' | 'simple';
+type ButtonVariant = 'primary' | 'secondary' | 'white' | 'destructive' | 'ghost' | 'outline';
 type ButtonSize = 'default' | 'icon';
+type ButtonInteractive = 'default' | 'onlyScale' | 'onlyColor';
 
 interface ButtonProps {
   variants?: ButtonVariant;
   size?: ButtonSize;
+  interactive?: ButtonInteractive;
 }
 
 export function Button({
   variants = 'primary',
   size = 'default',
+  interactive = 'default',
   className,
   children,
   ...props
@@ -27,8 +30,12 @@ export function Button({
           ['bg-black text-white']: variants === 'secondary',
           ['bg-white text-gray-900']: variants === 'white',
           ['bg-pink-400 text-white']: variants === 'destructive',
-          [`disabled:bg-transparent aria-[disabled='false']:touchdevice:active:bg-gray-100 aria-[disabled='false']:pointerdevice:hover:bg-gray-100`]:
-            variants === 'ghost',
+          [`disabled:bg-transparent`]: variants === 'ghost',
+          [`border border-gray-200`]: variants === 'outline',
+        },
+        {
+          [`aria-[disabled='false']:touchdevice:active:bg-gray-100 aria-[disabled='false']:pointerdevice:hover:bg-gray-100`]:
+            ['white', 'ghost', 'outline'].includes(variants) && (interactive === 'default' || interactive === 'onlyColor'),
         },
         {
           ['p-[.625rem]']: size === 'default',
@@ -38,7 +45,11 @@ export function Button({
       )}
       aria-disabled={props.disabled || false}
       {...props}>
-      <span className="inline-block transition-transform group-aria-[disabled='false']:touchdevice:group-active:scale-90 group-aria-[disabled='false']:pointerdevice:group-active:scale-90">
+      <span
+        className={cn('inline-block transition-transform', {
+          [`group-aria-[disabled='false']:touchdevice:group-active:scale-90 group-aria-[disabled='false']:pointerdevice:group-active:scale-90`]:
+            interactive === 'default' || interactive === 'onlyScale',
+        })}>
         {children}
       </span>
     </button>
