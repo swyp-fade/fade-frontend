@@ -81,6 +81,12 @@ export interface TFAPArchivingFeedAPI extends TFeed {
   createdAt: Date;
 }
 
+export interface TAllFashionFeedAPI extends TFeed {}
+export interface TAllFashionFeed extends Omit<TFeed, 'id' | 'styleIds'> {
+  feedId: number;
+  styleIds: number[];
+}
+
 /**
  * TFeed
  *  TVoteCandidate
