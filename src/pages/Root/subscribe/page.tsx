@@ -1,17 +1,15 @@
-import { OUTFIT_CATEGORY_LIST, OUTFIT_STYLE_LIST } from '@/constants';
 import testImage from '@Assets/test_fashion_image.jpg';
-import { ItemBadge } from '@Components/ItemBadge';
-import { ReportButton } from '@Components/ReportButton';
+import { FeedDetailCard } from '@Components/FeedDetailCard';
 import { ShowNotificationButton } from '@Components/ShowNotificationButton';
-import { SubscribeButton } from '@Components/SubscribeButton';
 import { Avatar } from '@Components/ui/avatar';
-import { Image } from '@Components/ui/image';
 import { useHeader } from '@Hooks/useHeader';
+import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
+import { requestGetSubscribeFeeds } from '@Services/feed';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { cn } from '@Utils/index';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
-import { motion } from 'framer-motion';
-import { MdBookmark, MdChevronRight } from 'react-icons/md';
+import { useEffect } from 'react';
+import { MdChevronRight } from 'react-icons/md';
+import { VscLoading } from 'react-icons/vsc';
 import { useNavigate } from 'react-router-dom';
 
 type SubscribeBadgeType = {
@@ -49,7 +47,29 @@ const subscribeList: SubscribeBadgeType[] = [
 ];
 
 export default function Page() {
-  useHeader({ title: '구독', rightSlot: () => <ShowNotificationButton /> });
+  const { data, fetchNextPage, isFetchingNextPage, isPending, hasNextPage } = useInfiniteQuery({
+    queryKey: ['subscribe', 'list'],
+    queryFn: ({ pageParam }) => requestGetSubscribeFeeds({ nextCursor: pageParam }),
+    getNextPageParam({ nextCursor }) {
+      return nextCursor || undefined;
+    },
+    initialPageParam: 0,
+  });
+
+  useHeader({
+    title: '구독',
+    leftSlot: () => (isFetchingNextPage || isPending) && <VscLoading className="size-6 animate-spin" />,
+    rightSlot: () => <ShowNotificationButton />,
+  });
+
+  const { disconnect: disconnectObserver } = useInfiniteObserver({
+    parentNodeId: 'feedList',
+    onIntersection: fetchNextPage,
+  });
+
+  useEffect(() => {
+    !hasNextPage && disconnectObserver();
+  }, [hasNextPage]);
 
   return (
     <div className="relative flex h-full flex-col">
@@ -72,67 +92,13 @@ export default function Page() {
         <ShowSubscribeListViewButton />
       </div>
 
-      {/* croll-snap-type: y mandatory; */}
-      <div className="min-h-1 flex-1 snap-y snap-mandatory overflow-y-scroll">
-        <FeedCard />
-        <FeedCard />
-        <FeedCard />
-        <FeedCard />
+      <div className="relative min-h-1 flex-1 snap-y snap-mandatory overflow-y-scroll">
+        <div id="feedList" className="h-full">
+          {data && data.pages.map((page) => page.feeds.map((feedDetail) => <FeedDetailCard key={feedDetail.feedId} {...feedDetail} />))}
+        </div>
+
+        {!isPending && !hasNextPage && <p className="text-detail text-gray-700">모든 페이더들의 패션을 불러왔어요.</p>}
       </div>
-    </div>
-  );
-}
-
-function BookmarkButton() {
-  return (
-    <button className="rounded-lg border bg-white px-3 py-2">
-      <MdBookmark className="size-6 text-gray-500" />
-    </button>
-  );
-}
-
-// function OutfitBadge({ categoryType }: { categoryType: number }) {
-//   return (
-//     <div className="min-w-fit rounded-[1rem] bg-purple-50 px-4 py-2">
-//       <span>{OUTFIT_CATEGORY_LIST[categoryType]}</span>
-//     </div>
-//   );
-// }
-
-function FeedCard() {
-  return (
-    <div className="flex h-full snap-start border border-red-500">
-      <section className="flex h-full w-full flex-col gap-3 p-5">
-        <p className="text-h6">{format(new Date(), 'yyyy년 M월 dd일 eeee', { locale: ko })}</p>
-
-        <Image src={testImage} className="relative w-full flex-1 rounded-lg bg-gray-200" size="contain">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={cn('absolute right-4 top-4')}>
-            <ReportButton feedId={0} />
-          </motion.div>
-        </Image>
-
-        <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white">
-          <Avatar src={testImage} size="32" />
-          <AccountIdButton />
-          <SubscribeButton userId={0} initialSubscribedStatus={true} onToggle={() => {}} />
-          <BookmarkButton />
-        </div>
-
-        <div>
-          <ul className="flex flex-row gap-2 overflow-y-scroll whitespace-nowrap">
-            {OUTFIT_STYLE_LIST.slice(0, 6).map((value, index) => (
-              <ItemBadge key={`test-badge-${index}`} variants="primary">
-                {value}
-              </ItemBadge>
-            ))}
-          </ul>
-        </div>
-
-        <button type="button" className="flex w-full flex-row items-center gap-3 rounded-lg border border-purple-50 bg-white p-3">
-          <ItemBadge variants="primary">{OUTFIT_CATEGORY_LIST[0]}</ItemBadge>
-          <p className="text-left">나이키 조던</p>
-        </button>
-      </section>
     </div>
   );
 }
@@ -143,16 +109,6 @@ function ShowSubscribeListViewButton() {
   return (
     <button className="absolute right-5 top-1/2 -translate-y-1/2 bg-fade-gradient px-2 py-4" onClick={() => navigate('/subscribe/list')}>
       <MdChevronRight className="size-6" />
-    </button>
-  );
-}
-
-function AccountIdButton() {
-  const navigate = useNavigate();
-
-  return (
-    <button className="flex-1 text-left" onClick={() => navigate('/user', { state: { userId: 0 } })}>
-      katie63
     </button>
   );
 }
