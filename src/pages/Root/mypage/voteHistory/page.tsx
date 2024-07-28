@@ -10,7 +10,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { TVoteHistoryItem } from '@Types/model';
 import { cn } from '@Utils/index';
 import { format } from 'date-fns';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { MdChevronLeft } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
@@ -65,7 +65,9 @@ export default function Page() {
       </div>
 
       <div className="flex-1 space-y-[3.75rem] overflow-y-scroll p-5">
-        {data?.pages.map((page) => [page.feeds.slice(0, 10), page.feeds.slice(11, 21), page.feeds.slice(21, 31)].map((feeds) => <VoteHistoryItem feeds={feeds} />))}
+        {data?.pages.map((page) =>
+          [page.feeds.slice(0, 10), page.feeds.slice(11, 21), page.feeds.slice(21, 31)].map((feeds) => <VoteHistoryItem isFadeInMode={isFadeInMode} feeds={feeds} />)
+        )}
         <p className="text-detail text-gray-700">모든 투표 내역을 불러왔습니다.</p>
       </div>
     </div>
@@ -99,16 +101,22 @@ function FadeInModeToggleButton({ isFadeInMode, onToggle }: { isFadeInMode: bool
   );
 }
 
-function VoteHistoryItem({ feeds }: { feeds: TVoteHistoryItem[] }) {
+function VoteHistoryItem({ isFadeInMode, feeds }: { isFadeInMode: boolean; feeds: TVoteHistoryItem[] }) {
   const votedAtLabel = feeds.at(0) && format(feeds.at(0).votedAt, 'yyyy년 M월 d일');
 
   return (
     <section className="space-y-2">
       <h6 className="text-h6 font-semibold">{votedAtLabel}</h6>
       <Grid id="feedList" cols={5}>
-        {feeds.map((feed, index) => (
-          <FeedItem key={`feed-item-${feed.feedId}`} {...feed} feeds={feeds} index={index} />
-        ))}
+        <AnimatePresence>
+          {feeds.map((feed, index) => {
+            if (isFadeInMode) {
+              return feed.voteType === 'FADE_IN' && <FeedItem key={`feed-item-${feed.feedId}`} {...feed} feeds={feeds} index={index} />;
+            } else {
+              return <FeedItem key={`feed-item-${feed.feedId}`} {...feed} feeds={feeds} index={index} />;
+            }
+          })}
+        </AnimatePresence>
       </Grid>
     </section>
   );
@@ -128,8 +136,14 @@ function FeedItem({ feeds, index, ...feed }: FeedItemProps) {
   };
 
   return (
-    <div key={`item-${feed.feedId}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg" onClick={handleClick}>
+    <motion.div
+      layout
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg"
+      onClick={handleClick}>
       <Image src={feed.feedImageURL} className="h-full w-full transition-transform group-hover:scale-105" />
-    </div>
+    </motion.div>
   );
 }
