@@ -8,6 +8,7 @@ import {
   TStyleId,
   TSubscriberAPI,
   TVoteCandidateAPI,
+  TVoteHistoryItemAPI,
   UserDetail,
 } from '@Types/model';
 import { addDays, addHours } from 'date-fns';
@@ -22,7 +23,7 @@ import testFashionImage6 from '@Assets/test_fashion_image_6.jpg';
 import testFashionImage7 from '@Assets/test_fashion_image_7.jpg';
 import testFashionImage8 from '@Assets/test_fashion_image_8.jpg';
 import testFashionImage9 from '@Assets/test_fashion_image_9.jpg';
-import { InfiniteResponse } from '@Types/response';
+import { InfiniteResponse, VoteInfiniteResponse } from '@Types/response';
 
 const testFahsionImages = [
   testFashionImage1,
@@ -305,4 +306,82 @@ function generateRandomIntroduceContent(): string {
     '건강한 라이프스타일을 추구합니다.',
   ];
   return introductions[Math.floor(Math.random() * introductions.length)];
+}
+
+function generateRandomVoteHistoryItem(date: Date): TVoteHistoryItemAPI {
+  const baseFeed = generateRandomFeed(Math.floor(Math.random() * 1000) + 1);
+
+  return {
+    feedId: baseFeed.id,
+    feedImageURL: baseFeed.imageURL,
+    memberId: baseFeed.memberId,
+    styleIds: baseFeed.styleIds,
+    outfits: baseFeed.outfits,
+    createdAt: baseFeed.createdAt,
+    username: `user${Math.floor(Math.random() * 1000)}`,
+    profileImageURL: testFahsionImages[getRandomNumber(0, testFahsionImages.length - 1)],
+    isFAPFeed: Math.random() < 0.5,
+    isSubscribed: Math.random() < 0.5,
+    isBookmarked: Math.random() < 0.5,
+    isMine: Math.random() < 0.3,
+    voteType: Math.random() < 0.5 ? 'FADE_IN' : 'FADE_OUT',
+    votedAt: new Date(date.getTime() + Math.random() * 24 * 60 * 60 * 1000), // Random time within the given day
+  };
+}
+
+function generateDailyVoteHistory(date: Date): TVoteHistoryItemAPI[] {
+  return Array(10)
+    .fill(null)
+    .map(() => generateRandomVoteHistoryItem(date));
+}
+
+export function generateDummyVoteHistory(
+  options: {
+    limit?: number;
+    direction?: 'up' | 'down' | 'both';
+    baseDate?: Date | string;
+  } = {}
+): VoteInfiniteResponse<{ feeds: TVoteHistoryItemAPI[] }> {
+  const { limit = 3, direction = 'down', baseDate } = options;
+
+  const baseDateObj = baseDate ? new Date(baseDate) : new Date();
+  baseDateObj.setHours(0, 0, 0, 0); // Set to start of the day
+
+  let voteHistory: TVoteHistoryItemAPI[] = [];
+
+  if (direction === 'both') {
+    const halfLimit = Math.floor(limit / 2);
+    const upLimit = limit % 2 === 0 ? halfLimit : halfLimit + 1;
+    const downLimit = halfLimit;
+
+    for (let i = 0; i < upLimit; i++) {
+      const date = new Date(baseDateObj.getTime() + i * 24 * 60 * 60 * 1000);
+      voteHistory = [...voteHistory, ...generateDailyVoteHistory(date)];
+    }
+    for (let i = 1; i <= downLimit; i++) {
+      const date = new Date(baseDateObj.getTime() - i * 24 * 60 * 60 * 1000);
+      voteHistory = [...voteHistory, ...generateDailyVoteHistory(date)];
+    }
+  } else {
+    const multiplier = direction === 'up' ? 1 : -1;
+    for (let i = 0; i < limit; i++) {
+      const date = new Date(baseDateObj.getTime() + multiplier * i * 24 * 60 * 60 * 1000);
+      voteHistory = [...voteHistory, ...generateDailyVoteHistory(date)];
+    }
+  }
+
+  // Sort by votedAt
+  voteHistory.sort((a, b) => b.votedAt.getTime() - a.votedAt.getTime());
+
+  const oldestVote = voteHistory[voteHistory.length - 1];
+  const newestVote = voteHistory[0];
+
+  return {
+    feeds: voteHistory,
+    nextCursorToUpScroll: oldestVote.votedAt.toISOString(),
+    nextCursorToDownScroll: newestVote.votedAt.toISOString(),
+    direction,
+    isLastCursorToUpScroll: Math.random() < 0.2,
+    isLastCursorToDownScroll: Math.random() < 0.2,
+  };
 }
