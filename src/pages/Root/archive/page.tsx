@@ -60,7 +60,7 @@ export default function Page() {
 
   return (
     <div className="flex h-full flex-col">
-      <menu className="sticky top-0 flex flex-row bg-white px-5">
+      <menu className="flex flex-row bg-white px-5">
         <li className="flex-1">
           <button className="relative h-full w-full py-3" onClick={() => switchToTab(0)} disabled={isTransitionInProgress}>
             <span className={cn('text-h6 font-semibold text-gray-500 transition-colors', { ['text-current']: isFAPTab })}>FA:P 아카이브</span>
