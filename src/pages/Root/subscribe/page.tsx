@@ -6,10 +6,10 @@ import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { requestGetSubscribeFeeds } from '@Services/feed';
 import { requestGetSubscribers } from '@Services/member';
 import { useHeaderStore } from '@Stores/header';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { TSubscriber } from '@Types/model';
 import { cn } from '@Utils/index';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { MdChevronRight } from 'react-icons/md';
 import { VscLoading } from 'react-icons/vsc';
 import { useNavigate } from 'react-router-dom';
@@ -20,15 +20,25 @@ export default function Page() {
   return (
     <div className="relative flex h-full flex-col">
       <div className="relative h-fit w-full px-5 py-4">
-        <SubscriberList />
+        <Suspense fallback={<SpinLoading />}>
+          <SubscriberList />
+        </Suspense>
         <ShowSubscribeListViewButton />
       </div>
 
-      <SubscribeFeedList />
+      <Suspense fallback={<SpinLoading />}>
+        <SubscribeFeedList />
+      </Suspense>
     </div>
   );
 }
-
+function SpinLoading() {
+  return (
+    <div className="flex w-full items-center justify-center p-5">
+      <VscLoading className="size-6 animate-spin" />
+    </div>
+  );
+}
 function ShowSubscribeListViewButton() {
   const navigate = useNavigate();
 
@@ -42,7 +52,7 @@ function ShowSubscribeListViewButton() {
 function SubscribeFeedList() {
   const setLeftSlot = useHeaderStore((state) => state.setLeftSlot);
 
-  const { data, fetchNextPage, isFetchingNextPage, isPending, hasNextPage } = useInfiniteQuery({
+  const { data, fetchNextPage, isFetchingNextPage, isPending, hasNextPage } = useSuspenseInfiniteQuery({
     queryKey: ['subscribe', 'list'],
     queryFn: ({ pageParam }) => requestGetSubscribeFeeds({ nextCursor: pageParam }),
     getNextPageParam({ nextCursor }) {
@@ -52,10 +62,11 @@ function SubscribeFeedList() {
   });
 
   useEffect(() => {
+    resetObserves();
     setLeftSlot(() => isFetchingNextPage && <VscLoading className="size-6 animate-spin" />);
-  }, [isFetchingNextPage]);
+  }, [isPending, isFetchingNextPage]);
 
-  const { disconnect: disconnectObserver } = useInfiniteObserver({
+  const { disconnect: disconnectObserver, resetObserves } = useInfiniteObserver({
     parentNodeId: 'feedList',
     onIntersection: fetchNextPage,
   });
@@ -66,8 +77,6 @@ function SubscribeFeedList() {
 
   return (
     <div className="relative min-h-1 flex-1 snap-y snap-mandatory overflow-y-scroll">
-      {isPending && 'TODO: 로딩 화면 표출'}
-
       <div id="feedList" className="h-full">
         {data && data.pages.map((page) => page.feeds.map((feedDetail) => <FeedDetailCard key={feedDetail.feedId} {...feedDetail} />))}
       </div>
@@ -78,7 +87,7 @@ function SubscribeFeedList() {
 }
 
 export function SubscriberList() {
-  const { data, isPending } = useInfiniteQuery({
+  const { data } = useSuspenseInfiniteQuery({
     queryKey: ['subscribe', 'subscribers'],
     queryFn: ({ pageParam }) => requestGetSubscribers({ nextCursor: pageParam }),
     getNextPageParam({ nextCursor }) {
@@ -90,7 +99,6 @@ export function SubscriberList() {
   return (
     <div className="flex w-full overflow-y-scroll pr-10">
       <ul className="flex flex-row gap-3">
-        {isPending && 'TODO: 로딩화면표출'}
         {data?.pages.map((page) => page.subscribers.map((subscriber) => <SubscriberItem key={`subscriber-${subscriber.userId}`} {...subscriber} />))}
       </ul>
     </div>
