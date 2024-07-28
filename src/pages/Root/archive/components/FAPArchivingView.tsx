@@ -1,5 +1,7 @@
+import { FeedDetailDialog } from '@Components/FeedDetailDialog';
 import { Button } from '@Components/ui/button';
 import { Image } from '@Components/ui/image';
+import { useModalActions } from '@Hooks/modal';
 import { requestFAPArchiving } from '@Services/feed';
 import { useQuery } from '@tanstack/react-query';
 import { TFAPArchivingFeed } from '@Types/model';
@@ -51,7 +53,7 @@ export function FAPArchivingView() {
       <div style={{ gridRow: weeksInMonth }} className={`grid flex-1 grid-cols-7 gap-x-2 gap-y-3`}>
         <AnimatePresence initial={false}>
           {data ? (
-            data.feeds.map((feed, index) => <FAPFeeds index={index} firstDayOfWeek={firstDayOfWeek} feed={feed} />)
+            data.feeds.map((feed, index) => <FAPFeeds index={index} firstDayOfWeek={firstDayOfWeek} feed={feed} feeds={data.feeds} />)
           ) : (
             <FAPFeedsLoading days={getDaysInMonth(calenderDate)} firstDayOfWeek={firstDayOfWeek} />
           )}
@@ -122,9 +124,16 @@ interface TFAPFeeds {
   index: number;
   firstDayOfWeek: string;
   feed: TFAPArchivingFeed;
+  feeds: TFAPArchivingFeed[];
 }
 
-function FAPFeeds({ index, firstDayOfWeek, feed }: TFAPFeeds) {
+function FAPFeeds({ index, firstDayOfWeek, feed, feeds }: TFAPFeeds) {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    await showModal({ type: 'fullScreenDialog', animateType: 'slideInFromRight', Component: FeedDetailDialog, props: { feeds, defaultViewIndex: index } });
+  };
+
   return (
     <motion.div
       layout
@@ -133,7 +142,8 @@ function FAPFeeds({ index, firstDayOfWeek, feed }: TFAPFeeds) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className={cn('flex h-full w-full flex-col')}
-      style={{ gridColumnStart: index === 0 ? firstDayOfWeek : undefined }}>
+      style={{ gridColumnStart: index === 0 ? firstDayOfWeek : undefined }}
+      onClick={handleClick}>
       <span className="ml-1">{index + 1}</span>
       <div className="group h-full w-full cursor-pointer overflow-hidden rounded-lg">
         <Image src={feed.imageURL} className="transition-transform group-hover:scale-105" />

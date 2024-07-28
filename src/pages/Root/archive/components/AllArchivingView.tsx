@@ -1,9 +1,11 @@
+import { FeedDetailDialog } from '@Components/FeedDetailDialog';
 import { Button } from '@Components/ui/button';
 import { Image } from '@Components/ui/image';
 import { useModalActions } from '@Hooks/modal';
 import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { requestGetAllFashionFeed } from '@Services/feed';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { TAllFashionFeed } from '@Types/model';
 import { cn } from '@Utils/index';
 import { useEffect, useState } from 'react';
 import { VscLoading } from 'react-icons/vsc';
@@ -46,13 +48,7 @@ export function AllArchivingView() {
 
       <div className="flex h-full min-h-1 flex-col overflow-y-scroll">
         <div id="feedList" className="grid w-full grid-cols-3 gap-1">
-          {data?.pages.map(({ feeds }) =>
-            feeds.map((feed) => (
-              <div key={`item-${feed.feedId}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg">
-                <Image src={feed.imageURL} className="h-full w-full transition-transform group-hover:scale-105" />
-              </div>
-            ))
-          )}
+          {data?.pages.map(({ feeds }) => feeds.map((feed, index) => <FeedItem key={`item-${feed.feedId}`} feeds={feeds} index={index} {...feed} />))}
         </div>
 
         {(isFetchingNextPage || isPending) && (
@@ -63,6 +59,27 @@ export function AllArchivingView() {
 
         {!isPending && !hasNextPage && <p className="text-detail text-gray-700">모든 페이더들의 패션을 불러왔어요.</p>}
       </div>
+    </div>
+  );
+}
+
+interface TFeedItem {
+  feeds: TAllFashionFeed[];
+  index: number;
+}
+
+type FeedItemProps = TFeedItem & TAllFashionFeed;
+
+function FeedItem({ feeds, index, ...feed }: FeedItemProps) {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    await showModal({ type: 'fullScreenDialog', animateType: 'slideInFromRight', Component: FeedDetailDialog, props: { feeds, defaultViewIndex: index } });
+  };
+
+  return (
+    <div key={`item-${feed.feedId}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg" onClick={handleClick}>
+      <Image src={feed.imageURL} className="h-full w-full transition-transform group-hover:scale-105" />
     </div>
   );
 }
