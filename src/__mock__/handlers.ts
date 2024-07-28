@@ -9,6 +9,7 @@ import {
   generateDummyFashionFeed,
   generateDummyFeedData,
   generateDummyFeedDetail,
+  generateDummySubscribersWithPagination,
   generateTVoteCandidateDummyData,
 } from './utils';
 
@@ -284,5 +285,16 @@ export const handlers = [
     const result = fetchingType === 'SUBSCRIBE' ? generateDummyFeedDetail(5, +nextCursor) : generateDummyFashionFeed(12, +nextCursor);
 
     return HttpResponse.json({ ...result }, { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/subscribe/subscribers`, async ({ request }) => {
+    const { searchParams } = new URL(request.url);
+    const nextCursor = searchParams.get('nextCursor')!;
+
+    await delay(NETWORK_DELAY);
+
+    const subscribers = generateDummySubscribersWithPagination(12, +nextCursor);
+
+    return HttpResponse.json(subscribers, { status: HttpStatusCode.Ok });
   }),
 ];

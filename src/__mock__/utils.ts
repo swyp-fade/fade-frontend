@@ -1,4 +1,4 @@
-import { TAllFashionFeedAPI, TFAPArchivingFeedAPI, TFeedAdittionalDetail, TFeedDetail, TOutfitItem, TStyleId, TVoteCandidateAPI, UserDetail } from '@Types/model';
+import { TAllFashionFeedAPI, TFAPArchivingFeedAPI, TFeedAdittionalDetail, TFeedDetail, TOutfitItem, TStyleId, TSubscriberAPI, TVoteCandidateAPI, UserDetail } from '@Types/model';
 import { addDays, addHours } from 'date-fns';
 
 import testFashionImage1 from '@Assets/test_fashion_image.jpg';
@@ -241,6 +241,35 @@ export function generateDummyFeedDetail(count: number = 10, startCursor: number 
 
   return {
     feeds,
+    nextCursor: startCursor + count,
+  };
+}
+
+function generateRandomSubscriber(): TSubscriberAPI {
+  const id = Math.floor(Math.random() * 10000) + 1;
+  return {
+    id,
+    username: `user${id}`,
+    profileImageURL: testFahsionImages[getRandomNumber(0, testFahsionImages.length - 1)],
+  };
+}
+
+export function generateDummySubscribers(count: number = 10): TSubscriberAPI[] {
+  return Array(count)
+    .fill(null)
+    .map(() => generateRandomSubscriber());
+}
+
+export function generateDummySubscribersWithPagination(count: number = 10, startCursor: number = 0): InfiniteResponse<{ subscribers: TSubscriberAPI[] }> {
+  const subscribers = Array(count)
+    .fill(null)
+    .map((_, index) => ({
+      ...generateRandomSubscriber(),
+      id: startCursor + index + 1,
+    }));
+
+  return {
+    subscribers,
     nextCursor: startCursor + count,
   };
 }
