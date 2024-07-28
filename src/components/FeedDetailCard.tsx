@@ -19,11 +19,12 @@ import { Button } from './ui/button';
 
 interface TFeedDetailCard {
   focus?: boolean;
+  onAccountIdClicked?: () => void;
 }
 
 type FeedDetailCardProps = TFeedDetailCard & TFeedDetail;
 
-export function FeedDetailCard({ focus, ...feedDetail }: FeedDetailCardProps) {
+export function FeedDetailCard({ focus, onAccountIdClicked, ...feedDetail }: FeedDetailCardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isVoteType = isTFeedDetailVote(feedDetail);
   const isMineType = isTFeedDetailMine(feedDetail);
@@ -64,7 +65,7 @@ export function FeedDetailCard({ focus, ...feedDetail }: FeedDetailCardProps) {
         </Image>
 
         {isMineType && <FeedAdiitionalDetails {...feedDetail} />}
-        {!isMineType && <MemberDetailCard {...feedDetail} />}
+        {!isMineType && <MemberDetailCard {...feedDetail} onAccountIdClicked={() => onAccountIdClicked && onAccountIdClicked()} />}
         {haveStyleIds && <StyleCard {...feedDetail} />}
         {haveOutfits && <OutfitCard {...outfits.at(0)!} wouldShowDetail={false} />}
         {haveOutfitsMoreThanOwn && <ShowAllOutfitsButton />}
@@ -73,12 +74,19 @@ export function FeedDetailCard({ focus, ...feedDetail }: FeedDetailCardProps) {
   );
 }
 
-function AccountIdButton({ userId, accountId }: { userId: number; accountId: string }) {
+function AccountIdButton({ userId, accountId, onClicked, isMine }: { userId: number; accountId: string; onClicked: () => void; isMine: boolean }) {
   const navigate = useNavigate();
 
   return (
     <div className="flex-1 text-left">
-      <Button variants="ghost" interactive="onlyScale" className="px-0 py-1 font-normal" onClick={() => navigate('/user', { state: { userId } })}>
+      <Button
+        variants="ghost"
+        interactive="onlyScale"
+        className="px-0 py-1 font-normal"
+        onClick={() => {
+          onClicked();
+          !isMine && navigate('/user', { state: { userId } });
+        }}>
         {accountId}
       </Button>
     </div>
@@ -99,11 +107,17 @@ function StyleCard({ styleIds }: TFeedDetail) {
   );
 }
 
-function MemberDetailCard({ profileImageURL, memberId, isSubscribed, isBookmarked, feedId, accountId }: TFeedDetail) {
+interface TMemberDetailCard {
+  onAccountIdClicked: () => void;
+}
+
+type MemberDetailCardProps = TMemberDetailCard & TFeedDetail;
+
+function MemberDetailCard({ profileImageURL, memberId, isSubscribed, isBookmarked, feedId, accountId, isMine, onAccountIdClicked }: MemberDetailCardProps) {
   return (
     <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white">
       <Avatar src={profileImageURL} size="32" />
-      <AccountIdButton userId={memberId} accountId={accountId} />
+      <AccountIdButton userId={memberId} accountId={accountId} onClicked={onAccountIdClicked} isMine={isMine} />
       <SubscribeButton userId={memberId} initialSubscribedStatus={isSubscribed} onToggle={() => {}} />
       <BookmarkButton feedId={feedId} defaultBookmarkStatus={isBookmarked} />
     </div>

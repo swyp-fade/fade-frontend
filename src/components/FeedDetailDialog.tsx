@@ -17,17 +17,17 @@ export function FeedDetailDialog({ feeds, defaultViewIndex, onClose }: DefaultMo
       </FlexibleLayout.Header>
 
       <FlexibleLayout.Content>
-        <Feeds feeds={feeds} defaultViewIndex={defaultViewIndex} />
+        <Feeds feeds={feeds} defaultViewIndex={defaultViewIndex} onAccountIdClicked={onClose} />
       </FlexibleLayout.Content>
     </FlexibleLayout.Root>
   );
 }
 
-function Feeds({ feeds, defaultViewIndex }: { feeds: TFeedDetail[]; defaultViewIndex: number }) {
+function Feeds({ feeds, defaultViewIndex, onAccountIdClicked }: { feeds: TFeedDetail[]; defaultViewIndex: number; onAccountIdClicked: () => void }) {
   return (
     <div id="feedList" className="h-full snap-y snap-mandatory overflow-y-scroll">
       {feeds.map((feedDetail, index) => (
-        <FeedDetailCard key={feedDetail.feedId} {...feedDetail} focus={index === defaultViewIndex} />
+        <FeedDetailCard key={feedDetail.feedId} {...feedDetail} focus={index === defaultViewIndex} onAccountIdClicked={onAccountIdClicked} />
       ))}
     </div>
   );
