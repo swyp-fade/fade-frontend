@@ -1,6 +1,6 @@
 import { axios } from '@Libs/axios';
 import { FilterType } from '@Pages/Root/archive/components/SelectFilterDialog';
-import { TAllFashionFeed, TAllFashionFeedAPI, TFAPArchivingFeed, TFAPArchivingFeedAPI } from '@Types/model';
+import { TAllFashionFeed, TAllFashionFeedAPI, TFAPArchivingFeed, TFAPArchivingFeedAPI, TFeedDetail, TFeedDetailAPI } from '@Types/model';
 import { InfiniteResponse } from '@Types/response';
 import { objectToQueryParam } from '@Utils/index';
 
@@ -60,5 +60,24 @@ export async function requestGetAllFashionFeed({ filters, nextCursor }: GetAllFa
           ...feed,
         })),
       }) as GetAllFashionFeedResponse
+  );
+}
+
+type GetSubscribeFeedsPayload = { nextCursor: number };
+type GetSubscribeFeedsResponseAPI = InfiniteResponse<{ feeds: TFeedDetailAPI[] }>;
+type GetSubscribeFeedsResponse = InfiniteResponse<{ feeds: TFeedDetail[] }>;
+
+export async function requestGetSubscribeFeeds({ nextCursor }: GetSubscribeFeedsPayload) {
+  return await axios.get<GetSubscribeFeedsResponseAPI>(`/feeds?fetchingType=SUBSCRIBE&limit=12&nextCursor=${nextCursor}`).then(
+    ({ data: { feeds, nextCursor } }) =>
+      ({
+        nextCursor,
+        feeds: feeds.map(({ id, styleIds, ...feed }) => ({
+          feedId: id,
+          styleIds: styleIds.map(({ id }) => id),
+          accountId: feed.username,
+          ...feed,
+        })),
+      }) as GetSubscribeFeedsResponse
   );
 }
