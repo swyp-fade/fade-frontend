@@ -1,43 +1,56 @@
 import fadeInImage from '@Assets/vote_fade_in.png';
+import { FeedDetailDialog } from '@Components/FeedDetailDialog';
+import { Grid } from '@Components/ui/grid';
+import { Image } from '@Components/ui/image';
+import { useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
+import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
+import { requestGetVoteHistory } from '@Services/vote';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { TVoteHistoryItem } from '@Types/model';
 import { cn } from '@Utils/index';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MdChevronLeft } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import './dateStyle.css';
-
-import testFashionImage1 from '@Assets/test_fashion_image.jpg';
-import testFashionImage10 from '@Assets/test_fashion_image_10.jpg';
-import testFashionImage2 from '@Assets/test_fashion_image_2.jpg';
-import testFashionImage3 from '@Assets/test_fashion_image_3.jpg';
-import testFashionImage4 from '@Assets/test_fashion_image_4.jpg';
-import testFashionImage5 from '@Assets/test_fashion_image_5.webp';
-import testFashionImage6 from '@Assets/test_fashion_image_6.jpg';
-import testFashionImage7 from '@Assets/test_fashion_image_7.jpg';
-import testFashionImage8 from '@Assets/test_fashion_image_8.jpg';
-import testFashionImage9 from '@Assets/test_fashion_image_9.jpg';
-import { Image } from '@Components/ui/image';
-import { Grid } from '@Components/ui/grid';
-
-const testFahsionImages = [
-  testFashionImage1,
-  testFashionImage2,
-  testFashionImage3,
-  testFashionImage4,
-  testFashionImage5,
-  testFashionImage6,
-  testFashionImage7,
-  testFashionImage8,
-  testFashionImage9,
-  testFashionImage10,
-];
 
 export default function Page() {
   useHeader({ title: '투표 내역', leftSlot: () => <BackButton /> });
 
   const [isFadeInMode, setIsFadeInMode] = useState(false);
+  const [scrollType, setScrollType] = useState('0');
+
+  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
+    queryKey: ['user', 0, 'voteHistory', scrollType],
+    queryFn: ({ pageParam }) =>
+      requestGetVoteHistory({
+        nextCursor: scrollType === '0' ? pageParam.nextCursorToUpScroll : scrollType === '1' ? pageParam.nextCursorToDownScroll : format(new Date(), 'yyyy-MM-dd'),
+        scrollType,
+      }),
+    getNextPageParam(lastPage) {
+      if (lastPage.isLastCursorToDownScroll) {
+        return undefined;
+      }
+
+      if (lastPage.isLastCursorToUpScroll) {
+        return undefined;
+      }
+
+      return { nextCursorToUpScroll: lastPage.nextCursorToUpScroll, nextCursorToDownScroll: lastPage.nextCursorToDownScroll };
+    },
+    initialPageParam: { nextCursorToUpScroll: format(new Date(), 'yyyy-MM-dd'), nextCursorToDownScroll: format(new Date(), 'yyyy-MM-dd') },
+  });
+
+  const { disconnect: disconnectObserver } = useInfiniteObserver({
+    parentNodeId: 'feedList',
+    onIntersection: fetchNextPage,
+  });
+
+  useEffect(() => {
+    !hasNextPage && disconnectObserver();
+  }, [hasNextPage]);
 
   return (
     <div className="flex h-full flex-col">
@@ -52,9 +65,7 @@ export default function Page() {
       </div>
 
       <div className="flex-1 space-y-[3.75rem] overflow-y-scroll p-5">
-        <VoteHistoryItem />
-        <VoteHistoryItem />
-        <VoteHistoryItem />
+        {data?.pages.map((page) => [page.feeds.slice(0, 10), page.feeds.slice(11, 21), page.feeds.slice(21, 31)].map((feeds) => <VoteHistoryItem feeds={feeds} />))}
         <p className="text-detail text-gray-700">모든 투표 내역을 불러왔습니다.</p>
       </div>
     </div>
@@ -88,32 +99,37 @@ function FadeInModeToggleButton({ isFadeInMode, onToggle }: { isFadeInMode: bool
   );
 }
 
-function VoteHistoryItem() {
+function VoteHistoryItem({ feeds }: { feeds: TVoteHistoryItem[] }) {
+  const votedAtLabel = feeds.at(0) && format(feeds.at(0).votedAt, 'yyyy년 M월 d일');
+
   return (
     <section className="space-y-2">
-      <h6 className="text-h6 font-semibold">2024년 7월 23일</h6>
-      <ImageGrid images={testFahsionImages} />
+      <h6 className="text-h6 font-semibold">{votedAtLabel}</h6>
+      <Grid id="feedList" cols={5}>
+        {feeds.map((feed, index) => (
+          <FeedItem key={`feed-item-${feed.feedId}`} {...feed} feeds={feeds} index={index} />
+        ))}
+      </Grid>
     </section>
   );
 }
-
-function ImageGrid({ images }: { images: string[] }) {
-  return (
-    <Grid cols={5}>
-      {images.map((imageURL) => (
-        <ImageGridItem key={imageURL} imageURL={imageURL} />
-      ))}
-    </Grid>
-  );
+interface TFeedItem {
+  feeds: TVoteHistoryItem[];
+  index: number;
 }
 
-function ImageGridItem({ imageURL }: { imageURL: string }) {
+type FeedItemProps = TFeedItem & TVoteHistoryItem;
+
+function FeedItem({ feeds, index, ...feed }: FeedItemProps) {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    await showModal({ type: 'fullScreenDialog', animateType: 'slideInFromRight', Component: FeedDetailDialog, props: { feeds, defaultViewIndex: index } });
+  };
+
   return (
-    <button className="group aspect-[3/4] overflow-hidden rounded-lg">
-      <div
-        style={{ backgroundImage: `url('${imageURL}')` }}
-        className="h-full w-full cursor-pointer bg-cover bg-center bg-no-repeat transition-transform touchdevice:group-active:scale-105 pointerdevice:group-hover:scale-105"
-      />
-    </button>
+    <div key={`item-${feed.feedId}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg" onClick={handleClick}>
+      <Image src={feed.feedImageURL} className="h-full w-full transition-transform group-hover:scale-105" />
+    </div>
   );
 }

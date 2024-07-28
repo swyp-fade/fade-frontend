@@ -58,6 +58,7 @@ export function Button({
   );
 }
 
+/** TODO: 서브 페이지일 때의 위치도 넣기 */
 export function BackButton({ className, onClick }: { className?: string; onClick: () => void }) {
   return (
     <Button variants="ghost" size="icon" className={cn('absolute left-3 top-1/2 -translate-y-1/2', className)} onClick={onClick}>
