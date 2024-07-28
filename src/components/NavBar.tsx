@@ -4,6 +4,7 @@ import { cn } from '@Utils/index';
 import { IconType } from 'react-icons/lib';
 import { MdAccountBox, MdAdd, MdHowToVote, MdOutlineGridOn, MdPerson } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Tooltip from './Tooltip';
 
 interface NavItem {
   link: string | null;
@@ -55,7 +56,8 @@ function NavItem({ link, IconComponent, isActive }: NavItemProps) {
 
   if (link) {
     return (
-      <li className="flex-1">
+      <li className="relative flex-1">
+        {link === '/vote-fap' && <Tooltip />}
         <button type="button" className={buttonClassName} onClick={() => navigate(link)}>
           <IconComponent className="mx-auto size-6 transition-transform touchdevice:group-active:rotate-3 touchdevice:group-active:scale-75 pointerdevice:group-hover:rotate-3 pointerdevice:group-hover:scale-125 pointerdevice:group-active:scale-95" />
         </button>
