@@ -288,6 +288,9 @@ export function generateDummySubscribersWithPagination(count: number = 10, start
 export function generateDummyFeedUserDetail(): TFeedUserDetailAPI {
   return {
     id: Math.floor(Math.random() * 10000) + 1, // 1부터 10000 사이의 랜덤 ID
+    profileImageURL: testFahsionImages[getRandomNumber(0, testFahsionImages.length - 1)],
+    username: getRandomString(10),
+    isSubscribed: getRandomBoolean(),
     subscribedCount: Math.floor(Math.random() * 1000), // 0부터 999 사이의 랜덤 구독자 수
     introduceContent: generateRandomIntroduceContent(),
   };
