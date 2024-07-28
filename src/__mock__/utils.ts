@@ -1,4 +1,4 @@
-import { TAllFashionFeedAPI, TFAPArchivingFeedAPI, TOutfitItem, TStyleId, TVoteCandidateAPI, UserDetail } from '@Types/model';
+import { TAllFashionFeedAPI, TFAPArchivingFeedAPI, TFeedAdittionalDetail, TFeedDetail, TOutfitItem, TStyleId, TSubscriberAPI, TVoteCandidateAPI, UserDetail } from '@Types/model';
 import { addDays, addHours } from 'date-fns';
 
 import testFashionImage1 from '@Assets/test_fashion_image.jpg';
@@ -166,18 +166,19 @@ function generateRandomOutfit(): TOutfitItem {
     id: Math.floor(Math.random() * 1000),
     brandName: ['Nike', 'Adidas', 'Gucci', 'Zara', 'H&M'][Math.floor(Math.random() * 5)],
     details: `Item details ${Math.random().toString(36).substring(7)}`,
-    categoryId: Math.floor(Math.random() * 10) + 1,
+    categoryId: Math.floor(Math.random() * 5) + 1,
   };
 }
 
 function generateRandomStyleId(): TStyleId {
-  return { id: Math.floor(Math.random() * 100) + 1 };
+  return { id: Math.floor(Math.random() * 30) + 1 };
 }
 
 function generateRandomFeed(id: number): TAllFashionFeedAPI {
   return {
     id,
     memberId: Math.floor(Math.random() * 1000) + 1,
+    username: getRandomString(10),
     imageURL: testFahsionImages[getRandomNumber(0, testFahsionImages.length - 1)],
     styleIds: Array(Math.floor(Math.random() * 5) + 1)
       .fill(null)
@@ -196,6 +197,79 @@ export function generateDummyFashionFeed(count: number = 10, startCursor: number
 
   return {
     feeds,
+    nextCursor: startCursor + count,
+  };
+}
+
+function generateRandomFeedDetail(id: number): TFeedDetail {
+  const baseFeed = generateRandomFeed(id);
+  const baseDetail: TFeedDetail = {
+    ...baseFeed,
+    profileImageURL: testFahsionImages[getRandomNumber(0, testFahsionImages.length - 1)],
+    feedId: baseFeed.id,
+    isFAPFeed: Math.random() < 0.5,
+    isSubscribed: Math.random() < 0.5,
+    isBookmarked: Math.random() < 0.5,
+    isMine: Math.random() < 0.3,
+  };
+
+  if (baseDetail.isMine) {
+    const mineDetail: TFeedDetail & TFeedAdittionalDetail = {
+      ...baseDetail,
+      isMine: true,
+      isSubscribed: undefined as never,
+      fadeInCount: Math.floor(Math.random() * 1000),
+      bookmarkCount: Math.floor(Math.random() * 500),
+      reportCount: Math.floor(Math.random() * 10),
+    };
+    return mineDetail;
+  } else if (Math.random() < 0.5) {
+    const voteDetail: TFeedDetail = {
+      ...baseDetail,
+      votedAt: generateRandomDate(new Date(2023, 0, 1), new Date()),
+    };
+    return voteDetail;
+  }
+
+  return baseDetail;
+}
+
+export function generateDummyFeedDetail(count: number = 10, startCursor: number = 0): InfiniteResponse<{ feeds: TFeedDetail[] }> {
+  const feeds = Array(count)
+    .fill(null)
+    .map((_, index) => generateRandomFeedDetail(startCursor + index + 1));
+
+  return {
+    feeds,
+    nextCursor: startCursor + count,
+  };
+}
+
+function generateRandomSubscriber(): TSubscriberAPI {
+  const id = Math.floor(Math.random() * 10000) + 1;
+  return {
+    id,
+    username: `user${id}`,
+    profileImageURL: testFahsionImages[getRandomNumber(0, testFahsionImages.length - 1)],
+  };
+}
+
+export function generateDummySubscribers(count: number = 10): TSubscriberAPI[] {
+  return Array(count)
+    .fill(null)
+    .map(() => generateRandomSubscriber());
+}
+
+export function generateDummySubscribersWithPagination(count: number = 10, startCursor: number = 0): InfiniteResponse<{ subscribers: TSubscriberAPI[] }> {
+  const subscribers = Array(count)
+    .fill(null)
+    .map((_, index) => ({
+      ...generateRandomSubscriber(),
+      id: startCursor + index + 1,
+    }));
+
+  return {
+    subscribers,
     nextCursor: startCursor + count,
   };
 }

@@ -1,6 +1,7 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { OUTFIT_CATEGORY_LIST, OUTFIT_STYLE_MAP } from '@/constants';
+import { OUTFIT_STYLE_MAP } from '@/constants';
 import { ItemBadge } from '@Components/ItemBadge';
+import { OutfitCard } from '@Components/OutfitCard';
 import { Button } from '@Components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useModalActions } from '@Hooks/modal';
@@ -249,13 +250,8 @@ function OutfitItemCard({
   };
 
   return (
-    <button type="button" className="flex w-full flex-row gap-3 rounded-lg border border-purple-50 bg-white p-3" onClick={handleClick}>
-      <ItemBadge variants="primary">{OUTFIT_CATEGORY_LIST[outfitItem.categoryId]}</ItemBadge>
-
-      <div className="flex w-full flex-col gap-1">
-        <p className="text-left">{outfitItem.brandName}</p>
-        <p className="text-left text-sm text-gray-500">{outfitItem.details}</p>
-      </div>
+    <button type="button" className="w-full" onClick={handleClick}>
+      <OutfitCard {...outfitItem} />
     </button>
   );
 }
