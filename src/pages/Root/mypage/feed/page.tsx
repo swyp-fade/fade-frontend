@@ -13,7 +13,7 @@ export default function Page() {
 
   return (
     <div className="flex h-full flex-col">
-      <ProfileDetails viewType="owner" />
+      <ProfileDetails viewType="owner" userId={0} />
     </div>
   );
 }

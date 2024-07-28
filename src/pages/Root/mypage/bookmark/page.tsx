@@ -1,8 +1,15 @@
-import testImage from '@Assets/test_fashion_image.jpg';
+import { FeedDetailDialog } from '@Components/FeedDetailDialog';
 import { Grid } from '@Components/ui/grid';
 import { Image } from '@Components/ui/image';
+import { useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
+import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
+import { requestGetBookmarkFeeds } from '@Services/feed';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { TFeedDetail } from '@Types/model';
+import { useEffect } from 'react';
 import { MdChevronLeft } from 'react-icons/md';
+import { VscLoading } from 'react-icons/vsc';
 import { useNavigate } from 'react-router-dom';
 
 export default function Page() {
@@ -11,19 +18,7 @@ export default function Page() {
     leftSlot: () => <BackButton />,
   });
 
-  return (
-    <div>
-      <Grid cols={3}>
-        {Array.from({ length: 13 })
-          .fill(0)
-          .map((_, index) => (
-            <div key={`item-${index}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg">
-              <Image src={testImage} className="h-full w-full transition-transform group-hover:scale-105" />
-            </div>
-          ))}
-      </Grid>
-    </div>
-  );
+  return <BookmarkFeeds userId={0} />;
 }
 
 function BackButton() {
@@ -35,5 +30,62 @@ function BackButton() {
       onClick={() => navigate('/mypage', { replace: true })}>
       <MdChevronLeft className="size-6 transition-transform group-active:scale-95" />
     </button>
+  );
+}
+
+function BookmarkFeeds({ userId }: { userId: number }) {
+  const { data, isPending, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+    queryKey: ['user', userId, 'bookmark'],
+    queryFn: ({ pageParam }) => requestGetBookmarkFeeds({ userId, nextCursor: pageParam }),
+    getNextPageParam({ nextCursor }) {
+      return nextCursor || undefined;
+    },
+    initialPageParam: 0,
+  });
+
+  const { disconnect: disconnectObserver } = useInfiniteObserver({
+    parentNodeId: 'feedList',
+    onIntersection: fetchNextPage,
+  });
+
+  useEffect(() => {
+    !hasNextPage && disconnectObserver();
+  }, [hasNextPage]);
+
+  return (
+    <div className="p-1">
+      {isPending && 'TODO: 유저 피드 목록 로딩 스켈레톤'}
+      <Grid id="feedList" cols={3}>
+        {data?.pages.map((page) => page.feeds.map((feed, index) => <FeedItem key={`feed-item-${feed.feedId}`} {...feed} feeds={page.feeds} index={index} />))}
+      </Grid>
+      {isFetchingNextPage && (
+        <div className="p-5">
+          <VscLoading className={'mx-auto block size-6 animate-spin text-gray-600'} />
+        </div>
+      )}
+
+      {!isPending && !hasNextPage && <p className="text-detail text-gray-700">내 모든 피드를 불러왔어요.</p>}
+    </div>
+  );
+}
+
+interface TFeedItem {
+  feeds: TFeedDetail[];
+  index: number;
+}
+
+type FeedItemProps = TFeedItem & TFeedDetail;
+
+function FeedItem({ feeds, index, ...feed }: FeedItemProps) {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    await showModal({ type: 'fullScreenDialog', animateType: 'slideInFromRight', Component: FeedDetailDialog, props: { feeds, defaultViewIndex: index } });
+  };
+
+  return (
+    <div key={`item-${feed.feedId}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg" onClick={handleClick}>
+      <Image src={feed.imageURL} className="h-full w-full transition-transform group-hover:scale-105" />
+    </div>
   );
 }
