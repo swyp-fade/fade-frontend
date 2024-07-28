@@ -151,6 +151,18 @@ export function isTFeedDetailVote(feedDetail: TFeedDetail): feedDetail is TFeedD
   return feedDetail.votedAt !== undefined;
 }
 
+export interface TSubscriberAPI {
+  id: number;
+  username: string;
+  profileImageURL: string;
+}
+
+export interface TSubscriber {
+  userId: number;
+  accountId: string;
+  profileImageURL: string;
+}
+
 /**
  * TFeed
  *  TVoteCandidate
