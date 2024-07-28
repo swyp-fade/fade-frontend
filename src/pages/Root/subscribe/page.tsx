@@ -57,7 +57,10 @@ function SubscribeFeedList() {
   });
 
   useEffect(() => {
-    resetObserve();
+    if (!isPending) {
+      resetObserve();
+    }
+
     setLeftSlot(() => isFetchingNextPage && <VscLoading className="size-6 animate-spin" />);
   }, [isPending, isFetchingNextPage]);
 

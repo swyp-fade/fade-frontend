@@ -4,53 +4,73 @@ import { Grid } from '@Components/ui/grid';
 import { Image } from '@Components/ui/image';
 import { useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
-import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { requestGetVoteHistory } from '@Services/vote';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { TVoteHistoryItem } from '@Types/model';
 import { cn } from '@Utils/index';
 import { format } from 'date-fns';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { MdChevronLeft } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import './dateStyle.css';
 
+interface PageParam {
+  nextCursorToUpScroll: string | undefined;
+  nextCursorToDownScroll: string | undefined;
+}
+
 export default function Page() {
   useHeader({ title: '투표 내역', leftSlot: () => <BackButton /> });
 
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const selectedDateLabel = format(selectedDate, 'yyyy-MM-dd');
+
   const [isFadeInMode, setIsFadeInMode] = useState(false);
-  const [scrollType, setScrollType] = useState('0');
+  const [scrollType] = useState('0');
 
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ['user', 0, 'voteHistory', scrollType],
-    queryFn: ({ pageParam }) =>
-      requestGetVoteHistory({
-        nextCursor: scrollType === '0' ? pageParam.nextCursorToUpScroll : scrollType === '1' ? pageParam.nextCursorToDownScroll : format(new Date(), 'yyyy-MM-dd'),
+  const { data, hasNextPage } = useInfiniteQuery({
+    queryKey: ['user', 0, 'voteHistory', { scrollType, selectedDateLabel }],
+    queryFn: ({ pageParam }: { pageParam: PageParam }) => {
+      let nextCursor: string | undefined;
+      if (scrollType === '0') {
+        nextCursor = pageParam.nextCursorToUpScroll;
+      } else if (scrollType === '1') {
+        nextCursor = pageParam.nextCursorToDownScroll;
+      } else {
+        nextCursor = selectedDateLabel;
+      }
+
+      // Ensure nextCursor is a string or use a default value
+      return requestGetVoteHistory({
+        nextCursor: nextCursor || format(new Date(), 'yyyy-MM-dd'),
         scrollType,
-      }),
-    getNextPageParam(lastPage) {
-      if (lastPage.isLastCursorToDownScroll) {
-        return undefined;
-      }
-
-      if (lastPage.isLastCursorToUpScroll) {
-        return undefined;
-      }
-
-      return { nextCursorToUpScroll: lastPage.nextCursorToUpScroll, nextCursorToDownScroll: lastPage.nextCursorToDownScroll };
+      });
     },
-    initialPageParam: { nextCursorToUpScroll: format(new Date(), 'yyyy-MM-dd'), nextCursorToDownScroll: format(new Date(), 'yyyy-MM-dd') },
+    getNextPageParam: (lastPage): PageParam => ({
+      nextCursorToUpScroll: lastPage.isLastCursorToUpScroll ? undefined : lastPage.nextCursorToUpScroll,
+      nextCursorToDownScroll: lastPage.isLastCursorToDownScroll ? undefined : lastPage.nextCursorToDownScroll,
+    }),
+    initialPageParam: {
+      nextCursorToUpScroll: format(new Date(), 'yyyy-MM-dd'),
+      nextCursorToDownScroll: format(new Date(), 'yyyy-MM-dd'),
+    },
   });
 
-  const { disconnect: disconnectObserver } = useInfiniteObserver({
-    parentNodeId: 'feedList',
-    onIntersection: fetchNextPage,
-  });
+  // const { disconnect: disconnectObserver, resetObserve } = useInfiniteObserver({
+  //   parentNodeId: 'feedList',
+  //   onIntersection: fetchNextPage,
+  // });
 
-  useEffect(() => {
-    !hasNextPage && disconnectObserver();
-  }, [hasNextPage]);
+  // useEffect(() => {
+  //   if (!isPending) {
+  //     resetObserve();
+  //   }
+  // }, [isPending]);
+
+  // useEffect(() => {
+  //   !hasNextPage && disconnectObserver();
+  // }, [hasNextPage]);
 
   return (
     <div className="flex h-full flex-col">
@@ -58,17 +78,20 @@ export default function Page() {
         <input
           id="datePicker"
           type="date"
+          value={format(selectedDate, 'yyyy-MM-dd')}
+          onInput={(e) => setSelectedDate(e.currentTarget.valueAsDate || selectedDate)}
           className="relative flex-1 appearance-none rounded-lg border-none bg-gray-100 bg-none px-3 py-1 outline-none"
-          defaultValue={format(new Date(), 'yyyy-MM-dd')}
         />
         <FadeInModeToggleButton isFadeInMode={isFadeInMode} onToggle={() => setIsFadeInMode((prev) => !prev)} />
       </div>
 
       <div className="flex-1 space-y-[3.75rem] overflow-y-scroll p-5">
         {data?.pages.map((page) =>
-          [page.feeds.slice(0, 10), page.feeds.slice(11, 21), page.feeds.slice(21, 31)].map((feeds) => <VoteHistoryItem isFadeInMode={isFadeInMode} feeds={feeds} />)
+          [page.feeds.slice(0, 10), page.feeds.slice(11, 21), page.feeds.slice(21, 31)].map((feeds, index) => (
+            <VoteHistoryItem key={`history-item-${index}-${feeds[0].feedId}`} isFadeInMode={isFadeInMode} feeds={feeds} />
+          ))
         )}
-        <p className="text-detail text-gray-700">모든 투표 내역을 불러왔습니다.</p>
+        {!hasNextPage && <p className="text-detail text-gray-700">모든 투표 내역을 불러왔습니다.</p>}
       </div>
     </div>
   );
@@ -107,17 +130,17 @@ function VoteHistoryItem({ isFadeInMode, feeds }: { isFadeInMode: boolean; feeds
   return (
     <section className="space-y-2">
       <h6 className="text-h6 font-semibold">{votedAtLabel}</h6>
-      <Grid id="feedList" cols={5}>
-        <AnimatePresence>
+      <AnimatePresence>
+        <Grid id="feedList" cols={5}>
           {feeds.map((feed, index) => {
             if (isFadeInMode) {
-              return feed.voteType === 'FADE_IN' && <FeedItem key={`feed-item-${feed.feedId}`} {...feed} feeds={feeds} index={index} />;
+              return feed.voteType === 'FADE_IN' && <FeedItem key={`feed-item-${feed.feedId}-${index}`} {...feed} feeds={feeds} index={index} />;
             } else {
-              return <FeedItem key={`feed-item-${feed.feedId}`} {...feed} feeds={feeds} index={index} />;
+              return <FeedItem key={`feed-item-${feed.feedId}-${index}`} {...feed} feeds={feeds} index={index} />;
             }
           })}
-        </AnimatePresence>
-      </Grid>
+        </Grid>
+      </AnimatePresence>
     </section>
   );
 }
