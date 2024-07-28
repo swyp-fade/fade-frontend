@@ -1,4 +1,6 @@
 import { axios } from '@Libs/axios';
+import { TSubscriber, TSubscriberAPI } from '@Types/model';
+import { InfiniteResponse } from '@Types/response';
 
 type UpdateUserDetailsPayload = { accountId: string; profileImageId: number };
 type UpdateUserDetailsResponse = '';
@@ -17,4 +19,26 @@ export async function requestSubscribeMember({ toMemberId, wouldSubscribe }: Req
   }
 
   return await axios.delete<RequestSubscribeMemberResponse>(`/subscribe/${toMemberId}`, {});
+}
+
+type RequestGetSubscribersPayload = { nextCursor: number };
+type RequestGetSubscribersResponseAPI = InfiniteResponse<{ subscribers: TSubscriberAPI[]; totalSubscribers: number }>;
+type RequestGetSubscribersResponse = InfiniteResponse<{ subscribers: TSubscriber[]; totalSubscribers: number }>;
+
+export async function requestGetSubscribers({ nextCursor }: RequestGetSubscribersPayload) {
+  return await axios.get<RequestGetSubscribersResponseAPI>(`/subscribe/subscribers?nextCursor=${nextCursor}`).then(
+    ({ data: { subscribers, nextCursor, totalSubscribers } }) =>
+      ({
+        subscribers: subscribers.map(
+          ({ id, username, profileImageURL }) =>
+            ({
+              userId: id,
+              accountId: username,
+              profileImageURL,
+            }) as TSubscriber
+        ),
+        nextCursor,
+        totalSubscribers,
+      }) as RequestGetSubscribersResponse
+  );
 }
