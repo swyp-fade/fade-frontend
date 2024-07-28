@@ -2,13 +2,13 @@ import { useModalActions } from '@Hooks/modal';
 import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { requestGetUserFeeds } from '@Services/feed';
 import { requestGetFeedUserDetails } from '@Services/member';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { TFeedDetail } from '@Types/model';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { MdEditNote } from 'react-icons/md';
-import { VscLoading } from 'react-icons/vsc';
 import { FeedDetailDialog } from './FeedDetailDialog';
 import { ProfileIntroEditBottomSheet } from './ProfileIntroEditBottomSheet';
+import { SpinLoading } from './SpinLoading';
 import { SubscribeButton } from './SubscribeButton';
 import { Avatar } from './ui/avatar';
 import { Button } from './ui/button';
@@ -27,8 +27,13 @@ type ProfileDetailsProps = TProfileDetails;
 export function ProfileDetails({ viewType, userId }: ProfileDetailsProps) {
   return (
     <div>
-      <UserDetail userId={userId} viewType={viewType} />
-      <UserFeeds userId={userId} />
+      <Suspense fallback={<SpinLoading />}>
+        <UserDetail userId={userId} viewType={viewType} />
+      </Suspense>
+
+      <Suspense fallback={<SpinLoading />}>
+        <UserFeeds userId={userId} />
+      </Suspense>
     </div>
   );
 }
@@ -37,14 +42,10 @@ function UserDetail({ userId, viewType }: { userId: number; viewType: ProfileVie
   const isOwnerView = viewType === 'owner';
   const isUserView = viewType === 'user';
 
-  const { data, isPending } = useQuery({
+  const { data } = useSuspenseQuery({
     queryKey: ['user', userId, 'detail'],
     queryFn: () => requestGetFeedUserDetails({ userId }),
   });
-
-  if (isPending) {
-    return 'TODO: 로딩 스켈레톤 구현';
-  }
 
   const { accountId, introduceContent, profileImageURL, subscribedCount, isSubscribed } = data!.details;
 
@@ -89,7 +90,7 @@ function EditProfileIntroButton() {
 }
 
 function UserFeeds({ userId }: { userId: number }) {
-  const { data, isPending, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+  const { data, isPending, fetchNextPage, hasNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery({
     queryKey: ['user', userId, 'feed'],
     queryFn: ({ pageParam }) => requestGetUserFeeds({ userId, nextCursor: pageParam }),
     getNextPageParam({ nextCursor }) {
@@ -98,10 +99,14 @@ function UserFeeds({ userId }: { userId: number }) {
     initialPageParam: 0,
   });
 
-  const { disconnect: disconnectObserver } = useInfiniteObserver({
+  const { disconnect: disconnectObserver, resetObserve } = useInfiniteObserver({
     parentNodeId: 'feedList',
     onIntersection: fetchNextPage,
   });
+
+  useEffect(() => {
+    resetObserve();
+  }, [isPending, isFetchingNextPage]);
 
   useEffect(() => {
     !hasNextPage && disconnectObserver();
@@ -109,16 +114,11 @@ function UserFeeds({ userId }: { userId: number }) {
 
   return (
     <div className="p-1">
-      {isPending && 'TODO: 유저 피드 목록 로딩 스켈레톤'}
       <Grid id="feedList" cols={3}>
         {data?.pages.map((page) => page.feeds.map((feed, index) => <FeedItem key={`feed-item-${feed.feedId}`} {...feed} feeds={page.feeds} index={index} />))}
       </Grid>
-      {isFetchingNextPage && (
-        <div className="p-5">
-          <VscLoading className={'mx-auto block size-6 animate-spin text-gray-600'} />
-        </div>
-      )}
 
+      {isFetchingNextPage && <SpinLoading />}
       {!isPending && !hasNextPage && <p className="text-detail text-gray-700">내 모든 피드를 불러왔어요.</p>}
     </div>
   );

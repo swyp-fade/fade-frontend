@@ -1,15 +1,17 @@
 import { FeedDetailDialog } from '@Components/FeedDetailDialog';
 import { Button } from '@Components/ui/button';
+import { Grid } from '@Components/ui/grid';
 import { Image } from '@Components/ui/image';
 import { useModalActions } from '@Hooks/modal';
 import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { requestGetAllFashionFeed } from '@Services/feed';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { TAllFashionFeed } from '@Types/model';
 import { cn } from '@Utils/index';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { VscLoading } from 'react-icons/vsc';
 import { FilterType, SelectFilterDialog, SelectFilterDialogProps } from './SelectFilterDialog';
+import { SpinLoading } from '@Components/SpinLoading';
 
 export function AllArchivingView() {
   const [filters, setFilters] = useState<FilterType>({
@@ -17,7 +19,32 @@ export function AllArchivingView() {
     selectedStyles: [],
   });
 
-  const { data, isPending, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+  const handleFilterChanged = (newFilter: FilterType) => {
+    setFilters(newFilter);
+  };
+
+  return (
+    <div className="flex w-full flex-col p-1">
+      {/* TODO: 나중에 스크롤 애니메이션 달아보기 */}
+      <div className="w-full bg-white p-5">
+        <SelectFilterButton filters={filters} onFilterChanged={handleFilterChanged} />
+      </div>
+
+      <Suspense fallback={<SpinLoading />}>
+        <FeedList filters={filters} />
+      </Suspense>
+    </div>
+  );
+}
+
+interface TFeedList {
+  filters: FilterType;
+}
+
+type FeedListProps = TFeedList;
+
+function FeedList({ filters }: FeedListProps) {
+  const { data, isPending, fetchNextPage, isFetchingNextPage, hasNextPage } = useSuspenseInfiniteQuery({
     queryKey: ['archiving', 'all', { ...filters }],
     queryFn: ({ pageParam }) => requestGetAllFashionFeed({ nextCursor: pageParam, filters }),
     getNextPageParam(lastPage) {
@@ -26,39 +53,34 @@ export function AllArchivingView() {
     initialPageParam: 0,
   });
 
-  const { disconnect: disconnectObserver } = useInfiniteObserver({
-    parentNodeId: 'feedList',
+  const { disconnect: disconnectObserver, resetObserve } = useInfiniteObserver({
+    parentNodeId: `feedList`,
     onIntersection: fetchNextPage,
   });
+
+  useEffect(() => {
+    resetObserve();
+  }, [filters]);
 
   useEffect(() => {
     !hasNextPage && disconnectObserver();
   }, [hasNextPage]);
 
-  const handleFilterChanged = (newFilter: FilterType) => {
-    setFilters(newFilter);
-  };
-
   return (
-    <div className="w-full p-1">
-      {/* TODO: 나중에 스크롤 애니메이션 달아보기 */}
-      <div className="w-full bg-white p-5">
-        <SelectFilterButton filters={filters} onFilterChanged={handleFilterChanged} />
-      </div>
-
-      <div className="flex h-full min-h-1 flex-col overflow-y-scroll">
-        <div id="feedList" className="grid w-full grid-cols-3 gap-1">
+    <div className="h-full min-h-1 flex-1 overflow-y-scroll">
+      <div className="w-full flex-1 gap-1">
+        <Grid id={`feedList`} cols={3} className="w-full">
           {data?.pages.map(({ feeds }) => feeds.map((feed, index) => <FeedItem key={`item-${feed.feedId}`} feeds={feeds} index={index} {...feed} />))}
-        </div>
-
-        {(isFetchingNextPage || isPending) && (
-          <div className="flex w-full items-center justify-center p-5">
-            <VscLoading className="size-6 animate-spin" />
-          </div>
-        )}
-
-        {!isPending && !hasNextPage && <p className="text-detail text-gray-700">모든 페이더들의 패션을 불러왔어요.</p>}
+        </Grid>
       </div>
+
+      {isFetchingNextPage && (
+        <div className="flex w-full items-center justify-center p-5">
+          <VscLoading className="size-6 animate-spin" />
+        </div>
+      )}
+
+      {!isPending && !hasNextPage && <p className="text-detail text-gray-700">모든 페이더들의 패션을 불러왔어요.</p>}
     </div>
   );
 }

@@ -1,8 +1,6 @@
 import { useEffect, useMemo } from 'react';
 
 export function useInfiniteObserver({ parentNodeId, onIntersection }: { parentNodeId: string; onIntersection: () => void }) {
-  const targetParentNode = document.getElementById(parentNodeId);
-
   const intersectionObserver = useMemo(
     () =>
       new IntersectionObserver(
@@ -26,21 +24,30 @@ export function useInfiniteObserver({ parentNodeId, onIntersection }: { parentNo
     [parentNodeId]
   );
 
+  const startObserve = () => {
+    const targetParentNode = document.getElementById(parentNodeId);
+
+    if (targetParentNode === null) {
+      return;
+    }
+
+    mutationObserver.observe(targetParentNode!, { childList: true });
+    intersectionObserver.observe(targetParentNode!.lastElementChild || targetParentNode!);
+  };
+
   const disconnect = () => {
     mutationObserver.disconnect();
     intersectionObserver.disconnect();
   };
 
+  const resetObserve = () => {
+    disconnect();
+    startObserve();
+  };
+
   useEffect(() => {
-    if (targetParentNode === null) {
-      return;
-    }
-
-    mutationObserver.observe(document.getElementById(parentNodeId)!, { childList: true });
-    intersectionObserver.observe(document.getElementById(parentNodeId)!.lastElementChild || document.getElementById(parentNodeId)!);
-
     return () => disconnect();
-  }, [targetParentNode, mutationObserver, intersectionObserver]);
+  }, []);
 
-  return { disconnect };
+  return { startObserve, disconnect, resetObserve };
 }
