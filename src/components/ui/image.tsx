@@ -26,7 +26,7 @@ export function Image({ children, src, className, alt, size = 'cover' }: PropsWi
       role="img"
       aria-label={alt}
       style={{ backgroundImage: imageURL ? `url('${imageURL}')` : 'none' }}
-      className={cn('relative h-full w-full bg-center bg-no-repeat', className, {
+      className={cn('relative grid h-full w-full place-content-center bg-center bg-no-repeat', className, {
         ['bg-cover']: size === 'cover',
         ['bg-contain']: size === 'contain',
       })}>
