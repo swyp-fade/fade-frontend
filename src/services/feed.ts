@@ -100,3 +100,22 @@ export async function requestGetUserFeeds({ userId, nextCursor }: GetUserFeedsPa
       }) as GetUserFeedsResponse
   );
 }
+
+type GetBookmarkFeedsPayload = { userId: number; nextCursor: number };
+type GetBookmarkFeedsResponseAPI = InfiniteResponse<{ feeds: TFeedDetailAPI[] }>;
+type GetBookmarkFeedsResponse = InfiniteResponse<{ feeds: TFeedDetail[] }>;
+
+export async function requestGetBookmarkFeeds({ userId, nextCursor }: GetBookmarkFeedsPayload) {
+  return await axios.get<GetBookmarkFeedsResponseAPI>(`/feeds?fetchingType=BOOKMARK&limit=12&nextCursor=${nextCursor}&memberId=${userId}`).then(
+    ({ data: { feeds, nextCursor } }) =>
+      ({
+        nextCursor,
+        feeds: feeds.map(({ id, styleIds, ...feed }) => ({
+          feedId: id,
+          styleIds: styleIds.map(({ id }) => id),
+          accountId: feed.username,
+          ...feed,
+        })),
+      }) as GetBookmarkFeedsResponse
+  );
+}
