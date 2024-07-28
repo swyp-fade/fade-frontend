@@ -1,4 +1,5 @@
 import { OUTFIT_STYLE_LIST } from '@/constants';
+import fapBadgeImage from '@Assets/fap_badge.png';
 import { ItemBadge } from '@Components/ItemBadge';
 import { ReportButton } from '@Components/ReportButton';
 import { SubscribeButton } from '@Components/SubscribeButton';
@@ -9,34 +10,50 @@ import { cn } from '@Utils/index';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { motion } from 'framer-motion';
+import { ReactNode, useEffect, useRef } from 'react';
 import { MdBookmark, MdHowToVote, MdReport } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { BookmarkButton } from './BookmarkButton';
 import { OutfitCard } from './OutfitCard';
 import { Button } from './ui/button';
-import { ReactNode } from 'react';
 
-export function FeedDetailCard(feedDetail: TFeedDetail) {
+interface TFeedDetailCard {
+  focus?: boolean;
+}
+
+type FeedDetailCardProps = TFeedDetailCard & TFeedDetail;
+
+export function FeedDetailCard({ focus, ...feedDetail }: FeedDetailCardProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const isVoteType = isTFeedDetailVote(feedDetail);
   const isMineType = isTFeedDetailMine(feedDetail);
 
-  const { accountId, createdAt, feedId, imageURL, isBookmarked, isFAPFeed, isMine, isSubscribed, memberId, outfits, styleIds, profileImageURL } = feedDetail;
+  const { feedId, imageURL, isFAPFeed, isMine, outfits, styleIds } = feedDetail;
 
   const haveStyleIds = styleIds.length !== 0;
 
   const haveOutfits = outfits.length !== 0;
   const haveOutfitsMoreThanOwn = outfits.length > 1;
 
+  useEffect(() => {
+    if (containerRef.current == null) {
+      return;
+    }
+
+    focus && containerRef.current.scrollIntoView({ behavior: 'smooth' });
+  }, [focus, containerRef.current]);
+
   return (
-    <div className="flex h-full snap-start border border-red-500">
-      <section className="flex h-full w-full flex-col gap-3 p-5">
+    <div ref={containerRef} className="flex h-full snap-start border border-red-500">
+      <section className="relative flex h-full w-full flex-col gap-3 p-5">
+        {isFAPFeed && <Image src={fapBadgeImage} className="absolute right-5 top-3 size-10" />}
         {isVoteType && <p className="text-h6">{format(feedDetail.votedAt, 'yyyy년 M월 dd일 eeee', { locale: ko })}</p>}
         {!isVoteType && <p className="text-h6">{format(feedDetail.createdAt, 'yyyy년 M월 dd일 eeee', { locale: ko })}</p>}
 
         <Image
           src={imageURL}
           className={cn('relative w-full flex-1 rounded-lg bg-gray-200', {
-            ['boder-2 border-purple-500']: isFAPFeed,
+            ['border-2 border-purple-500']: isFAPFeed,
           })}
           size="contain">
           {!isMine && (
