@@ -1,9 +1,8 @@
+import { BookmarkButton } from '@Components/BookmarkButton';
 import { ReportButton } from '@Components/ReportButton';
 import { SubscribeButton } from '@Components/SubscribeButton';
-import { Button } from '@Components/ui/button';
 import { Image } from '@Components/ui/image';
 import { useToastActions } from '@Hooks/toast';
-import { requestBookmarkFeed } from '@Services/feed';
 import { requestGetVoteCandidates, requestSendVoteResult } from '@Services/vote';
 import { SwipeDirection, useVotingStore } from '@Stores/vote';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -13,7 +12,6 @@ import { cn, generateAnonName, prefetchImages } from '@Utils/index';
 import { isAxiosError } from 'axios';
 import { AnimatePresence, motion, MotionValue, useMotionValue, useTransform, Variants } from 'framer-motion';
 import { useEffect, useLayoutEffect, useState, useTransition } from 'react';
-import { MdBookmark } from 'react-icons/md';
 import { RandomAvatar } from './RandomAvatar';
 
 import swipeFadeInImage from '@Assets/swipe_fade_in.png';
@@ -465,60 +463,5 @@ function VoteButton({ type, onClick }: VoteButtonProps) {
         })}
       />
     </button>
-  );
-}
-
-interface TBookmarkButton {
-  feedId: number;
-  defaultBookmarkStatus: boolean;
-}
-
-type BookmarkButtonProps = TBookmarkButton;
-
-function BookmarkButton({ feedId, defaultBookmarkStatus }: BookmarkButtonProps) {
-  const [isBookmarked, setIsBookmarked] = useState(defaultBookmarkStatus);
-  const { showToast } = useToastActions();
-
-  const { mutate: bookmarkFeed, isPending } = useMutation({
-    mutationKey: ['bookmarkFeed'],
-    mutationFn: requestBookmarkFeed,
-  });
-
-  useEffect(() => {
-    setIsBookmarked(defaultBookmarkStatus);
-  }, [defaultBookmarkStatus]);
-
-  const handleClick = () => {
-    setIsBookmarked((prev) => !prev);
-
-    bookmarkFeed(
-      {
-        feedId,
-        wouldBookmark: !defaultBookmarkStatus,
-      },
-      {
-        onError() {
-          setIsBookmarked((prev) => !prev);
-          showToast({ type: 'error', title: '북마크에 실패했어요.' });
-        },
-      }
-    );
-  };
-
-  return (
-    <Button
-      variants="white"
-      interactive="onlyScale"
-      className={cn('shadow-bento', {
-        ['bg-purple-500']: isBookmarked,
-      })}
-      disabled={isPending}
-      onClick={handleClick}>
-      <MdBookmark
-        className={cn('size-6 text-gray-600 transition-colors', {
-          ['text-white']: isBookmarked,
-        })}
-      />
-    </Button>
   );
 }
