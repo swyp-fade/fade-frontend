@@ -1,5 +1,5 @@
 import { axios } from '@Libs/axios';
-import { TSubscriber, TSubscriberAPI } from '@Types/model';
+import { TFeedUserDetail, TFeedUserDetailAPI, TSubscriber, TSubscriberAPI } from '@Types/model';
 import { InfiniteResponse } from '@Types/response';
 
 type UpdateUserDetailsPayload = { accountId: string; profileImageId: number };
@@ -40,5 +40,26 @@ export async function requestGetSubscribers({ nextCursor }: RequestGetSubscriber
         nextCursor,
         totalSubscribers,
       }) as RequestGetSubscribersResponse
+  );
+}
+
+type RequestGetFeedUserDetailsPayload = { userId: number };
+type RequestGetFeedUserDetailsResponseAPI = { details: TFeedUserDetailAPI };
+type RequestGetFeedUserDetailsResponse = { details: TFeedUserDetail };
+
+export async function requestGetFeedUserDetails({ userId }: RequestGetFeedUserDetailsPayload) {
+  return await axios.get<RequestGetFeedUserDetailsResponseAPI>(`/member/details?memberId=${userId}`).then(
+    ({
+      data: {
+        details: { id, username, ...rest },
+      },
+    }) =>
+      ({
+        details: {
+          userId: id,
+          accountId: username,
+          ...rest,
+        },
+      }) as RequestGetFeedUserDetailsResponse
   );
 }

@@ -81,3 +81,22 @@ export async function requestGetSubscribeFeeds({ nextCursor }: GetSubscribeFeeds
       }) as GetSubscribeFeedsResponse
   );
 }
+
+type GetUserFeedsPayload = { userId: number; nextCursor: number };
+type GetUserFeedsResponseAPI = InfiniteResponse<{ feeds: TFeedDetailAPI[] }>;
+type GetUserFeedsResponse = InfiniteResponse<{ feeds: TFeedDetail[] }>;
+
+export async function requestGetUserFeeds({ userId, nextCursor }: GetUserFeedsPayload) {
+  return await axios.get<GetUserFeedsResponseAPI>(`/feeds?limit=12&nextCursor=${nextCursor}&memberId=${userId}`).then(
+    ({ data: { feeds, nextCursor } }) =>
+      ({
+        nextCursor,
+        feeds: feeds.map(({ id, styleIds, ...feed }) => ({
+          feedId: id,
+          styleIds: styleIds.map(({ id }) => id),
+          accountId: feed.username,
+          ...feed,
+        })),
+      }) as GetUserFeedsResponse
+  );
+}

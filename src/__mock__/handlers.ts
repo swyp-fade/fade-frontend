@@ -9,6 +9,7 @@ import {
   generateDummyFashionFeed,
   generateDummyFeedData,
   generateDummyFeedDetail,
+  generateDummyFeedUserDetail,
   generateDummySubscribersWithPagination,
   generateTVoteCandidateDummyData,
 } from './utils';
@@ -296,5 +297,11 @@ export const handlers = [
     const subscribers = generateDummySubscribersWithPagination(12, +nextCursor);
 
     return HttpResponse.json(subscribers, { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/member/details`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return HttpResponse.json({ details: generateDummyFeedUserDetail() }, { status: HttpStatusCode.Ok });
   }),
 ];

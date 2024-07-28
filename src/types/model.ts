@@ -163,6 +163,24 @@ export interface TSubscriber {
   profileImageURL: string;
 }
 
+export interface TFeedUserDetailAPI {
+  id: number;
+  username: string;
+  profileImageURL: string;
+  subscribedCount: number;
+  introduceContent: string;
+  isSubscribed: boolean;
+}
+
+export interface TFeedUserDetail {
+  userId: number;
+  accountId: string;
+  profileImageURL: string;
+  subscribedCount: number;
+  introduceContent: string;
+  isSubscribed: boolean;
+}
+
 /**
  * TFeed
  *  TVoteCandidate

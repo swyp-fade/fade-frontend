@@ -1,4 +1,15 @@
-import { TAllFashionFeedAPI, TFAPArchivingFeedAPI, TFeedAdittionalDetail, TFeedDetail, TOutfitItem, TStyleId, TSubscriberAPI, TVoteCandidateAPI, UserDetail } from '@Types/model';
+import {
+  TAllFashionFeedAPI,
+  TFAPArchivingFeedAPI,
+  TFeedAdittionalDetail,
+  TFeedDetail,
+  TFeedUserDetailAPI,
+  TOutfitItem,
+  TStyleId,
+  TSubscriberAPI,
+  TVoteCandidateAPI,
+  UserDetail,
+} from '@Types/model';
 import { addDays, addHours } from 'date-fns';
 
 import testFashionImage1 from '@Assets/test_fashion_image.jpg';
@@ -272,4 +283,26 @@ export function generateDummySubscribersWithPagination(count: number = 10, start
     subscribers,
     nextCursor: startCursor + count,
   };
+}
+
+export function generateDummyFeedUserDetail(): TFeedUserDetailAPI {
+  return {
+    id: Math.floor(Math.random() * 10000) + 1, // 1부터 10000 사이의 랜덤 ID
+    profileImageURL: testFahsionImages[getRandomNumber(0, testFahsionImages.length - 1)],
+    username: getRandomString(10),
+    isSubscribed: getRandomBoolean(),
+    subscribedCount: Math.floor(Math.random() * 1000), // 0부터 999 사이의 랜덤 구독자 수
+    introduceContent: generateRandomIntroduceContent(),
+  };
+}
+
+function generateRandomIntroduceContent(): string {
+  const introductions = [
+    '안녕하세요! 제 피드에 오신 것을 환영합니다.',
+    '여행과 음식을 사랑하는 블로거입니다.',
+    '일상의 소소한 행복을 공유합니다.',
+    '기술과 과학에 관심이 많은 개발자입니다.',
+    '건강한 라이프스타일을 추구합니다.',
+  ];
+  return introductions[Math.floor(Math.random() * introductions.length)];
 }
