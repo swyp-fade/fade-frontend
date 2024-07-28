@@ -81,10 +81,74 @@ export interface TFAPArchivingFeedAPI extends TFeed {
   createdAt: Date;
 }
 
-export interface TAllFashionFeedAPI extends TFeed {}
+export interface TAllFashionFeedAPI extends TFeed {
+  username: string;
+}
 export interface TAllFashionFeed extends Omit<TFeed, 'id' | 'styleIds'> {
   feedId: number;
   styleIds: number[];
+}
+
+interface TFeedDetailBase extends Omit<TFeed, 'id' | 'styleIds' | 'username'> {
+  accountId: string;
+  profileImageURL: string;
+
+  feedId: number;
+  styleIds: number[];
+
+  isFAPFeed: boolean;
+  isSubscribed: boolean;
+  isBookmarked: boolean;
+  isMine: boolean;
+
+  votedAt?: Date;
+}
+
+interface TFeedDetailBaseAPI extends TFeed {
+  username: string;
+  profileImageURL: string;
+
+  isFAPFeed: boolean;
+  isSubscribed: boolean;
+  isBookmarked: boolean;
+  isMine: boolean;
+
+  votedAt?: Date;
+}
+
+interface TFeedDetailMine extends TFeedDetailBase, TFeedAdittionalDetail {
+  isMine: true;
+  isSubscribed: never;
+}
+
+interface TFeedDetailMineAPI extends TFeedDetailBaseAPI, TFeedAdittionalDetail {
+  isMine: true;
+  isSubscribed: never;
+}
+
+export interface TFeedAdittionalDetail {
+  fadeInCount: number;
+  bookmarkCount: number;
+  reportCount: number;
+}
+
+interface TFeedDetailVote extends TFeedDetailBase {
+  votedAt: Date;
+}
+
+interface TFeedDetailVoteAPI extends TFeedDetailBaseAPI {
+  votedAt: Date;
+}
+
+export type TFeedDetail = TFeedDetailBase | TFeedDetailMine | TFeedDetailVote;
+export type TFeedDetailAPI = TFeedDetailBaseAPI | TFeedDetailMineAPI | TFeedDetailVoteAPI;
+
+export function isTFeedDetailMine(feedDetail: TFeedDetail): feedDetail is TFeedDetailMine {
+  return feedDetail.isMine;
+}
+
+export function isTFeedDetailVote(feedDetail: TFeedDetail): feedDetail is TFeedDetailVote {
+  return feedDetail.votedAt !== undefined;
 }
 
 /**
