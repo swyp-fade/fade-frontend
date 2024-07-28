@@ -31,7 +31,7 @@ export function useInfiniteObserver({ parentNodeId, onIntersection }: { parentNo
 
   useEffect(() => {
     mutationObserver.observe(document.getElementById(parentNodeId)!, { childList: true });
-    intersectionObserver.observe(document.getElementById(parentNodeId)!.lastElementChild!);
+    intersectionObserver.observe(document.getElementById(parentNodeId)!.lastElementChild || document.getElementById(parentNodeId)!);
 
     return () => disconnect();
   }, []);
