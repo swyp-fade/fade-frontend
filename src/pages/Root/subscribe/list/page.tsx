@@ -27,13 +27,13 @@ export default function Page() {
     initialPageParam: 0,
   });
 
-  const { disconnect: disconnectObserver, resetObserves } = useInfiniteObserver({
+  const { disconnect: disconnectObserver, resetObserve } = useInfiniteObserver({
     parentNodeId: 'subscriberList',
     onIntersection: fetchNextPage,
   });
 
   useEffect(() => {
-    resetObserves();
+    resetObserve();
   }, [isPending, isFetchingNextPage]);
 
   useEffect(() => {

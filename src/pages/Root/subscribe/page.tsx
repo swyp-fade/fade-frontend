@@ -57,11 +57,11 @@ function SubscribeFeedList() {
   });
 
   useEffect(() => {
-    resetObserves();
+    resetObserve();
     setLeftSlot(() => isFetchingNextPage && <VscLoading className="size-6 animate-spin" />);
   }, [isPending, isFetchingNextPage]);
 
-  const { disconnect: disconnectObserver, resetObserves } = useInfiniteObserver({
+  const { disconnect: disconnectObserver, resetObserve } = useInfiniteObserver({
     parentNodeId: 'feedList',
     onIntersection: fetchNextPage,
   });

@@ -40,7 +40,7 @@ export function useInfiniteObserver({ parentNodeId, onIntersection }: { parentNo
     intersectionObserver.disconnect();
   };
 
-  const resetObserves = () => {
+  const resetObserve = () => {
     disconnect();
     startObserve();
   };
@@ -49,5 +49,5 @@ export function useInfiniteObserver({ parentNodeId, onIntersection }: { parentNo
     return () => disconnect();
   }, []);
 
-  return { startObserve, disconnect, resetObserves };
+  return { startObserve, disconnect, resetObserve };
 }

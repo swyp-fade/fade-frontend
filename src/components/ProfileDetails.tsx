@@ -99,13 +99,13 @@ function UserFeeds({ userId }: { userId: number }) {
     initialPageParam: 0,
   });
 
-  const { disconnect: disconnectObserver, resetObserves } = useInfiniteObserver({
+  const { disconnect: disconnectObserver, resetObserve } = useInfiniteObserver({
     parentNodeId: 'feedList',
     onIntersection: fetchNextPage,
   });
 
   useEffect(() => {
-    resetObserves();
+    resetObserve();
   }, [isPending, isFetchingNextPage]);
 
   useEffect(() => {

@@ -1,13 +1,14 @@
 import { FeedDetailDialog } from '@Components/FeedDetailDialog';
+import { SpinLoading } from '@Components/SpinLoading';
 import { Grid } from '@Components/ui/grid';
 import { Image } from '@Components/ui/image';
 import { useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { requestGetBookmarkFeeds } from '@Services/feed';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { TFeedDetail } from '@Types/model';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { MdChevronLeft } from 'react-icons/md';
 import { VscLoading } from 'react-icons/vsc';
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +19,11 @@ export default function Page() {
     leftSlot: () => <BackButton />,
   });
 
-  return <BookmarkFeeds userId={0} />;
+  return (
+    <Suspense fallback={<SpinLoading />}>
+      <BookmarkFeeds userId={0} />
+    </Suspense>
+  );
 }
 
 function BackButton() {
@@ -34,7 +39,7 @@ function BackButton() {
 }
 
 function BookmarkFeeds({ userId }: { userId: number }) {
-  const { data, isPending, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+  const { data, isPending, fetchNextPage, hasNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery({
     queryKey: ['user', userId, 'bookmark'],
     queryFn: ({ pageParam }) => requestGetBookmarkFeeds({ userId, nextCursor: pageParam }),
     getNextPageParam({ nextCursor }) {
@@ -43,10 +48,14 @@ function BookmarkFeeds({ userId }: { userId: number }) {
     initialPageParam: 0,
   });
 
-  const { disconnect: disconnectObserver } = useInfiniteObserver({
+  const { disconnect: disconnectObserver, resetObserve } = useInfiniteObserver({
     parentNodeId: 'feedList',
     onIntersection: fetchNextPage,
   });
+
+  useEffect(() => {
+    resetObserve();
+  }, [isPending, isFetchingNextPage]);
 
   useEffect(() => {
     !hasNextPage && disconnectObserver();
