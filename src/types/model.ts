@@ -187,3 +187,16 @@ export interface TFeedUserDetail {
  *    TVoteCandidateCard
  *  TFAPArchivingFeed
  */
+
+export interface TVoteHistoryItemAPI extends Omit<TFeedDetailBaseAPI, 'imageURL' | 'id'> {
+  feedId: number;
+  feedImageURL: string;
+  voteType: 'FADE_IN' | 'FADE_OUT';
+  votedAt: Date;
+}
+
+export interface TVoteHistoryItem extends Omit<TFeedDetailBase, 'imageURL'> {
+  feedImageURL: string;
+  voteType: 'FADE_IN' | 'FADE_OUT';
+  votedAt: Date;
+}

@@ -11,6 +11,7 @@ import {
   generateDummyFeedDetail,
   generateDummyFeedUserDetail,
   generateDummySubscribersWithPagination,
+  generateDummyVoteHistory,
   generateTVoteCandidateDummyData,
 } from './utils';
 
@@ -303,5 +304,20 @@ export const handlers = [
     await delay(NETWORK_DELAY);
 
     return HttpResponse.json({ details: generateDummyFeedUserDetail() }, { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/vote/history`, async ({ request }) => {
+    await delay(NETWORK_DELAY);
+
+    const { searchParams } = new URL(request.url);
+    const scrollType = searchParams.get('scrollType')!;
+    const selectedDate = searchParams.get('selectedDate')!;
+    const limit = searchParams.get('limit')!;
+
+    const direction = scrollType === '0' ? 'down' : scrollType === '1' ? 'up' : 'both';
+
+    const result = generateDummyVoteHistory({ limit: +limit, baseDate: selectedDate, direction });
+
+    return HttpResponse.json(result, { status: HttpStatusCode.Ok });
   }),
 ];
