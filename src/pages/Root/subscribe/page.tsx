@@ -1,12 +1,13 @@
 import { FeedDetailCard } from '@Components/FeedDetailCard';
 import { ShowNotificationButton } from '@Components/ShowNotificationButton';
+import { SpinLoading } from '@Components/SpinLoading';
 import { Avatar } from '@Components/ui/avatar';
 import { useHeader } from '@Hooks/useHeader';
 import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { requestGetSubscribeFeeds } from '@Services/feed';
 import { requestGetSubscribers } from '@Services/member';
 import { useHeaderStore } from '@Stores/header';
-import { useInfiniteQuery, useSuspenseInfiniteQuery } from '@tanstack/react-query';
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { TSubscriber } from '@Types/model';
 import { cn } from '@Utils/index';
 import { Suspense, useEffect } from 'react';
@@ -32,13 +33,7 @@ export default function Page() {
     </div>
   );
 }
-function SpinLoading() {
-  return (
-    <div className="flex w-full items-center justify-center p-5">
-      <VscLoading className="size-6 animate-spin" />
-    </div>
-  );
-}
+
 function ShowSubscribeListViewButton() {
   const navigate = useNavigate();
 

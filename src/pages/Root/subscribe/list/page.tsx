@@ -1,3 +1,4 @@
+import { SpinLoading } from '@Components/SpinLoading';
 import { SubscribeButton } from '@Components/SubscribeButton';
 import { Avatar } from '@Components/ui/avatar';
 import { BackButton } from '@Components/ui/button';
@@ -7,10 +8,14 @@ import { requestGetSubscribers } from '@Services/member';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { TSubscriber } from '@Types/model';
 import { useEffect } from 'react';
-import { VscLoading } from 'react-icons/vsc';
 import { useNavigate } from 'react-router-dom';
 
 export default function Page() {
+  useHeader({
+    title: '구독 목록',
+    leftSlot: () => <BackButton className="left-0" onClick={() => navigate('/subscribe', { replace: true })} />,
+  });
+
   const navigate = useNavigate();
 
   const { data, isPending, hasNextPage, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
@@ -22,16 +27,14 @@ export default function Page() {
     initialPageParam: 0,
   });
 
-  useHeader({
-    title: '구독 목록',
-    leftSlot: () => <BackButton className="left-0" onClick={() => navigate('/subscribe', { replace: true })} />,
-    rightSlot: () => isFetchingNextPage && <VscLoading className="size-6 animate-spin" />,
-  });
-
-  const { disconnect: disconnectObserver } = useInfiniteObserver({
+  const { disconnect: disconnectObserver, resetObserves } = useInfiniteObserver({
     parentNodeId: 'subscriberList',
     onIntersection: fetchNextPage,
   });
+
+  useEffect(() => {
+    resetObserves();
+  }, [isPending, isFetchingNextPage]);
 
   useEffect(() => {
     !hasNextPage && disconnectObserver();
@@ -43,6 +46,7 @@ export default function Page() {
         {data?.pages.map((page) => page.subscribers.map((subscriber) => <SubscribeItem key={`subscriber-${subscriber.userId}`} {...subscriber} />))}
       </ul>
 
+      {isFetchingNextPage && <SpinLoading />}
       {isPending && !hasNextPage && <p className="pl-3 text-detail text-gray-700">모든 페이더들의 패션을 불러왔어요.</p>}
     </div>
   );

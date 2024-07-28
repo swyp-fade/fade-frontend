@@ -11,6 +11,7 @@ import { cn } from '@Utils/index';
 import { Suspense, useEffect, useState } from 'react';
 import { VscLoading } from 'react-icons/vsc';
 import { FilterType, SelectFilterDialog, SelectFilterDialogProps } from './SelectFilterDialog';
+import { SpinLoading } from '@Components/SpinLoading';
 
 export function AllArchivingView() {
   const [filters, setFilters] = useState<FilterType>({
@@ -32,14 +33,6 @@ export function AllArchivingView() {
       <Suspense fallback={<SpinLoading />}>
         <FeedList filters={filters} />
       </Suspense>
-    </div>
-  );
-}
-
-function SpinLoading() {
-  return (
-    <div className="flex w-full items-center justify-center p-5">
-      <VscLoading className="size-6 animate-spin" />
     </div>
   );
 }
