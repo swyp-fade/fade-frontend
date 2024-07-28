@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { requestSubscribeMember } from '@Services/member';
 import { useToastActions } from '@Hooks/toast';
+import { VscLoading } from 'react-icons/vsc';
 
 type SubscribeButtonSize = 'default' | 'lg';
 
@@ -62,6 +63,7 @@ export function SubscribeButton({ size = 'default', userId, initialSubscribedSta
       onClick={handleClick}>
       {isSubscribed && '구독중'}
       {!isSubscribed && '구독'}
+      {isPending && <VscLoading className={cn('ml-1 inline-block size-3 animate-spin text-gray-600')} />}
     </Button>
   );
 }
