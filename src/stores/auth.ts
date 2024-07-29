@@ -22,7 +22,7 @@ export type AuthStore = {
 
 const initialUserDetail: UserDetail = {
   id: -1,
-  accountId: '',
+  username: '',
   genderType: undefined,
   profileImageURL: undefined,
 };
@@ -57,9 +57,9 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   },
 
   setAuthFromToken({ accessToken }) {
-    const { id, username: accountId, genderType, exp, iat } = getPayloadFromJWT(accessToken);
+    const { id, username, genderType, exp, iat } = getPayloadFromJWT(accessToken);
 
-    const newUser: Partial<UserDetail> = { id: +id, accountId, genderType };
+    const newUser: Partial<UserDetail> = { id: +id, username, genderType };
     set(({ user }) => ({
       isAuthentication: true,
       user: { ...user, ...newUser },

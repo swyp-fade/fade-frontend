@@ -9,7 +9,7 @@ export function AccountSetting({ onClose }: DefaultModalProps) {
   /** TODO: 유저 정보 가져오기 */
 
   const userDetails: UserDetail = {
-    accountId: 'fade_1234',
+    username: 'fade_1234',
     id: 0,
     profileImageURL: testImage,
     genderType: 'MALE',

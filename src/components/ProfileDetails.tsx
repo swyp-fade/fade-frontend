@@ -47,7 +47,7 @@ function UserDetail({ userId, viewType }: { userId: number; viewType: ProfileVie
     queryFn: () => requestGetFeedUserDetails({ userId }),
   });
 
-  const { accountId, introduceContent, profileImageURL, subscribedCount, isSubscribed } = data!.details;
+  const { username, introduceContent, profileImageURL, subscribedCount, isSubscribed } = data!.details;
 
   return (
     <div className="space-y-5 p-5">
@@ -55,7 +55,7 @@ function UserDetail({ userId, viewType }: { userId: number; viewType: ProfileVie
         <Avatar src={profileImageURL} size="72" />
 
         <div className="flex flex-1 flex-col justify-center">
-          <span className="font-semibold">{accountId}</span>
+          <span className="font-semibold">{username}</span>
 
           <div className="space-x-2">
             <span>구독자</span>

@@ -2,7 +2,7 @@ export type GenderType = 'MALE' | 'FEMALE';
 
 export interface UserDetail {
   id: number;
-  accountId: string;
+  username: string;
   profileImageURL?: string;
   genderType?: GenderType;
 }
@@ -58,7 +58,7 @@ export type VoteType = 'FADE_IN' | 'FADE_OUT';
 
 export interface TFAPArchivingFeed extends Omit<TFeed, 'id' | 'styleIds'> {
   feedId: number;
-  accountId: string;
+  username: string;
 
   isSubscribed: boolean;
   isBookmarked: boolean;
@@ -70,7 +70,7 @@ export interface TFAPArchivingFeed extends Omit<TFeed, 'id' | 'styleIds'> {
 }
 
 export interface TFAPArchivingFeedAPI extends TFeed {
-  accountId: string;
+  username: string;
 
   isSubscribed: boolean;
   isBookmarked: boolean;
@@ -90,7 +90,7 @@ export interface TAllFashionFeed extends Omit<TFeed, 'id' | 'styleIds'> {
 }
 
 interface TFeedDetailBase extends Omit<TFeed, 'id' | 'styleIds' | 'username'> {
-  accountId: string;
+  username: string;
   profileImageURL: string;
 
   feedId: number;
@@ -159,7 +159,7 @@ export interface TSubscriberAPI {
 
 export interface TSubscriber {
   userId: number;
-  accountId: string;
+  username: string;
   profileImageURL: string;
 }
 
@@ -174,7 +174,7 @@ export interface TFeedUserDetailAPI {
 
 export interface TFeedUserDetail {
   userId: number;
-  accountId: string;
+  username: string;
   profileImageURL: string;
   subscribedCount: number;
   introduceContent: string;

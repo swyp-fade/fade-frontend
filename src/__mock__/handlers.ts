@@ -22,7 +22,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const userData: UserDetail = {
   id: 0,
-  accountId: 'fade_1234',
+  username: 'fade_1234',
   genderType: 'MALE',
   profileImageURL: testFashionImage1,
 };
@@ -87,10 +87,10 @@ export const handlers = [
   http.post(`${BASE_URL}/auth/social-login/KAKAO/signup`, async ({ request }) => {
     await delay(NETWORK_DELAY);
 
-    const requestPayload = (await request.json()) as { accountId: string };
-    const alreadyExistAccountId = requestPayload.accountId === 'asdf';
+    const requestPayload = (await request.json()) as { username: string };
+    const alreadyExistUsername = requestPayload.username === 'asdf';
 
-    if (alreadyExistAccountId) {
+    if (alreadyExistUsername) {
       return HttpResponse.json(
         {
           statusCode: HttpStatusCode.Unauthorized,

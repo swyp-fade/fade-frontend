@@ -32,9 +32,8 @@ export async function requestGetVoteHistory({ scrollType, nextCursor }: GetVoteH
     ({ data: { feeds, ...rest } }) =>
       ({
         ...rest,
-        feeds: feeds.map(({ styleIds, username, ...feed }) => ({
+        feeds: feeds.map(({ styleIds, ...feed }) => ({
           ...feed,
-          accountId: username,
           styleIds: styleIds.map(({ id }) => id),
         })),
       }) as GetVoteHistoryResponse

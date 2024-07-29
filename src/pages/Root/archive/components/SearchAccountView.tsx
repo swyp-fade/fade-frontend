@@ -12,20 +12,20 @@ import { VscLoading } from 'react-icons/vsc';
 
 interface TSearchResultItem {
   userId: number;
-  accountId: string;
+  username: string;
   profileURL: string;
 }
 
 type SearchResults = TSearchResultItem[];
 
-const searchResults: SearchResults = [{ userId: 0, accountId: 'fade_1234', profileURL: testImage }];
+const searchResults: SearchResults = [{ userId: 0, username: 'fade_1234', profileURL: testImage }];
 
 export function SearchAccountView({ onClose }: DefaultModalProps) {
-  const [targetAccountId, setTargetAccountId] = useState('');
-  const [isPending, debouncedAccountId] = useDebounce(targetAccountId, 350);
+  const [targetUsername, setTargetUsername] = useState('');
+  const [isPending, debouncedUsername] = useDebounce(targetUsername, 350);
 
-  const isHistoryView = debouncedAccountId === '';
-  const isResultView = debouncedAccountId !== '';
+  const isHistoryView = debouncedUsername === '';
+  const isResultView = debouncedUsername !== '';
 
   return (
     <FlexibleLayout.Root>
@@ -37,11 +37,11 @@ export function SearchAccountView({ onClose }: DefaultModalProps) {
 
         <div className="border-b border-b-gray-200 p-5">
           <SearchInput
-            value={targetAccountId}
+            value={targetUsername}
             isPending={isPending}
-            onChange={setTargetAccountId}
-            onClear={() => setTargetAccountId('')}
-            onSubmit={() => console.log(targetAccountId)}
+            onChange={setTargetUsername}
+            onClear={() => setTargetUsername('')}
+            onSubmit={() => console.log(targetUsername)}
           />
         </div>
       </FlexibleLayout.Header>
@@ -122,7 +122,7 @@ function SearchHistoryList() {
 
       <ul>
         {searchHistory.map((userDetail) => (
-          <li key={`search-histroy-${userDetail.accountId}`} className="flex flex-row items-center gap-3">
+          <li key={`search-histroy-${userDetail.username}`} className="flex flex-row items-center gap-3">
             <AccountItem {...userDetail} onClick={(userId) => console.log({ userId })} />
 
             <button className="group cursor-pointer rounded-lg p-2 touchdevice:active:bg-gray-100 pointerdevice:hover:bg-gray-100">
@@ -135,13 +135,13 @@ function SearchHistoryList() {
   );
 }
 
-function AccountItem({ userId, profileURL, accountId, onClick }: { userId: number; profileURL: string; accountId: string; onClick: (userId: number) => void }) {
+function AccountItem({ userId, profileURL, username, onClick }: { userId: number; profileURL: string; username: string; onClick: (userId: number) => void }) {
   return (
     <button
       className="group flex flex-1 flex-row items-center gap-3 rounded-lg p-2 touchdevice:active:bg-gray-200 pointerdevice:hover:bg-gray-100 pointerdevice:active:bg-gray-200"
       onClick={() => onClick(userId)}>
       <Avatar src={profileURL} size="40" />
-      <p>{accountId}</p>
+      <p>{username}</p>
     </button>
   );
 }
@@ -159,7 +159,7 @@ function SearchResultList({ matchedUsers }: { matchedUsers: SearchResults }) {
 
       <ul>
         {matchedUsers.map((userDetail) => (
-          <li key={`search-histroy-${userDetail.accountId}`} className="flex flex-row items-center gap-3">
+          <li key={`search-histroy-${userDetail.username}`} className="flex flex-row items-center gap-3">
             <AccountItem {...userDetail} onClick={(userId) => console.log({ userId })} />
 
             <Button variants="ghost" className="p-2">

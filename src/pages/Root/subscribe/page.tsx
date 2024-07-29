@@ -103,14 +103,14 @@ export function SubscriberList() {
   );
 }
 
-function SubscriberItem({ accountId, profileImageURL, userId }: TSubscriber) {
+function SubscriberItem({ username, profileImageURL, userId }: TSubscriber) {
   return (
     <li
       className={cn('boder-gray-200 flex h-full flex-row items-center gap-2 rounded-lg border p-2', {
         ['border-purple-100 bg-purple-50']: userId === 0,
       })}>
       <Avatar src={profileImageURL} size="32" />
-      <span>{accountId}</span>
+      <span>{username}</span>
     </li>
   );
 }

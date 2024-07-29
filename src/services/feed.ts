@@ -75,7 +75,7 @@ export async function requestGetSubscribeFeeds({ nextCursor }: GetSubscribeFeeds
         feeds: feeds.map(({ id, styleIds, ...feed }) => ({
           feedId: id,
           styleIds: styleIds.map(({ id }) => id),
-          accountId: feed.username,
+          username: feed.username,
           ...feed,
         })),
       }) as GetSubscribeFeedsResponse
@@ -94,7 +94,7 @@ export async function requestGetUserFeeds({ userId, nextCursor }: GetUserFeedsPa
         feeds: feeds.map(({ id, styleIds, ...feed }) => ({
           feedId: id,
           styleIds: styleIds.map(({ id }) => id),
-          accountId: feed.username,
+          username: feed.username,
           ...feed,
         })),
       }) as GetUserFeedsResponse
@@ -113,7 +113,7 @@ export async function requestGetBookmarkFeeds({ userId, nextCursor }: GetBookmar
         feeds: feeds.map(({ id, styleIds, ...feed }) => ({
           feedId: id,
           styleIds: styleIds.map(({ id }) => id),
-          accountId: feed.username,
+          username: feed.username,
           ...feed,
         })),
       }) as GetBookmarkFeedsResponse

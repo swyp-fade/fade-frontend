@@ -147,7 +147,7 @@ const generateFeedItem = (date: Date): TFAPArchivingFeedAPI => ({
   styleIds: generateStyleIds(),
   outfits: generateOutfitItems(),
   createdAt: date,
-  accountId: `account${randomInt(1, 1000)}`,
+  username: `account${randomInt(1, 1000)}`,
   isSubscribed: randomBool(),
   isBookmarked: randomBool(),
 });

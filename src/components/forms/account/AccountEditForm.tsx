@@ -11,8 +11,8 @@ import { useTransition } from 'react';
 import { Control, useForm } from 'react-hook-form';
 import { VscLoading } from 'react-icons/vsc';
 import { accountEditSchema, AccountEditSchema, AccountSchema } from './_accountSchema';
-import { AccountIdField } from './fields/AccountIdField';
 import { ProfileImageField } from './fields/ProfileImageField';
+import { UsernameField } from './fields/UsernameField';
 
 interface TAccountEditForm {
   defaultUserDetails: UserDetail;
@@ -35,7 +35,7 @@ export function AccountEditForm({ defaultUserDetails, onSubmited }: AccountEditF
     resolver: zodResolver(accountEditSchema),
     defaultValues: {
       profileImageId: -1,
-      accountId: defaultUserDetails.accountId,
+      username: defaultUserDetails.username,
     },
     mode: 'onChange',
   });
@@ -76,7 +76,7 @@ export function AccountEditForm({ defaultUserDetails, onSubmited }: AccountEditF
         <fieldset className="flex h-full flex-col gap-5" disabled={isPending}>
           <div className="flex flex-1 flex-col gap-5">
             <ProfileImageField control={form.control as unknown as Control<AccountSchema>} />
-            <AccountIdField control={form.control as unknown as Control<AccountSchema>} invalid={!!errors?.accountId} />
+            <UsernameField control={form.control as unknown as Control<AccountSchema>} invalid={!!errors?.username} />
           </div>
 
           <Button type="submit" className="text-xl" disabled={!couldSubmit}>
