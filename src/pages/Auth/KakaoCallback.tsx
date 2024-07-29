@@ -15,7 +15,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     return null;
   }
 
-  const [response, errorResponse] = await tryCatcher(() => requestSignInWithCode({ authorizationCode }));
+  const [response, errorResponse] = await tryCatcher(() =>
+    requestSignInWithCode({ authorizationCode, redirectUri: import.meta.env.VITE_KAKAO_REDIRECT_URL })
+  );
 
   if (response) {
     return createSuccessLoaderResponse(response.data);

@@ -35,12 +35,12 @@ export async function requestSignUp(payload: SignUpPayload) {
   });
 }
 
-type SignInWithCodePayload = { authorizationCode: string };
+type SignInWithCodePayload = { authorizationCode: string; redirectUri: string };
 type SignInWithCodeReponse = AuthTokens;
 
 /** 인가 코드로 로그인 요청 */
-export async function requestSignInWithCode({ authorizationCode }: SignInWithCodePayload) {
-  return await axios.post<SignInWithCodeReponse>(`/auth/social-login/KAKAO/signin`, { code: authorizationCode });
+export async function requestSignInWithCode({ authorizationCode, redirectUri }: SignInWithCodePayload) {
+  return await axios.post<SignInWithCodeReponse>(`/auth/social-login/KAKAO/signin`, { code: authorizationCode, redirectUri });
 }
 
 /** 로그아웃 요청 */
