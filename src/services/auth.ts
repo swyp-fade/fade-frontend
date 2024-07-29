@@ -1,5 +1,5 @@
-import { AuthTokens } from '@Types/User';
 import { axios } from '@Libs/axios';
+import { AuthTokens } from '@Types/model';
 
 /**
  * 서비스 로직에서 응답 및 오류를 처리하는 방법:
@@ -40,7 +40,10 @@ type SignInWithCodeReponse = AuthTokens;
 
 /** 인가 코드로 로그인 요청 */
 export async function requestSignInWithCode({ authorizationCode }: SignInWithCodePayload) {
-  return await axios.post<SignInWithCodeReponse>(`/auth/social-login/KAKAO/signin`, { code: authorizationCode });
+  return await axios.post<SignInWithCodeReponse>(`/auth/social-login/KAKAO/signin`, {
+    code: authorizationCode,
+    redirectUri: import.meta.env.VITE_KAKAO_REDIRECT_URL,
+  });
 }
 
 /** 로그아웃 요청 */
