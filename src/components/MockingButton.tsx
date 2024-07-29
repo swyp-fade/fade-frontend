@@ -34,7 +34,7 @@ export function MockingButton() {
           variants="outline"
           interactive="onlyScale"
           size="icon"
-          className={cn('border border-gray-200 bg-white shadow-2xl', {
+          className={cn('pointer-events-auto border border-gray-200 bg-white shadow-2xl', {
             ['border-red-400 bg-red-300']: isMockEnabled,
           })}>
           <MdSettings />
