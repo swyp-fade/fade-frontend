@@ -1,6 +1,6 @@
 import { axios } from '@Libs/axios';
 import { FilterType } from '@Pages/Root/archive/components/SelectFilterDialog';
-import { TAllFashionFeed, TAllFashionFeedAPI, TFAPArchivingFeed, TFAPArchivingFeedAPI, TFeedDetail, TFeedDetailAPI } from '@Types/model';
+import { TAllFashionFeed, TAllFashionFeedDTO, TFAPArchivingFeed, TFAPArchivingFeedDTO, TFeedDetail, TFeedDetailAPI } from '@Types/model';
 import { InfiniteResponse } from '@Types/response';
 import { objectToQueryParam } from '@Utils/index';
 
@@ -29,7 +29,7 @@ export async function requestBookmarkFeed({ feedId, wouldBookmark }: BookmarkFee
 }
 
 type FAPArchivingPayload = { selectedDate: string };
-type FAPArchivingResponseAPI = { feeds: TFAPArchivingFeedAPI[] };
+type FAPArchivingResponseAPI = { feeds: TFAPArchivingFeedDTO[] };
 type FAPArchivingResponse = { feeds: TFAPArchivingFeed[] };
 
 export async function requestFAPArchiving({ selectedDate }: FAPArchivingPayload) {
@@ -46,7 +46,7 @@ export async function requestFAPArchiving({ selectedDate }: FAPArchivingPayload)
 }
 
 type GetAllFashionFeedPayload = { filters: FilterType; nextCursor: number };
-type GetAllFashionFeedResponseAPI = InfiniteResponse<{ feeds: TAllFashionFeedAPI[] }>;
+type GetAllFashionFeedResponseAPI = InfiniteResponse<{ feeds: TAllFashionFeedDTO[] }>;
 type GetAllFashionFeedResponse = InfiniteResponse<{ feeds: TAllFashionFeed[] }>;
 
 export async function requestGetAllFashionFeed({ filters, nextCursor }: GetAllFashionFeedPayload) {
@@ -75,7 +75,6 @@ export async function requestGetSubscribeFeeds({ nextCursor }: GetSubscribeFeeds
         feeds: feeds.map(({ id, styleIds, ...feed }) => ({
           feedId: id,
           styleIds: styleIds.map(({ id }) => id),
-          username: feed.username,
           ...feed,
         })),
       }) as GetSubscribeFeedsResponse
@@ -94,7 +93,6 @@ export async function requestGetUserFeeds({ userId, nextCursor }: GetUserFeedsPa
         feeds: feeds.map(({ id, styleIds, ...feed }) => ({
           feedId: id,
           styleIds: styleIds.map(({ id }) => id),
-          username: feed.username,
           ...feed,
         })),
       }) as GetUserFeedsResponse
@@ -113,7 +111,6 @@ export async function requestGetBookmarkFeeds({ userId, nextCursor }: GetBookmar
         feeds: feeds.map(({ id, styleIds, ...feed }) => ({
           feedId: id,
           styleIds: styleIds.map(({ id }) => id),
-          username: feed.username,
           ...feed,
         })),
       }) as GetBookmarkFeedsResponse

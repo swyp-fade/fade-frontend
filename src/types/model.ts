@@ -32,7 +32,7 @@ export interface TOutfitItem {
   categoryId: number;
 }
 
-export interface TVoteCandidateAPI extends Omit<TFeed, 'id'> {
+export interface TVoteCandidateDTO extends Omit<TFeed, 'id'> {
   feedId: number;
   isSubscribed: boolean;
   isBookmarked: boolean;
@@ -69,7 +69,7 @@ export interface TFAPArchivingFeed extends Omit<TFeed, 'id' | 'styleIds'> {
   createdAt: Date;
 }
 
-export interface TFAPArchivingFeedAPI extends TFeed {
+export interface TFAPArchivingFeedDTO extends TFeed {
   username: string;
 
   isSubscribed: boolean;
@@ -81,7 +81,7 @@ export interface TFAPArchivingFeedAPI extends TFeed {
   createdAt: Date;
 }
 
-export interface TAllFashionFeedAPI extends TFeed {
+export interface TAllFashionFeedDTO extends TFeed {
   username: string;
 }
 export interface TAllFashionFeed extends Omit<TFeed, 'id' | 'styleIds'> {
@@ -104,7 +104,7 @@ interface TFeedDetailBase extends Omit<TFeed, 'id' | 'styleIds' | 'username'> {
   votedAt?: Date;
 }
 
-interface TFeedDetailBaseAPI extends TFeed {
+interface TFeedDetailBaseDTO extends TFeed {
   username: string;
   profileImageURL: string;
 
@@ -121,7 +121,7 @@ interface TFeedDetailMine extends TFeedDetailBase, TFeedAdittionalDetail {
   isSubscribed: never;
 }
 
-interface TFeedDetailMineAPI extends TFeedDetailBaseAPI, TFeedAdittionalDetail {
+interface TFeedDetailMineDTO extends TFeedDetailBaseDTO, TFeedAdittionalDetail {
   isMine: true;
   isSubscribed: never;
 }
@@ -136,12 +136,12 @@ interface TFeedDetailVote extends TFeedDetailBase {
   votedAt: Date;
 }
 
-interface TFeedDetailVoteAPI extends TFeedDetailBaseAPI {
+interface TFeedDetailVoteDTO extends TFeedDetailBaseDTO {
   votedAt: Date;
 }
 
 export type TFeedDetail = TFeedDetailBase | TFeedDetailMine | TFeedDetailVote;
-export type TFeedDetailAPI = TFeedDetailBaseAPI | TFeedDetailMineAPI | TFeedDetailVoteAPI;
+export type TFeedDetailAPI = TFeedDetailBaseDTO | TFeedDetailMineDTO | TFeedDetailVoteDTO;
 
 export function isTFeedDetailMine(feedDetail: TFeedDetail): feedDetail is TFeedDetailMine {
   return feedDetail.isMine;
@@ -151,7 +151,7 @@ export function isTFeedDetailVote(feedDetail: TFeedDetail): feedDetail is TFeedD
   return feedDetail.votedAt !== undefined;
 }
 
-export interface TSubscriberAPI {
+export interface TSubscriberDTO {
   id: number;
   username: string;
   profileImageURL: string;
@@ -163,7 +163,7 @@ export interface TSubscriber {
   profileImageURL: string;
 }
 
-export interface TFeedUserDetailAPI {
+export interface TFeedUserDetailDTO {
   id: number;
   username: string;
   profileImageURL: string;
@@ -188,7 +188,7 @@ export interface TFeedUserDetail {
  *  TFAPArchivingFeed
  */
 
-export interface TVoteHistoryItemAPI extends Omit<TFeedDetailBaseAPI, 'imageURL' | 'id'> {
+export interface TVoteHistoryItemDTO extends Omit<TFeedDetailBaseDTO, 'imageURL' | 'id'> {
   feedId: number;
   feedImageURL: string;
   voteType: 'FADE_IN' | 'FADE_OUT';

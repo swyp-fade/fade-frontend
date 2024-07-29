@@ -1,14 +1,14 @@
 import {
-  TAllFashionFeedAPI,
-  TFAPArchivingFeedAPI,
+  TAllFashionFeedDTO,
+  TFAPArchivingFeedDTO,
   TFeedAdittionalDetail,
   TFeedDetail,
-  TFeedUserDetailAPI,
+  TFeedUserDetailDTO,
   TOutfitItem,
   TStyleId,
-  TSubscriberAPI,
-  TVoteCandidateAPI,
-  TVoteHistoryItemAPI,
+  TSubscriberDTO,
+  TVoteCandidateDTO,
+  TVoteHistoryItemDTO,
   UserDetail,
 } from '@Types/model';
 import { addDays, addHours } from 'date-fns';
@@ -88,7 +88,7 @@ function createRandomOutfitItem(index: number): TOutfitItem {
   };
 }
 
-function createRandomTVoteCandidate(): TVoteCandidateAPI {
+function createRandomTVoteCandidate(): TVoteCandidateDTO {
   const styleIdsLength = getRandomNumber(1, 6);
   const outfitsLength = getRandomNumber(1, 5);
 
@@ -107,7 +107,7 @@ function createRandomTVoteCandidate(): TVoteCandidateAPI {
   };
 }
 
-export function generateTVoteCandidateDummyData(size: number): TVoteCandidateAPI[] {
+export function generateTVoteCandidateDummyData(size: number): TVoteCandidateDTO[] {
   return Array.from({ length: size }, () => createRandomTVoteCandidate());
 }
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -139,8 +139,8 @@ const generateOutfitItems = (): TOutfitItem[] => {
     }));
 };
 
-// 단일 TFAPArchivingFeedAPI 아이템 생성 함수
-const generateFeedItem = (date: Date): TFAPArchivingFeedAPI => ({
+// 단일 TFAPArchivingFeedDTO 아이템 생성 함수
+const generateFeedItem = (date: Date): TFAPArchivingFeedDTO => ({
   id: randomInt(1, 100),
   memberId: randomInt(1, 1000),
   imageURL: testFahsionImages[getRandomNumber(0, testFahsionImages.length - 1)],
@@ -152,9 +152,9 @@ const generateFeedItem = (date: Date): TFAPArchivingFeedAPI => ({
   isBookmarked: randomBool(),
 });
 
-// 주어진 월에 대한 TFAPArchivingFeedAPI 더미 데이터 생성 함수
-export const generateDummyFeedData = (year: number, month: number): TFAPArchivingFeedAPI[] => {
-  const result: TFAPArchivingFeedAPI[] = [];
+// 주어진 월에 대한 TFAPArchivingFeedDTO 더미 데이터 생성 함수
+export const generateDummyFeedData = (year: number, month: number): TFAPArchivingFeedDTO[] => {
+  const result: TFAPArchivingFeedDTO[] = [];
   const today = new Date();
   const lastDayOfMonth = new Date(year, month, 0).getDate();
 
@@ -186,7 +186,7 @@ function generateRandomStyleId(): TStyleId {
   return { id: Math.floor(Math.random() * 30) + 1 };
 }
 
-function generateRandomFeed(id: number): TAllFashionFeedAPI {
+function generateRandomFeed(id: number): TAllFashionFeedDTO {
   return {
     id,
     memberId: Math.floor(Math.random() * 1000) + 1,
@@ -202,7 +202,7 @@ function generateRandomFeed(id: number): TAllFashionFeedAPI {
   };
 }
 
-export function generateDummyFashionFeed(count: number = 10, startCursor: number = 0): InfiniteResponse<{ feeds: TAllFashionFeedAPI[] }> {
+export function generateDummyFashionFeed(count: number = 10, startCursor: number = 0): InfiniteResponse<{ feeds: TAllFashionFeedDTO[] }> {
   const feeds = Array(count)
     .fill(null)
     .map((_, index) => generateRandomFeed(startCursor + index + 1));
@@ -258,7 +258,7 @@ export function generateDummyFeedDetail(count: number = 10, startCursor: number 
   };
 }
 
-function generateRandomSubscriber(): TSubscriberAPI {
+function generateRandomSubscriber(): TSubscriberDTO {
   const id = Math.floor(Math.random() * 10000) + 1;
   return {
     id,
@@ -267,13 +267,13 @@ function generateRandomSubscriber(): TSubscriberAPI {
   };
 }
 
-export function generateDummySubscribers(count: number = 10): TSubscriberAPI[] {
+export function generateDummySubscribers(count: number = 10): TSubscriberDTO[] {
   return Array(count)
     .fill(null)
     .map(() => generateRandomSubscriber());
 }
 
-export function generateDummySubscribersWithPagination(count: number = 10, startCursor: number = 0): InfiniteResponse<{ subscribers: TSubscriberAPI[] }> {
+export function generateDummySubscribersWithPagination(count: number = 10, startCursor: number = 0): InfiniteResponse<{ subscribers: TSubscriberDTO[] }> {
   const subscribers = Array(count)
     .fill(null)
     .map((_, index) => ({
@@ -287,7 +287,7 @@ export function generateDummySubscribersWithPagination(count: number = 10, start
   };
 }
 
-export function generateDummyFeedUserDetail(): TFeedUserDetailAPI {
+export function generateDummyFeedUserDetail(): TFeedUserDetailDTO {
   return {
     id: Math.floor(Math.random() * 10000) + 1, // 1부터 10000 사이의 랜덤 ID
     profileImageURL: testFahsionImages[getRandomNumber(0, testFahsionImages.length - 1)],
@@ -309,7 +309,7 @@ function generateRandomIntroduceContent(): string {
   return introductions[Math.floor(Math.random() * introductions.length)];
 }
 
-function generateRandomVoteHistoryItem(date: Date): TVoteHistoryItemAPI {
+function generateRandomVoteHistoryItem(date: Date): TVoteHistoryItemDTO {
   const baseFeed = generateRandomFeed(Math.floor(Math.random() * 1000) + 1);
 
   return {
@@ -330,7 +330,7 @@ function generateRandomVoteHistoryItem(date: Date): TVoteHistoryItemAPI {
   };
 }
 
-function generateDailyVoteHistory(date: Date): TVoteHistoryItemAPI[] {
+function generateDailyVoteHistory(date: Date): TVoteHistoryItemDTO[] {
   return Array(10)
     .fill(null)
     .map(() => generateRandomVoteHistoryItem(date));
@@ -342,13 +342,13 @@ export function generateDummyVoteHistory(
     direction?: 'up' | 'down' | 'both';
     baseDate?: Date | string;
   } = {}
-): VoteInfiniteResponse<{ feeds: TVoteHistoryItemAPI[] }> {
+): VoteInfiniteResponse<{ feeds: TVoteHistoryItemDTO[] }> {
   const { limit = 3, direction = 'down', baseDate } = options;
 
   const baseDateObj = baseDate ? new Date(baseDate) : new Date();
   baseDateObj.setHours(0, 0, 0, 0); // Set to start of the day
 
-  let voteHistory: TVoteHistoryItemAPI[] = [];
+  let voteHistory: TVoteHistoryItemDTO[] = [];
 
   if (direction === 'both') {
     const halfLimit = Math.floor(limit / 2);

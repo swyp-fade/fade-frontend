@@ -1,5 +1,5 @@
 import { axios } from '@Libs/axios';
-import { TFeedUserDetail, TFeedUserDetailAPI, TSubscriber, TSubscriberAPI } from '@Types/model';
+import { TFeedUserDetail, TFeedUserDetailDTO, TSubscriber, TSubscriberDTO } from '@Types/model';
 import { InfiniteResponse } from '@Types/response';
 
 type UpdateUserDetailsPayload = { username: string; profileImageId: number };
@@ -22,7 +22,7 @@ export async function requestSubscribeMember({ toMemberId, wouldSubscribe }: Req
 }
 
 type RequestGetSubscribersPayload = { nextCursor: number };
-type RequestGetSubscribersResponseAPI = InfiniteResponse<{ subscribers: TSubscriberAPI[]; totalSubscribers: number }>;
+type RequestGetSubscribersResponseAPI = InfiniteResponse<{ subscribers: TSubscriberDTO[]; totalSubscribers: number }>;
 type RequestGetSubscribersResponse = InfiniteResponse<{ subscribers: TSubscriber[]; totalSubscribers: number }>;
 
 export async function requestGetSubscribers({ nextCursor }: RequestGetSubscribersPayload) {
@@ -43,7 +43,7 @@ export async function requestGetSubscribers({ nextCursor }: RequestGetSubscriber
 }
 
 type RequestGetFeedUserDetailsPayload = { userId: number };
-type RequestGetFeedUserDetailsResponseAPI = { details: TFeedUserDetailAPI };
+type RequestGetFeedUserDetailsResponseAPI = { details: TFeedUserDetailDTO };
 type RequestGetFeedUserDetailsResponse = { details: TFeedUserDetail };
 
 export async function requestGetFeedUserDetails({ userId }: RequestGetFeedUserDetailsPayload) {

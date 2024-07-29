@@ -1,8 +1,8 @@
 import { axios } from '@Libs/axios';
-import { TVoteCandidate, TVoteCandidateAPI, TVoteHistoryItem, TVoteHistoryItemAPI, TVoteResult } from '@Types/model';
+import { TVoteCandidate, TVoteCandidateDTO, TVoteHistoryItem, TVoteHistoryItemDTO, TVoteResult } from '@Types/model';
 import { VoteInfiniteResponse } from '@Types/response';
 
-type GetVoteCandidatesAPIResponse = { feeds: TVoteCandidateAPI[] };
+type GetVoteCandidatesAPIResponse = { feeds: TVoteCandidateDTO[] };
 type GetVoteCandidatesResponse = { voteCandidates: TVoteCandidate[] };
 
 export async function requestGetVoteCandidates() {
@@ -24,7 +24,7 @@ export async function requestSendVoteResult(voteItems: SendVoteResultPayload) {
 }
 
 type GetVoteHistoryPayload = { nextCursor: string; scrollType: string };
-type GetVoteHistoryResponseAPI = VoteInfiniteResponse<{ feeds: TVoteHistoryItemAPI[] }>;
+type GetVoteHistoryResponseAPI = VoteInfiniteResponse<{ feeds: TVoteHistoryItemDTO[] }>;
 type GetVoteHistoryResponse = VoteInfiniteResponse<{ feeds: TVoteHistoryItem[] }>;
 
 export async function requestGetVoteHistory({ scrollType, nextCursor }: GetVoteHistoryPayload) {
