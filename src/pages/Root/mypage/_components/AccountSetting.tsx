@@ -3,16 +3,19 @@ import { AccountEditForm } from '@Components/forms/account/AccountEditForm';
 import { BackButton } from '@Components/ui/button';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
-import { UserDetail } from '@Types/model';
+import { TMyUserDetail } from '@Types/model';
 
 export function AccountSetting({ onClose }: DefaultModalProps) {
   /** TODO: 유저 정보 가져오기 */
 
-  const userDetails: UserDetail = {
+  const userDetails: TMyUserDetail = {
     username: 'fade_1234',
     id: 0,
     profileImageURL: testImage,
     genderType: 'MALE',
+    selectedFAPCount: 0,
+    subscribedCount: 0,
+    introduceContent: '반갑다.',
   };
 
   return (

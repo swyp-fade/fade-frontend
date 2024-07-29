@@ -1,10 +1,48 @@
+/**
+ * API에서 응답이 오는 모델은 Suffix로 DTO가 붙습니다.
+ * 프론트에서 사용하는 모델은 Suffix없이 사용합니다.
+ * 두 개를 작성 시 순서는 DTO를 작성하고 바로 프론트 모델을 작성합니다.
+ *
+ * API에서 오는 응답 그대로 사용할 시 Suffix 없이 사용합니다.
+ */
+
 export type GenderType = 'MALE' | 'FEMALE';
 
-export interface UserDetail {
+export interface TUserDetail {
   id: number;
   username: string;
   profileImageURL?: string;
   genderType?: GenderType;
+  subscribedCount?: number;
+  introduceContent?: string;
+  isSubscribed?: boolean;
+}
+
+export interface TMyUserDetail extends TUserDetail {
+  selectedFAPCount: number;
+  genderType: GenderType;
+  subscribedCount: number;
+  introduceContent: string;
+  isSubscribed?: never;
+}
+
+export interface TFeedUserDetailDTO extends TUserDetail {
+  id: number;
+  username: string;
+  profileImageURL: string;
+  genderType: GenderType;
+  subscribedCount: number;
+  introduceContent: string;
+  isSubscribed: boolean;
+}
+
+export interface TFeedUserDetail {
+  userId: number;
+  username: string;
+  profileImageURL: string;
+  subscribedCount: number;
+  introduceContent: string;
+  isSubscribed: boolean;
 }
 
 export interface AuthTokens {
@@ -89,6 +127,18 @@ export interface TAllFashionFeed extends Omit<TFeed, 'id' | 'styleIds'> {
   styleIds: number[];
 }
 
+interface TFeedDetailBaseDTO extends TFeed {
+  username: string;
+  profileImageURL: string;
+
+  isFAPFeed: boolean;
+  isSubscribed: boolean;
+  isBookmarked: boolean;
+  isMine: boolean;
+
+  votedAt?: Date;
+}
+
 interface TFeedDetailBase extends Omit<TFeed, 'id' | 'styleIds' | 'username'> {
   username: string;
   profileImageURL: string;
@@ -104,24 +154,12 @@ interface TFeedDetailBase extends Omit<TFeed, 'id' | 'styleIds' | 'username'> {
   votedAt?: Date;
 }
 
-interface TFeedDetailBaseDTO extends TFeed {
-  username: string;
-  profileImageURL: string;
-
-  isFAPFeed: boolean;
-  isSubscribed: boolean;
-  isBookmarked: boolean;
-  isMine: boolean;
-
-  votedAt?: Date;
-}
-
-interface TFeedDetailMine extends TFeedDetailBase, TFeedAdittionalDetail {
+interface TFeedDetailMineDTO extends TFeedDetailBaseDTO, TFeedAdittionalDetail {
   isMine: true;
   isSubscribed: never;
 }
 
-interface TFeedDetailMineDTO extends TFeedDetailBaseDTO, TFeedAdittionalDetail {
+interface TFeedDetailMine extends TFeedDetailBase, TFeedAdittionalDetail {
   isMine: true;
   isSubscribed: never;
 }
@@ -132,11 +170,10 @@ export interface TFeedAdittionalDetail {
   reportCount: number;
 }
 
-interface TFeedDetailVote extends TFeedDetailBase {
+interface TFeedDetailVoteDTO extends TFeedDetailBaseDTO {
   votedAt: Date;
 }
-
-interface TFeedDetailVoteDTO extends TFeedDetailBaseDTO {
+interface TFeedDetailVote extends TFeedDetailBase {
   votedAt: Date;
 }
 
@@ -161,24 +198,6 @@ export interface TSubscriber {
   userId: number;
   username: string;
   profileImageURL: string;
-}
-
-export interface TFeedUserDetailDTO {
-  id: number;
-  username: string;
-  profileImageURL: string;
-  subscribedCount: number;
-  introduceContent: string;
-  isSubscribed: boolean;
-}
-
-export interface TFeedUserDetail {
-  userId: number;
-  username: string;
-  profileImageURL: string;
-  subscribedCount: number;
-  introduceContent: string;
-  isSubscribed: boolean;
 }
 
 /**

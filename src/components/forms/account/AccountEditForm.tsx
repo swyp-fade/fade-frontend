@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useToastActions } from '@Hooks/toast';
 import { requestUpdateUserDetails } from '@Services/member';
 import { useMutation } from '@tanstack/react-query';
-import { UserDetail } from '@Types/model';
+import { TMyUserDetail } from '@Types/model';
 import { ServiceErrorResponse } from '@Types/serviceError';
 import { isAxiosError } from 'axios';
 import { useTransition } from 'react';
@@ -15,7 +15,7 @@ import { ProfileImageField } from './fields/ProfileImageField';
 import { UsernameField } from './fields/UsernameField';
 
 interface TAccountEditForm {
-  defaultUserDetails: UserDetail;
+  defaultUserDetails: TMyUserDetail;
   onSubmited: (values: AccountEditSchema) => void;
 }
 

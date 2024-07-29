@@ -1,8 +1,8 @@
 import { axios } from '@Libs/axios';
-import { TFeedUserDetail, TFeedUserDetailDTO, TSubscriber, TSubscriberDTO } from '@Types/model';
+import { TFeedUserDetail, TFeedUserDetailDTO, TMyUserDetail, TSubscriber, TSubscriberDTO } from '@Types/model';
 import { InfiniteResponse } from '@Types/response';
 
-type UpdateUserDetailsPayload = { username: string; profileImageId: number };
+type UpdateUserDetailsPayload = Pick<TMyUserDetail, 'username' | 'profileImageURL'>;
 type UpdateUserDetailsResponse = '';
 
 /** 유저 정보 변경 요청 */
