@@ -1,10 +1,14 @@
 import { BackButton, Button } from '@Components/ui/button';
 import { Textarea } from '@Components/ui/textarea';
+import { useAuthActions } from '@Hooks/auth';
 import { useConfirm } from '@Hooks/modal';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
+import { axios } from '@Libs/axios';
+import { requestResignService } from '@Services/member';
 import { DefaultModalProps } from '@Stores/modal';
 import { cn } from '@Utils/index';
 import * as RadioGroup from '@radix-ui/react-radio-group';
+import { useMutation } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { PropsWithChildren, useState } from 'react';
 import { MdChevronRight } from 'react-icons/md';
@@ -40,12 +44,32 @@ export default function ResignServiceView({ onClose }: DefaultModalProps) {
   const doesNotInputOtherDetail = isSelectView && isOtherSelected && !isDetailInputed;
   const wouldCTADisabled = isNotConfirmed || doesNotInputOtherDetail;
 
+  const { signOut } = useAuthActions();
+
+  const { mutate: resignService } = useMutation({
+    mutationKey: ['resignService'],
+    mutationFn: requestResignService,
+  });
+
   const handleCTAClick = async () => {
     if (isSelectView) {
       return setViewId(1);
     }
 
-    await confirm({ title: '잠깐만요.. 정말 탈퇴하시겠어요?', description: '탈퇴 이후 재가입이 불가능하며 동일한 계정 ID의 사용이 불가합니다.' });
+    const result = await confirm({ title: '잠깐만요.. 정말 탈퇴하시겠어요?', description: '탈퇴 이후 재가입이 불가능하며 동일한 계정 ID의 사용이 불가합니다.' });
+
+    if (!result) {
+      return;
+    }
+
+    resignService(null as unknown as void, {
+      onSuccess() {
+        axios.defaults.headers.common.Authorization = '';
+        localStorage.clear();
+        signOut();
+        location.reload();
+      },
+    });
   };
 
   return (
