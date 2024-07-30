@@ -104,6 +104,7 @@ export function SubscriberList() {
 }
 
 function SubscriberItem({ username, profileImageURL, userId }: TSubscriber) {
+  console.log(username);
   return (
     <li
       className={cn('boder-gray-200 flex h-full flex-row items-center gap-2 rounded-lg border p-2', {
