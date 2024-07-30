@@ -1,6 +1,8 @@
+import ResignServiceView from '@Components/ResignServiceDialog';
 import { Button } from '@Components/ui/button';
 import { Form } from '@Components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useModalActions } from '@Hooks/modal';
 import { useToastActions } from '@Hooks/toast';
 import { requestUpdateUserDetails } from '@Services/member';
 import { useMutation } from '@tanstack/react-query';
@@ -44,6 +46,10 @@ export function AccountEditForm({ defaultUserDetails, onSubmited }: AccountEditF
   const couldSubmit = isValid;
 
   function handleSubmitAfterValidation(values: AccountEditSchema) {
+    if (!form.formState.isDirty) {
+      return;
+    }
+
     startTransition(() => {
       updateUserDetails(values, {
         onSuccess() {
@@ -77,6 +83,7 @@ export function AccountEditForm({ defaultUserDetails, onSubmited }: AccountEditF
           <div className="flex flex-1 flex-col gap-5">
             <ProfileImageField control={form.control as unknown as Control<AccountSchema>} />
             <UsernameField control={form.control as unknown as Control<AccountSchema>} invalid={!!errors?.username} />
+            <ResignButton />
           </div>
 
           <Button type="submit" className="text-xl" disabled={!couldSubmit}>
@@ -91,5 +98,22 @@ export function AccountEditForm({ defaultUserDetails, onSubmited }: AccountEditF
         </fieldset>
       </form>
     </Form>
+  );
+}
+
+function ResignButton() {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    await showModal({ type: 'fullScreenDialog', Component: ResignServiceView, animateType: 'slideInFromRight' });
+  };
+
+  return (
+    <div className="space-y-1 p-1">
+      <p className="text-h6 font-semibold">회원 탈퇴</p>
+      <button className="font-semibold text-gray-500 underline" onClick={handleClick}>
+        페이드 서비스에서 탈퇴하기
+      </button>
+    </div>
   );
 }
