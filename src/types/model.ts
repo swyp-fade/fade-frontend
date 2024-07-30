@@ -8,6 +8,10 @@
 
 export type GenderType = 'MALE' | 'FEMALE';
 
+/**
+ * 유저 정보 관련 모델
+ */
+
 export interface TUserDetail {
   id: number;
   username: string;
@@ -44,6 +48,8 @@ export interface AuthTokens {
 }
 
 /**
+ * Feed 관련 모델
+ *
  * Feed 기본 모델은 다음과 같은 순서로 확장됨.
  * TFeedBase -> TFeedDetailBase -> TFAPArchivingFeed | TAllFashionFeed | TBookmarkFeed | TVoteHistoryFeed | TUserFeed | TMyFeed
  * TVoteCandidate는 Feed의 일부 타입을 쓰긴 하나 성격이 다르므로 Feed로 묶이지 않음.
@@ -75,16 +81,14 @@ export interface TOutfitItem {
   categoryId: number;
 }
 
-export interface TFeedDetailBaseDTO extends TFeedBase {
-  username: string;
-  profileImageURL: string;
-
+export interface TFeedDetailBaseDTO extends TFeedBase, Pick<TUserDetail, 'username' | 'profileImageURL'> {
   isFAPFeed: boolean;
   isSubscribed: boolean;
   isBookmarked: boolean;
   isMine: boolean;
 
   votedAt?: Date;
+  fapSelectedAt?: Date;
 }
 
 interface TFeedDetailBase extends Omit<TFeedDetailBaseDTO, 'styleIds'> {
@@ -115,6 +119,7 @@ export type VoteType = 'FADE_IN' | 'FADE_OUT';
 
 export interface TFAPArchivingFeedDTO extends TFeedDetailBaseDTO {
   isFAPFeed: true;
+  fapSelectedAt: Date;
 }
 
 export interface TFAPArchivingFeed extends Omit<TFAPArchivingFeedDTO, 'styleIds'> {
@@ -127,6 +132,7 @@ export interface TAllFashionFeed extends Omit<TAllFashionFeedDTO, 'styleIds'> {
 }
 
 export interface TSubscribeFeedDTO extends TFeedDetailBaseDTO {
+  isMine: false;
   isSubscribed: true;
 }
 
@@ -144,12 +150,11 @@ export interface TBookmarkFeed extends Omit<TBookmarkFeedDTO, 'styleIds'> {
 
 export interface TMyFeedDTO extends TFeedDetailBaseDTO, TFeedAdittionalDetail {
   isMine: true;
+  isSubscribed: false;
 }
 
 interface TMyFeed extends Omit<TMyFeedDTO, 'styleIds'> {
   styleIds: number[];
-  isMine: true;
-  isSubscribed: never;
 }
 
 export interface TUserFeedDTO extends TFeedDetailBaseDTO {}
