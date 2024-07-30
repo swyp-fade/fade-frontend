@@ -61,13 +61,13 @@ function BookmarkFeeds({ userId }: { userId: number }) {
   }, [hasNextPage]);
 
   return (
-    <div className="p-1">
+    <div className="space-y-10 p-1">
       <Grid id="feedList" cols={3}>
         {data?.pages.map((page) => page.feeds.map((feed, index) => <FeedItem key={`feed-item-${feed.id}`} {...feed} feeds={page.feeds} index={index} />))}
       </Grid>
 
       {isFetchingNextPage && <SpinLoading />}
-      {!isPending && !hasNextPage && <p className="text-detail text-gray-700">내 모든 피드를 불러왔어요.</p>}
+      {!isPending && !hasNextPage && <p className="text-detail text-gray-700">내 모든 북마크를 불러왔어요.</p>}
     </div>
   );
 }

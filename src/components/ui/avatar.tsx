@@ -9,7 +9,7 @@ interface AvatarProps {
 export function Avatar({ src, size }: AvatarProps) {
   return (
     <div
-      className={cn('overflow-hidden rounded-lg', {
+      className={cn('overflow-hidden rounded-lg bg-gray-200', {
         ['size-[2rem]']: size === '32',
         ['size-[2.5rem]']: size === '40',
         ['size-[4.5rem]']: size === '72',

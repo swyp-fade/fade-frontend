@@ -41,7 +41,6 @@ export default function Page() {
         nextCursor = selectedDateLabel;
       }
 
-      // Ensure nextCursor is a string or use a default value
       return requestGetVoteHistory({
         nextCursor: nextCursor || format(new Date(), 'yyyy-MM-dd'),
         scrollType,
