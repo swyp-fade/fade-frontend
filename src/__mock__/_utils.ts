@@ -23,13 +23,16 @@ const testFahsionImages = [
 ];
 
 import {
+  GenderType,
   TAllFashionFeedDTO,
   TBookmarkFeed,
   TBookmarkFeedDTO,
   TFAPArchivingFeedDTO,
+  TFeedUserDetail,
   TMyFeedDTO,
   TMyUserDetail,
   TSubscribeFeedDTO,
+  TSubscriberDTO,
   TVoteCandidateDTO,
   TVoteHistoryFeedDTO,
 } from '@Types/model';
@@ -41,6 +44,8 @@ const getRandomElements = <T>(arr: T[], count: number): T[] => {
   const shuffled = [...arr].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
 };
+const getRandomGender = (): GenderType => getRandomElement(['MALE', 'FEMALE']);
+const getRandomUsername = () => `user${getRandomInt(1000, 9999)}`;
 
 function encodeJWT(payload: TMyUserDetail, secret: string, exp: Date) {
   const header = {
@@ -209,3 +214,35 @@ export const createBookmarkFeedDTODummies = (count: number): TBookmarkFeedDTO[] 
       isFAPFeed: Math.random() < 0.2,
     };
   });
+
+// TMyUserDetail 더미 데이터 생성 함수
+export const createMyUserDetailDummies = (count: number): TMyUserDetail[] =>
+  Array.from({ length: count }, () => ({
+    id: getRandomInt(1, 10000),
+    username: getRandomUsername(),
+    profileImageURL: testFahsionImages[getRandomInt(0, testFahsionImages.length - 1)],
+    genderType: getRandomGender(),
+    subscribedCount: getRandomInt(0, 1000),
+    introduceContent: `안녕하세요. ${getRandomUsername()}입니다. 패션에 관심이 많습니다.`,
+    selectedFAPCount: getRandomInt(0, 50),
+  }));
+
+// TFeedUserDetail 더미 데이터 생성 함수
+export const createFeedUserDetailDummies = (count: number): TFeedUserDetail[] =>
+  Array.from({ length: count }, () => ({
+    id: getRandomInt(1, 10000),
+    username: getRandomUsername(),
+    profileImageURL: testFahsionImages[getRandomInt(0, testFahsionImages.length - 1)],
+    genderType: getRandomGender(),
+    subscribedCount: getRandomInt(0, 1000),
+    introduceContent: `패션 좋아하는 ${getRandomUsername()}입니다. 팔로우 해주세요!`,
+    isSubscribed: Math.random() < 0.5,
+  }));
+
+// TSubscriberDTO 더미 데이터 생성 함수
+export const createSubscriberDTODummies = (count: number): TSubscriberDTO[] =>
+  Array.from({ length: count }, () => ({
+    id: getRandomInt(1, 10000),
+    username: getRandomUsername(),
+    profileImageURL: testFahsionImages[getRandomInt(0, testFahsionImages.length - 1)],
+  }));

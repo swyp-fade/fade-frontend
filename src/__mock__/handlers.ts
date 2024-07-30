@@ -3,15 +3,17 @@ import { TMyUserDetail } from '@Types/model';
 import { ServiceErrorResponse } from '@Types/serviceError';
 import { generateRandomId } from '@Utils/index';
 import { HttpStatusCode } from 'axios';
-import { addDays, getDaysInMonth } from 'date-fns';
+import { addDays } from 'date-fns';
 import { HttpResponse, delay, http } from 'msw';
 import {
   createAccessToken,
   createAllFashionFeedDTODummies,
   createBookmarkFeedDTODummies,
   createFAPArchivingFeedDTODummies,
+  createFeedUserDetailDummies,
   createRefreshToken,
   createSubscribeFeedDTODummies,
+  createSubscriberDTODummies,
   createVoteCandidateDTODummies,
 } from './_utils';
 
@@ -281,15 +283,15 @@ export const handlers = [
 
     await delay(NETWORK_DELAY);
 
-    const subscribers = generateDummySubscribersWithPagination(12, +nextCursor);
+    const subscribers = createSubscriberDTODummies(12);
 
-    return HttpResponse.json(subscribers, { status: HttpStatusCode.Ok });
+    return HttpResponse.json({ subscribers, nextCursor: generateRandomId(), totalSubscribers: 100 }, { status: HttpStatusCode.Ok });
   }),
 
-  http.get(`${BASE_URL}/member/details`, async () => {
+  http.get(`${BASE_URL}/member/:memberId`, async () => {
     await delay(NETWORK_DELAY);
 
-    return HttpResponse.json({ details: generateDummyFeedUserDetail() }, { status: HttpStatusCode.Ok });
+    return HttpResponse.json(createFeedUserDetailDummies(1), { status: HttpStatusCode.Ok });
   }),
 
   http.get(`${BASE_URL}/vote/history`, async ({ request }) => {

@@ -1,5 +1,5 @@
 import { axios } from '@Libs/axios';
-import { TFeedUserDetail, TFeedUserDetailDTO, TMyUserDetail, TSubscriber, TSubscriberDTO } from '@Types/model';
+import { TFeedUserDetail, TMyUserDetail, TSubscriber, TSubscriberDTO } from '@Types/model';
 import { InfiniteResponse } from '@Types/response';
 
 type UpdateUserDetailsPayload = Pick<TMyUserDetail, 'username' | 'profileImageURL'>;
@@ -30,10 +30,10 @@ export async function requestGetSubscribers({ nextCursor }: RequestGetSubscriber
     ({ data: { subscribers, nextCursor, totalSubscribers } }) =>
       ({
         subscribers: subscribers.map(
-          ({ id, profileImageURL }) =>
+          ({ id, ...rest }) =>
             ({
+              ...rest,
               userId: id,
-              profileImageURL,
             }) as TSubscriber
         ),
         nextCursor,
@@ -43,21 +43,9 @@ export async function requestGetSubscribers({ nextCursor }: RequestGetSubscriber
 }
 
 type RequestGetFeedUserDetailsPayload = { userId: number };
-type RequestGetFeedUserDetailsResponseAPI = { details: TFeedUserDetailDTO };
+// type RequestGetFeedUserDetailsResponseAPI = { details: TFeedUserDetail };
 type RequestGetFeedUserDetailsResponse = { details: TFeedUserDetail };
 
 export async function requestGetFeedUserDetails({ userId }: RequestGetFeedUserDetailsPayload) {
-  return await axios.get<RequestGetFeedUserDetailsResponseAPI>(`/member/details?memberId=${userId}`).then(
-    ({
-      data: {
-        details: { id, ...rest },
-      },
-    }) =>
-      ({
-        details: {
-          userId: id,
-          ...rest,
-        },
-      }) as RequestGetFeedUserDetailsResponse
-  );
+  return await axios.get<RequestGetFeedUserDetailsResponse>(`/member/${userId}`);
 }
