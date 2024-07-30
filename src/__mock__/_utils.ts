@@ -25,7 +25,6 @@ const testFahsionImages = [
 import {
   GenderType,
   TAllFashionFeedDTO,
-  TBookmarkFeed,
   TBookmarkFeedDTO,
   TFAPArchivingFeedDTO,
   TFeedUserDetail,
@@ -136,8 +135,19 @@ export const createFAPArchivingFeedDTODummies = (baseDate: Date): TFAPArchivingF
   for (let day = 1; day <= daysInMonth; day++) {
     if (Math.random() < 0.1) continue; // 10% 확률로 해당 일의 데이터 생략
 
+    const baseData = createBaseDummyData();
+
+    const additionalData = baseData.isMine
+      ? {
+          fadeInCount: getRandomInt(0, 1000),
+          bookmarkCount: getRandomInt(0, 500),
+          reportCount: getRandomInt(0, 50),
+        }
+      : {};
+
     const dummy: TFAPArchivingFeedDTO = {
-      ...createBaseDummyData(),
+      ...baseData,
+      ...additionalData,
       isFAPFeed: true,
       fapSelectedAt: new Date(year, month, day),
     };
@@ -224,7 +234,7 @@ export const createMyUserDetailDummies = (count: number): TMyUserDetail[] =>
     genderType: getRandomGender(),
     subscribedCount: getRandomInt(0, 1000),
     introduceContent: `안녕하세요. ${getRandomUsername()}입니다. 패션에 관심이 많습니다.`,
-    selectedFAPCount: getRandomInt(0, 50),
+    fapSelectedCount: getRandomInt(0, 50),
   }));
 
 // TFeedUserDetail 더미 데이터 생성 함수

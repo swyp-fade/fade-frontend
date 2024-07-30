@@ -28,7 +28,7 @@ const userData: TMyUserDetail = {
   genderType: 'MALE',
   profileImageURL: testFashionImage1,
   introduceContent: '안녕',
-  selectedFAPCount: 0,
+  fapSelectedCount: 0,
   subscribedCount: 0,
 };
 
@@ -278,8 +278,8 @@ export const handlers = [
     return HttpResponse.json({ feeds: createAllFashionFeedDTODummies(+limit), nextCursor: generateRandomId() }, { status: HttpStatusCode.Ok });
   }),
 
-  http.get(`${BASE_URL}/subscribe/subscribers`, async ({ request }) => {
-    const { searchParams } = new URL(request.url);
+  http.get(`${BASE_URL}/subscribe/subscribers`, async () => {
+    // const { searchParams } = new URL(request.url);
 
     await delay(NETWORK_DELAY);
 
@@ -288,18 +288,28 @@ export const handlers = [
     return HttpResponse.json({ subscribers, nextCursor: generateRandomId(), totalSubscribers: 100 }, { status: HttpStatusCode.Ok });
   }),
 
-  http.get(`${BASE_URL}/members/:memberId`, async () => {
-    await delay(NETWORK_DELAY);
-
-    return HttpResponse.json(createFeedUserDetailDummies(1), { status: HttpStatusCode.Ok });
-  }),
-
   http.get(`${BASE_URL}/members/me`, async () => {
     await delay(NETWORK_DELAY);
 
-    const [myDetail] = createMyUserDetailDummies(1);
+    return HttpResponse.json(createMyUserDetailDummies(1)[0], { status: HttpStatusCode.Ok });
+  }),
 
-    return HttpResponse.json(myDetail, { status: HttpStatusCode.Ok });
+  http.put(`${BASE_URL}/members/me`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return HttpResponse.json({}, { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/members/search`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return HttpResponse.json({ matchedMembers: createMyUserDetailDummies(5) }, { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/members/:memberId`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return HttpResponse.json(createFeedUserDetailDummies(1)[0], { status: HttpStatusCode.Ok });
   }),
 
   http.get(`${BASE_URL}/vote/history`, async () => {
