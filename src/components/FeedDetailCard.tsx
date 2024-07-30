@@ -19,12 +19,13 @@ import { Button } from './ui/button';
 
 interface TFeedDetailCard {
   focus?: boolean;
+  isStartAnimtionEnd?: boolean;
   onUsernameClicked?: () => void;
 }
 
 type FeedDetailCardProps = TFeedDetailCard & TFeed;
 
-export function FeedDetailCard({ focus, onUsernameClicked, ...feedDetail }: FeedDetailCardProps) {
+export function FeedDetailCard({ focus, isStartAnimtionEnd, onUsernameClicked, ...feedDetail }: FeedDetailCardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isVoteType = isTVoteHistoryFeed(feedDetail);
   const isMineType = isTMyFeed(feedDetail);
@@ -41,8 +42,10 @@ export function FeedDetailCard({ focus, onUsernameClicked, ...feedDetail }: Feed
       return;
     }
 
-    focus && containerRef.current.scrollIntoView({ behavior: 'smooth' });
-  }, [focus, containerRef.current]);
+    if (isStartAnimtionEnd && focus) {
+      containerRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [focus, containerRef.current, isStartAnimtionEnd]);
 
   return (
     <div ref={containerRef} className="flex h-full snap-start">
