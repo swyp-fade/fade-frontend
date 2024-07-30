@@ -23,7 +23,7 @@ export interface TUserDetail {
 }
 
 export interface TMyUserDetail extends TUserDetail {
-  selectedFAPCount: number;
+  fapSelectedCount: number;
   genderType: GenderType;
   subscribedCount: number;
   introduceContent: string;
@@ -41,6 +41,8 @@ export interface TSubscriberDTO extends Pick<TUserDetail, 'id' | 'username' | 'p
 export interface TSubscriber extends Omit<TSubscriberDTO, 'id'> {
   userId: number;
 }
+
+export interface TMatchedUser extends Pick<TUserDetail, 'id' | 'username' | 'profileImageURL'> {}
 
 export interface AuthTokens {
   accessToken: string;

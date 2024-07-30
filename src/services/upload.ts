@@ -3,7 +3,7 @@ import { axios } from '@Libs/axios';
 
 type GetPresignedURLResponse = { presignURL: string; attachmentId: number };
 
-export async function requestGetPresignedURL(checksum: string) {
+export async function requestGetPresignedURL(checksum?: string) {
   return await axios.post<GetPresignedURLResponse>(`/attachments/presign-url`, { checksum });
 }
 

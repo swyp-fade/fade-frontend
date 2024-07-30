@@ -81,7 +81,7 @@ type GetSubscribeFeedsResponseAPI = InfiniteResponse<{ feeds: TSubscribeFeedDTO[
 type GetSubscribeFeedsResponse = InfiniteResponse<{ feeds: TSubscribeFeed[] }>;
 
 export async function requestGetSubscribeFeeds({ nextCursor }: GetSubscribeFeedsPayload) {
-  return await axios.get<GetSubscribeFeedsResponseAPI>(`/feeds?fetchingType=SUBSCRIBE&limit=12${nextCursor !== -1 ? `&nextCursor=${nextCursor}` : ''}`).then(
+  return await axios.get<GetSubscribeFeedsResponseAPI>(`/feeds?fetchTypes=SUBSCRIBE&limit=12${nextCursor !== -1 ? `&nextCursor=${nextCursor}` : ''}`).then(
     ({ data: { feeds, nextCursor } }) =>
       ({
         nextCursor,
@@ -115,7 +115,7 @@ type GetBookmarkFeedsResponseAPI = InfiniteResponse<{ feeds: TBookmarkFeedDTO[] 
 type GetBookmarkFeedsResponse = InfiniteResponse<{ feeds: TBookmarkFeed[] }>;
 
 export async function requestGetBookmarkFeeds({ nextCursor }: GetBookmarkFeedsPayload) {
-  return await axios.get<GetBookmarkFeedsResponseAPI>(`/feeds?fetchingType=BOOKMARK&limit=12${nextCursor !== -1 ? `&nextCursor=${nextCursor}` : ''}`).then(
+  return await axios.get<GetBookmarkFeedsResponseAPI>(`/feeds?fetchTypes=BOOKMARK&limit=12${nextCursor !== -1 ? `&nextCursor=${nextCursor}` : ''}`).then(
     ({ data: { feeds, nextCursor } }) =>
       ({
         nextCursor,
