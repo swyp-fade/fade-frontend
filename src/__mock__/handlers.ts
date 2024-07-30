@@ -1,32 +1,31 @@
-import { UserDetail } from '@Types/model';
+import testFashionImage1 from '@Assets/test_fashion_image.jpg';
+import { TMyUserDetail } from '@Types/model';
 import { ServiceErrorResponse } from '@Types/serviceError';
+import { generateRandomId } from '@Utils/index';
 import { HttpStatusCode } from 'axios';
-import { addDays, getDaysInMonth, getMonth, getYear } from 'date-fns';
+import { addDays, getDaysInMonth } from 'date-fns';
 import { HttpResponse, delay, http } from 'msw';
 import {
   createAccessToken,
+  createAllFashionFeedDTODummies,
+  createBookmarkFeedDTODummies,
+  createFAPArchivingFeedDTODummies,
   createRefreshToken,
-  generateDummyFashionFeed,
-  generateDummyFeedData,
-  generateDummyFeedDetail,
-  generateDummyFeedUserDetail,
-  generateDummySubscribersWithPagination,
-  generateDummyVoteHistory,
-  generateTVoteCandidateDummyData,
-} from './utils';
-
-import testFashionImage1 from '@Assets/test_fashion_image.jpg';
-import { generateDummyTFAPArchivingFeedDTOs, generateDummyTFeedDetailBaseDTOs, generateDummyTVoteCandidateDTOs } from './_utils';
-import { generateRandomId } from '@Utils/index';
+  createSubscribeFeedDTODummies,
+  createVoteCandidateDTODummies,
+} from './_utils';
 
 const NETWORK_DELAY = 1000;
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const userData: UserDetail = {
+const userData: TMyUserDetail = {
   id: 0,
   username: 'fade_1234',
   genderType: 'MALE',
   profileImageURL: testFashionImage1,
+  introduceContent: '안녕',
+  selectedFAPCount: 0,
+  subscribedCount: 0,
 };
 
 export const handlers = [
@@ -213,7 +212,7 @@ export const handlers = [
   http.get(`${BASE_URL}/vote/candidates`, async () => {
     await delay(NETWORK_DELAY);
 
-    return HttpResponse.json({ feeds: generateDummyTVoteCandidateDTOs(10) }, { status: HttpStatusCode.Ok });
+    return HttpResponse.json({ feeds: createVoteCandidateDTODummies(10) }, { status: HttpStatusCode.Ok });
   }),
 
   http.post(`${BASE_URL}/vote/candidates`, async () => {
@@ -252,7 +251,7 @@ export const handlers = [
 
     await delay(NETWORK_DELAY);
 
-    const feeds = generateDummyTFAPArchivingFeedDTOs(getDaysInMonth(selectedDate));
+    const feeds = createFAPArchivingFeedDTODummies(new Date(selectedDate));
 
     return HttpResponse.json({ feeds }, { status: HttpStatusCode.Ok });
   }),
@@ -261,22 +260,19 @@ export const handlers = [
     const { searchParams } = new URL(request.url);
     const nextCursor = searchParams.get('nextCursor')!;
     const fetchingType = searchParams.get('fetchingType')!;
-    const limit = searchParams.get('limit');
-    const testType = searchParams.get('testType');
+    const limit = searchParams.get('limit') || '12';
 
     await delay(NETWORK_DELAY);
 
     if (fetchingType === 'SUBSCRIBE') {
-      return HttpResponse.json({ feeds: generateDummyTFeedDetailBaseDTOs(parseInt(limit || '12')), nextCursor: generateRandomId() }, { status: HttpStatusCode.Ok });
+      return HttpResponse.json({ feeds: createSubscribeFeedDTODummies(12), nextCursor: generateRandomId() }, { status: HttpStatusCode.Ok });
     }
 
     if (fetchingType === 'BOOKMARK') {
-      return HttpResponse.json({ ...result }, { status: HttpStatusCode.Ok });
+      return HttpResponse.json({ feeds: createBookmarkFeedDTODummies(12), nextCursor: generateRandomId() }, { status: HttpStatusCode.Ok });
     }
 
-    const result = fetchingType === 'SUBSCRIBE' ? generateDummyFeedDetail(5, +nextCursor) : generateDummyFashionFeed(12, +nextCursor);
-
-    return HttpResponse.json({ feeds: generateDummyTFeedDetailBaseDTOs(parseInt(limit || '12')), nextCursor: generateRandomId() }, { status: HttpStatusCode.Ok });
+    return HttpResponse.json({ feeds: createAllFashionFeedDTODummies(+limit), nextCursor: generateRandomId() }, { status: HttpStatusCode.Ok });
   }),
 
   http.get(`${BASE_URL}/subscribe/subscribers`, async ({ request }) => {

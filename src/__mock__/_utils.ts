@@ -24,175 +24,188 @@ const testFahsionImages = [
 
 import {
   TAllFashionFeedDTO,
+  TBookmarkFeed,
+  TBookmarkFeedDTO,
   TFAPArchivingFeedDTO,
-  TFeedBase,
-  TFeedAdittionalDetail,
-  TFeedDetailBaseDTO,
-  TFeedDTO,
   TMyFeedDTO,
-  TOutfitItem,
-  TStyleId,
+  TMyUserDetail,
+  TSubscribeFeedDTO,
   TVoteCandidateDTO,
   TVoteHistoryFeedDTO,
 } from '@Types/model';
+import { addDays, addHours } from 'date-fns';
 
-function generateRandomNumber(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+const getRandomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+const getRandomElement = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+const getRandomElements = <T>(arr: T[], count: number): T[] => {
+  const shuffled = [...arr].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+};
+
+function encodeJWT(payload: TMyUserDetail, secret: string, exp: Date) {
+  const header = {
+    alg: 'HS256',
+    typ: 'JWT',
+  };
+
+  const { introduceContent, ...source } = payload;
+
+  const encodedHeader = btoa(JSON.stringify(header)).replace(/=+$/, '');
+  const encodedPayload = btoa(JSON.stringify({ ...source, iat: new Date().toUTCString(), exp })).replace(/=+$/, '');
+
+  const signature = btoa(secret).replace(/=+$/, '');
+
+  return `${encodedHeader}.${encodedPayload}.${signature}`;
 }
 
-function generateUniqueRandomNumbers(count: number, min: number, max: number): number[] {
-  const numbers = new Set<number>();
-  while (numbers.size < count) {
-    numbers.add(generateRandomNumber(min, max));
+const createJWT = (userData: TMyUserDetail, expiresIn: Date) => encodeJWT(userData, 'JWT_SECRET', expiresIn);
+
+export const createAccessToken = (userData: TMyUserDetail) => createJWT(userData, addHours(new Date(), 1));
+export const createRefreshToken = (userData: TMyUserDetail) => createJWT(userData, addDays(new Date(), 14));
+
+// 상수
+const BRAND_NAMES = ['나이키', '아디다스', '구찌', '샤넬', '루이비통', '프라다', '에르메스', '발렌시아가', '버버리', '카르티에'];
+const PRODUCT_DETAILS = [
+  '클래식 티셔츠',
+  '슬림핏 청바지',
+  '오버사이즈 후드티',
+  '가죽 재킷',
+  '니트 스웨터',
+  '플리스 집업',
+  '캐주얼 셔츠',
+  '롱 원피스',
+  '미니스커트',
+  '트렌치코트',
+  '데님 자켓',
+  '카고 팬츠',
+  '크롭티',
+  '와이드 팬츠',
+  '블레이저',
+  '슬립 원피스',
+  '맨투맨',
+  '레깅스',
+  '베스트',
+  '카디건',
+];
+
+// 기본 더미 데이터 생성 함수
+const createBaseDummyData = (): Omit<TFAPArchivingFeedDTO, 'isFAPFeed' | 'fapSelectedAt'> => ({
+  id: getRandomInt(1, 1000000),
+  memberId: getRandomInt(1, 10000),
+  imageURL: testFahsionImages[getRandomInt(0, testFahsionImages.length - 1)],
+  styleIds: getRandomElements(
+    Array.from({ length: 8 }, (_, i) => ({ id: i })),
+    getRandomInt(1, 10)
+  ),
+  outfits: Array.from({ length: getRandomInt(1, 5) }, () => ({
+    id: getRandomInt(1, 1000),
+    brandName: getRandomElement(BRAND_NAMES),
+    details: getRandomElement(PRODUCT_DETAILS),
+    categoryId: getRandomInt(0, 7),
+  })),
+  createdAt: new Date(Date.now() - getRandomInt(0, 30 * 24 * 60 * 60 * 1000)),
+  username: `user${getRandomInt(1, 1000)}`,
+  profileImageURL: testFahsionImages[getRandomInt(0, testFahsionImages.length - 1)],
+  isSubscribed: Math.random() < 0.5,
+  isBookmarked: Math.random() < 0.5,
+  isMine: Math.random() < 0.1,
+  votedAt: Math.random() < 0.7 ? new Date(Date.now() - getRandomInt(0, 7 * 24 * 60 * 60 * 1000)) : undefined,
+});
+
+// TVoteCandidateDTO 더미 데이터 생성 함수
+export const createVoteCandidateDTODummies = (count: number): TVoteCandidateDTO[] =>
+  Array.from({ length: count }, () => {
+    const baseData = createBaseDummyData();
+    //@ts-expect-error 쓰지 않는 변수
+    const { styleIds, isFAPFeed, isMine, ...voteCandidateData } = baseData;
+    return voteCandidateData;
+  });
+
+// TFAPArchivingFeedDTO 더미 데이터 생성 함수
+export const createFAPArchivingFeedDTODummies = (baseDate: Date): TFAPArchivingFeedDTO[] => {
+  const year = baseDate.getFullYear();
+  const month = baseDate.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const dummies: TFAPArchivingFeedDTO[] = [];
+  for (let day = 1; day <= daysInMonth; day++) {
+    if (Math.random() < 0.1) continue; // 10% 확률로 해당 일의 데이터 생략
+
+    const dummy: TFAPArchivingFeedDTO = {
+      ...createBaseDummyData(),
+      isFAPFeed: true,
+      fapSelectedAt: new Date(year, month, day),
+    };
+    dummies.push(dummy);
   }
-  return Array.from(numbers);
-}
 
-function generateRandomString(length: number): string {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  return Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
-}
+  return dummies.toSorted((a, b) => a.fapSelectedAt.getDate() - b.fapSelectedAt.getDate());
+};
 
-function generateRandomUsername(): string {
-  return `user_${generateRandomString(8)}`;
-}
+// TAllFashionFeedDTO 더미 데이터 생성 함수
+export const createAllFashionFeedDTODummies = (count: number): TAllFashionFeedDTO[] =>
+  Array.from({ length: count }, () => {
+    const baseData = createBaseDummyData();
 
-function generateRandomImage() {
-  return testFahsionImages[generateRandomNumber(0, testFahsionImages.length - 1)];
-}
+    const additionalData = baseData.isMine
+      ? {
+          fadeInCount: getRandomInt(0, 1000),
+          bookmarkCount: getRandomInt(0, 500),
+          reportCount: getRandomInt(0, 50),
+        }
+      : {};
 
-function generateBaseFeed(): Omit<TFeedBase, 'id' | 'imageURL'> {
-  const styleIdsCount = generateRandomNumber(1, 38);
-  const styleIds: TStyleId[] = generateUniqueRandomNumbers(styleIdsCount, 0, 38).map((id) => ({ id }));
+    return {
+      ...baseData,
+      ...additionalData,
+      isFAPFeed: Math.random() < 0.2, // 20% 확률로 FAP 피드
+    };
+  });
 
-  const outfitsCount = generateRandomNumber(1, 5);
-  const outfits: TOutfitItem[] = Array.from({ length: outfitsCount }, () => ({
-    id: generateRandomNumber(1, 1000),
-    brandName: generateRandomString(10),
-    details: generateRandomString(20),
-    categoryId: generateRandomNumber(0, 7),
+// TMyFeedDTO 더미 데이터 생성 함수
+export const createMyFeedDTODummies = (count: number): TMyFeedDTO[] =>
+  Array.from({ length: count }, () => ({
+    ...createBaseDummyData(),
+    isMine: true,
+    isSubscribed: false,
+    isFAPFeed: Math.random() < 0.2, // 20% 확률로 FAP 피드
+    fadeInCount: getRandomInt(0, 1000),
+    bookmarkCount: getRandomInt(0, 500),
+    reportCount: getRandomInt(0, 50),
   }));
 
-  return {
-    memberId: generateRandomNumber(1, 1000),
-    styleIds,
-    outfits,
-    createdAt: new Date(Date.now() - generateRandomNumber(0, 30 * 24 * 60 * 60 * 1000)), // 최근 30일 내의 랜덤한 날짜
-  };
-}
+// TVoteHistoryFeedDTO 더미 데이터 생성 함수
+export const createVoteHistoryFeedDTODummies = (count: number): TVoteHistoryFeedDTO[] =>
+  Array.from({ length: count }, () => ({
+    ...createBaseDummyData(),
+    isFAPFeed: Math.random() < 0.2, // 20% 확률로 FAP 피드
+    voteType: Math.random() < 0.5 ? 'FADE_IN' : 'FADE_OUT',
+    votedAt: new Date(Date.now() - getRandomInt(0, 30 * 24 * 60 * 60 * 1000)),
+  }));
 
-function generateDummyTVoteCandidateDTO(): TVoteCandidateDTO {
-  const baseFeed = generateBaseFeed();
-  const { styleIds, ...rest } = baseFeed; // styleIds를 제거합니다.
+// TSubscribeFeedDTO 더미 데이터 생성 함수
+export const createSubscribeFeedDTODummies = (count: number): TSubscribeFeedDTO[] =>
+  Array.from({ length: count }, () => {
+    const baseData = createBaseDummyData();
+    //@ts-expect-error 쓰지 않는 변수
+    const { isFAPFeed, isMine, isSubscribed, ...subscribeFeed } = baseData;
 
-  return {
-    ...rest,
-    id: generateRandomNumber(1, 1000),
-    imageURL: generateRandomImage(),
-    isSubscribed: Math.random() < 0.5,
-    isBookmarked: Math.random() < 0.5,
-  };
-}
+    return {
+      ...subscribeFeed,
+      isMine: false,
+      isSubscribed: true,
+      isFAPFeed: Math.random() < 0.2,
+    };
+  });
 
-function generateDummyTFAPArchivingFeedDTO(): TFAPArchivingFeedDTO {
-  const baseFeed = generateBaseFeed();
-  const { id, imageURL, ...rest } = baseFeed;
+// TBookmarkFeedDTO 더미 데이터 생성 함수
+export const createBookmarkFeedDTODummies = (count: number): TBookmarkFeedDTO[] =>
+  Array.from({ length: count }, () => {
+    const baseData = createBaseDummyData();
 
-  return {
-    ...rest,
-    feedId: generateRandomNumber(1, 1000),
-    feedImageUrl: generateRandomImage(),
-    username: generateRandomUsername(),
-    isSubscribed: Math.random() < 0.5,
-    isBookmarked: Math.random() < 0.5,
-    isMine: Math.random() < 0.1, // 10% 확률로 자신의 피드로 설정
-  };
-}
-
-function generateDummyTAllFashionFeedDTO(): TAllFashionFeedDTO {
-  const baseFeed = generateBaseFeed();
-
-  return {
-    ...baseFeed,
-    id: generateRandomNumber(1, 1000),
-    imageURL: generateRandomImage(),
-    username: generateRandomUsername(),
-  };
-}
-
-function generateBaseFeedDetailDTO(): TFeedDetailBaseDTO {
-  const baseFeed = generateBaseFeed();
-  return {
-    ...baseFeed,
-    id: generateRandomNumber(1, 1000),
-    imageURL: generateRandomImage(),
-    username: generateRandomUsername(),
-    profileImageURL: generateRandomImage(),
-    isFAPFeed: Math.random() < 0.5,
-    isSubscribed: Math.random() < 0.5,
-    isBookmarked: Math.random() < 0.5,
-    isMine: Math.random() < 0.1, // 10% 확률로 자신의 피드로 설정
-    votedAt: Math.random() < 0.5 ? new Date(Date.now() - generateRandomNumber(0, 7 * 24 * 60 * 60 * 1000)) : undefined,
-  };
-}
-
-function generateDummyTFeedDetailBaseDTO(): TFeedDetailBaseDTO {
-  return generateBaseFeedDetailDTO();
-}
-
-function generateDummyTMyFeedDTO(): TMyFeedDTO {
-  const base = generateBaseFeedDetailDTO();
-  const additionalDetail: TFeedAdittionalDetail = {
-    fadeInCount: generateRandomNumber(0, 3000),
-    bookmarkCount: generateRandomNumber(0, 200),
-    reportCount: generateRandomNumber(0, 4),
-  };
-
-  return {
-    ...base,
-    ...additionalDetail,
-    isMine: true,
-    bookmarkCount: generateRandomNumber(0, 1000),
-    reportCount: generateRandomNumber(0, 100),
-    isSubscribed: undefined as never, // TypeScript에서 never 타입을 명시적으로 할당
-  };
-}
-
-function generateDummyTVoteHistoryFeedDTO(): TVoteHistoryFeedDTO {
-  const base = generateBaseFeedDetailDTO();
-  return {
-    ...base,
-    votedAt: new Date(Date.now() - generateRandomNumber(0, 7 * 24 * 60 * 60 * 1000)),
-  };
-}
-
-function generateDummyTFeedDTO(): TFeedDTO {
-  const random = Math.random();
-  if (random < 0.33) {
-    return generateDummyTFeedDetailBaseDTO();
-  } else if (random < 0.67) {
-    return generateDummyTMyFeedDTO();
-  } else {
-    return generateDummyTVoteHistoryFeedDTO();
-  }
-}
-
-export function generateDummyTVoteCandidateDTOs(count: number): TVoteCandidateDTO[] {
-  return Array.from({ length: count }, generateDummyTVoteCandidateDTO);
-}
-
-export function generateDummyTFAPArchivingFeedDTOs(count: number): TFAPArchivingFeedDTO[] {
-  return Array.from({ length: count }, generateDummyTFAPArchivingFeedDTO);
-}
-
-export function generateDummyTAllFashionFeedDTOs(count: number): TAllFashionFeedDTO[] {
-  return Array.from({ length: count }, generateDummyTAllFashionFeedDTO);
-}
-
-export function generateDummyTFeedDTOs(count: number): TFeedDTO[] {
-  return Array.from({ length: count }, generateDummyTFeedDTO);
-}
-
-export function generateDummyTFeedDetailBaseDTOs(count: number): TFeedDTO[] {
-  return Array.from({ length: count }, generateDummyTFeedDTO);
-}
+    return {
+      ...baseData,
+      isBookmarked: true,
+      isFAPFeed: Math.random() < 0.2,
+    };
+  });
