@@ -11,10 +11,12 @@ import {
   createBookmarkFeedDTODummies,
   createFAPArchivingFeedDTODummies,
   createFeedUserDetailDummies,
+  createMyUserDetailDummies,
   createRefreshToken,
   createSubscribeFeedDTODummies,
   createSubscriberDTODummies,
   createVoteCandidateDTODummies,
+  createVoteHistoryFeedDTODummies,
 } from './_utils';
 
 const NETWORK_DELAY = 1000;
@@ -260,7 +262,6 @@ export const handlers = [
 
   http.get(`${BASE_URL}/feeds`, async ({ request }) => {
     const { searchParams } = new URL(request.url);
-    const nextCursor = searchParams.get('nextCursor')!;
     const fetchingType = searchParams.get('fetchingType')!;
     const limit = searchParams.get('limit') || '12';
 
@@ -279,7 +280,6 @@ export const handlers = [
 
   http.get(`${BASE_URL}/subscribe/subscribers`, async ({ request }) => {
     const { searchParams } = new URL(request.url);
-    const nextCursor = searchParams.get('nextCursor')!;
 
     await delay(NETWORK_DELAY);
 
@@ -288,23 +288,31 @@ export const handlers = [
     return HttpResponse.json({ subscribers, nextCursor: generateRandomId(), totalSubscribers: 100 }, { status: HttpStatusCode.Ok });
   }),
 
-  http.get(`${BASE_URL}/member/:memberId`, async () => {
+  http.get(`${BASE_URL}/members/:memberId`, async () => {
     await delay(NETWORK_DELAY);
 
     return HttpResponse.json(createFeedUserDetailDummies(1), { status: HttpStatusCode.Ok });
   }),
 
-  http.get(`${BASE_URL}/vote/history`, async ({ request }) => {
+  http.get(`${BASE_URL}/members/me`, async () => {
     await delay(NETWORK_DELAY);
 
-    const { searchParams } = new URL(request.url);
-    const scrollType = searchParams.get('scrollType')!;
-    const selectedDate = searchParams.get('selectedDate')!;
-    const limit = searchParams.get('limit')!;
+    const [myDetail] = createMyUserDetailDummies(1);
 
-    const direction = scrollType === '0' ? 'down' : scrollType === '1' ? 'up' : 'both';
+    return HttpResponse.json(myDetail, { status: HttpStatusCode.Ok });
+  }),
 
-    const result = generateDummyVoteHistory({ limit: +limit, baseDate: selectedDate, direction });
+  http.get(`${BASE_URL}/vote/history`, async () => {
+    await delay(NETWORK_DELAY);
+
+    const result = {
+      feeds: [...createVoteHistoryFeedDTODummies(10), ...createVoteHistoryFeedDTODummies(10), ...createVoteHistoryFeedDTODummies(10)],
+      nextCursorToUpScroll: '2024-07-30',
+      nextCursorToDownScroll: '2024-07-30',
+      direction: '0',
+      isLastCursorToUpScroll: true,
+      isLastCursorToDownScroll: true,
+    };
 
     return HttpResponse.json(result, { status: HttpStatusCode.Ok });
   }),

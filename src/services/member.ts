@@ -44,8 +44,15 @@ export async function requestGetSubscribers({ nextCursor }: RequestGetSubscriber
 
 type RequestGetFeedUserDetailsPayload = { userId: number };
 // type RequestGetFeedUserDetailsResponseAPI = { details: TFeedUserDetail };
-type RequestGetFeedUserDetailsResponse = { details: TFeedUserDetail };
+type RequestGetFeedUserDetailsResponse = TFeedUserDetail;
 
 export async function requestGetFeedUserDetails({ userId }: RequestGetFeedUserDetailsPayload) {
-  return await axios.get<RequestGetFeedUserDetailsResponse>(`/member/${userId}`);
+  return await axios.get<RequestGetFeedUserDetailsResponse>(`/members/${userId}`);
+}
+
+// type RequestGetMyDetailsPayload = null
+type RequestGetMyDetailsResponse = TMyUserDetail;
+
+export async function requestGetMyDetails() {
+  return await axios.get<RequestGetMyDetailsResponse>(`/members/me`);
 }

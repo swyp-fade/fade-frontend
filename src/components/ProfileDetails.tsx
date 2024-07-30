@@ -42,12 +42,14 @@ function UserDetail({ userId, viewType }: { userId: number; viewType: ProfileVie
   const isOwnerView = viewType === 'owner';
   const isUserView = viewType === 'user';
 
-  const { data } = useSuspenseQuery({
+  const {
+    data: { data },
+  } = useSuspenseQuery({
     queryKey: ['user', userId, 'detail'],
     queryFn: () => requestGetFeedUserDetails({ userId }),
   });
 
-  const { username, introduceContent, profileImageURL, subscribedCount, isSubscribed } = data!.details;
+  const { username, introduceContent, profileImageURL, subscribedCount, isSubscribed } = data;
 
   return (
     <div className="space-y-5 p-5">
@@ -96,7 +98,7 @@ function UserFeeds({ userId }: { userId: number }) {
     getNextPageParam({ nextCursor }) {
       return nextCursor || undefined;
     },
-    initialPageParam: 0,
+    initialPageParam: -1,
   });
 
   const { disconnect: disconnectObserver, resetObserve } = useInfiniteObserver({

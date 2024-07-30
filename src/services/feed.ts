@@ -110,21 +110,19 @@ export async function requestGetUserFeeds({ userId, nextCursor }: GetUserFeedsPa
   );
 }
 
-type GetBookmarkFeedsPayload = { userId: number; nextCursor: number };
+type GetBookmarkFeedsPayload = { nextCursor: number };
 type GetBookmarkFeedsResponseAPI = InfiniteResponse<{ feeds: TBookmarkFeedDTO[] }>;
 type GetBookmarkFeedsResponse = InfiniteResponse<{ feeds: TBookmarkFeed[] }>;
 
-export async function requestGetBookmarkFeeds({ userId, nextCursor }: GetBookmarkFeedsPayload) {
-  return await axios
-    .get<GetBookmarkFeedsResponseAPI>(`/feeds?fetchingType=BOOKMARK&limit=12&memberId=${userId}${nextCursor !== -1 ? `&nextCursor=${nextCursor}` : ''}`)
-    .then(
-      ({ data: { feeds, nextCursor } }) =>
-        ({
-          nextCursor,
-          feeds: feeds.map(({ styleIds, ...feed }) => ({
-            styleIds: styleIds.map(({ id }) => id),
-            ...feed,
-          })),
-        }) as GetBookmarkFeedsResponse
-    );
+export async function requestGetBookmarkFeeds({ nextCursor }: GetBookmarkFeedsPayload) {
+  return await axios.get<GetBookmarkFeedsResponseAPI>(`/feeds?fetchingType=BOOKMARK&limit=12${nextCursor !== -1 ? `&nextCursor=${nextCursor}` : ''}`).then(
+    ({ data: { feeds, nextCursor } }) =>
+      ({
+        nextCursor,
+        feeds: feeds.map(({ styleIds, ...feed }) => ({
+          styleIds: styleIds.map(({ id }) => id),
+          ...feed,
+        })),
+      }) as GetBookmarkFeedsResponse
+  );
 }

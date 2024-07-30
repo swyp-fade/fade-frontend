@@ -24,7 +24,7 @@ export default function Page() {
     getNextPageParam({ nextCursor }) {
       return nextCursor || undefined;
     },
-    initialPageParam: 0,
+    initialPageParam: -1,
   });
 
   const { disconnect: disconnectObserver, resetObserve } = useInfiniteObserver({

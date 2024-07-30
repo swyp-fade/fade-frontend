@@ -53,7 +53,7 @@ function SubscribeFeedList() {
     getNextPageParam({ nextCursor }) {
       return nextCursor || undefined;
     },
-    initialPageParam: 0,
+    initialPageParam: -1,
   });
 
   useEffect(() => {
@@ -91,7 +91,7 @@ export function SubscriberList() {
     getNextPageParam({ nextCursor }) {
       return nextCursor || undefined;
     },
-    initialPageParam: 0,
+    initialPageParam: -1,
   });
 
   return (

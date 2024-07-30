@@ -8,6 +8,8 @@ import { MdBook, MdBookmark, MdHowToVote, MdPerson } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { AccountSetting } from './_components/AccountSetting';
 import { ServicePolicyDialog } from './_components/ServicePolicyDialog';
+import { useQuery } from '@tanstack/react-query';
+import { requestGetMyDetails } from '@Services/member';
 
 type MenuType = 'subpage' | 'dialog';
 
@@ -80,21 +82,7 @@ export default function Page() {
 
   return (
     <div className="flex h-full flex-col bg-gray-100">
-      <div className="flex flex-col items-center justify-center gap-5 rounded-b-2xl bg-white pb-5 pt-10">
-        <Avatar src={testImage} size="124" />
-
-        <div className="flex flex-col items-center justify-center gap-1">
-          <p className="text-h4 font-semibold">안녕하세요, FADE_1234님!</p>
-
-          <div className="space-x-1 text-detail">
-            <span className="text-gray-500">여자</span>
-            <span>·</span>
-            <span>FA:P 선정 0회</span>
-          </div>
-        </div>
-
-        <ManageAccountButton />
-      </div>
+      <MyDetails />
 
       <div className="flex min-h-1 flex-1 flex-col">
         <ul className="min-h-1 flex-1 space-y-3 overflow-y-scroll px-5 py-3">
@@ -108,6 +96,31 @@ export default function Page() {
 
         <LogoutButton />
       </div>
+    </div>
+  );
+}
+
+function MyDetails() {
+  const { data } = useQuery({
+    queryKey: ['user', 'me', 'detail'],
+    queryFn: () => requestGetMyDetails(),
+  });
+
+  return (
+    <div className="flex flex-col items-center justify-center gap-5 rounded-b-2xl bg-white pb-5 pt-10">
+      <Avatar src={data?.data.profileImageURL} size="124" />
+
+      <div className="flex flex-col items-center justify-center gap-1">
+        <p className="text-h4 font-semibold">안녕하세요, {data?.data.username}님!</p>
+
+        <div className="space-x-1 text-detail">
+          <span className="text-gray-500">{data?.data.genderType === 'MALE' ? '남자' : '여자'}</span>
+          <span>·</span>
+          <span>FA:P 선정 {data?.data.selectedFAPCount || '-'}회</span>
+        </div>
+      </div>
+
+      <ManageAccountButton />
     </div>
   );
 }

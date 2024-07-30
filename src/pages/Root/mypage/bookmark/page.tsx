@@ -40,11 +40,11 @@ function BackButton() {
 function BookmarkFeeds({ userId }: { userId: number }) {
   const { data, isPending, fetchNextPage, hasNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery({
     queryKey: ['user', userId, 'bookmark'],
-    queryFn: ({ pageParam }) => requestGetBookmarkFeeds({ userId, nextCursor: pageParam }),
+    queryFn: ({ pageParam }) => requestGetBookmarkFeeds({ nextCursor: pageParam }),
     getNextPageParam({ nextCursor }) {
       return nextCursor || undefined;
     },
-    initialPageParam: 0,
+    initialPageParam: -1,
   });
 
   const { disconnect: disconnectObserver, resetObserve } = useInfiniteObserver({
