@@ -4,18 +4,18 @@ import { cn } from '@Utils/index';
 import { Control } from 'react-hook-form';
 import { AccountSchema } from '../_accountSchema';
 
-interface TAccountIdField {
+interface TUsernameField {
   control: Control<AccountSchema>;
   invalid: boolean;
 }
 
-type AccountIdFieldProps = TAccountIdField;
+type UsernameFieldProps = TUsernameField;
 
-export function AccountIdField({ control, invalid }: AccountIdFieldProps) {
+export function UsernameField({ control, invalid }: UsernameFieldProps) {
   return (
     <FormField
       control={control}
-      name="accountId"
+      name="username"
       render={({ field }) => (
         <FormItem className="space-y-1">
           <p className="text-h6 font-semibold">계정 ID</p>
