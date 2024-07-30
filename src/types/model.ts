@@ -26,23 +26,16 @@ export interface TMyUserDetail extends TUserDetail {
   isSubscribed?: never;
 }
 
-export interface TFeedUserDetailDTO extends TUserDetail {
-  id: number;
-  username: string;
-  profileImageURL: string;
+export interface TFeedUserDetail extends TUserDetail {
   genderType: GenderType;
   subscribedCount: number;
   introduceContent: string;
   isSubscribed: boolean;
 }
 
-export interface TFeedUserDetail {
+export interface TSubscriberDTO extends Pick<TUserDetail, 'id' | 'username' | 'profileImageURL'> {}
+export interface TSubscriber extends Omit<TSubscriberDTO, 'id'> {
   userId: number;
-  username: string;
-  profileImageURL: string;
-  subscribedCount: number;
-  introduceContent: string;
-  isSubscribed: boolean;
 }
 
 export interface AuthTokens {
@@ -50,7 +43,19 @@ export interface AuthTokens {
   csrfToken?: string; // 보류
 }
 
-export interface TFeed {
+/**
+ * Feed 기본 모델은 다음과 같은 순서로 확장됨.
+ * TFeedBase -> TFeedDetailBase -> TFAPArchivingFeed | TAllFashionFeed | TBookmarkFeed | TVoteHistoryFeed | TUserFeed | TMyFeed
+ * TVoteCandidate는 Feed의 일부 타입을 쓰긴 하나 성격이 다르므로 Feed로 묶이지 않음.
+ *
+ * 여기에서 서버에서 직접 받는 데이터 타입은 DTO를 붙이며,
+ * UI 모델을 위한 데이터 타입은 DTO를 붙이지 않음
+ * (Ex. TMyFeedDTO, TMyFeed )
+ *
+ * DTO의
+ * */
+
+export interface TFeedBase {
   id: number;
   memberId: number;
   imageURL: string;
@@ -70,17 +75,31 @@ export interface TOutfitItem {
   categoryId: number;
 }
 
-export interface TVoteCandidateDTO extends Omit<TFeed, 'id'> {
-  feedId: number;
+export interface TFeedDetailBaseDTO extends TFeedBase {
+  username: string;
+  profileImageURL: string;
+
+  isFAPFeed: boolean;
   isSubscribed: boolean;
   isBookmarked: boolean;
+  isMine: boolean;
+
+  votedAt?: Date;
 }
 
-export interface TVoteCandidate extends Omit<TFeed, 'id' | 'styleIds'> {
-  feedId: number;
+interface TFeedDetailBase extends Omit<TFeedDetailBaseDTO, 'styleIds'> {
   styleIds: number[];
-  isSubscribed: boolean;
-  isBookmarked: boolean;
+}
+
+export interface TFeedAdittionalDetail {
+  fadeInCount: number;
+  bookmarkCount: number;
+  reportCount: number;
+}
+
+export interface TVoteCandidateDTO extends Omit<TFeedDetailBaseDTO, 'styleIds' | 'isFAPFeed' | 'isMine'> {}
+export interface TVoteCandidate extends Omit<TVoteCandidateDTO, 'id'> {
+  feedId: number;
 }
 
 export interface TVoteCandidateCard extends TVoteCandidate {
@@ -94,128 +113,73 @@ export interface TVoteResult {
 
 export type VoteType = 'FADE_IN' | 'FADE_OUT';
 
-export interface TFAPArchivingFeed extends Omit<TFeed, 'id' | 'styleIds'> {
-  feedId: number;
-  username: string;
-
-  isSubscribed: boolean;
-  isBookmarked: boolean;
-
-  outfits: TOutfitItem[];
-  styleIds: number[];
-
-  createdAt: Date;
+export interface TFAPArchivingFeedDTO extends TFeedDetailBaseDTO {
+  isFAPFeed: true;
 }
 
-export interface TFAPArchivingFeedDTO extends TFeed {
-  username: string;
-
-  isSubscribed: boolean;
-  isBookmarked: boolean;
-
-  outfits: TOutfitItem[];
-  styleIds: TStyleId[];
-
-  createdAt: Date;
-}
-
-export interface TAllFashionFeedDTO extends TFeed {
-  username: string;
-}
-export interface TAllFashionFeed extends Omit<TFeed, 'id' | 'styleIds'> {
-  feedId: number;
+export interface TFAPArchivingFeed extends Omit<TFAPArchivingFeedDTO, 'styleIds'> {
   styleIds: number[];
 }
 
-interface TFeedDetailBaseDTO extends TFeed {
-  username: string;
-  profileImageURL: string;
-
-  isFAPFeed: boolean;
-  isSubscribed: boolean;
-  isBookmarked: boolean;
-  isMine: boolean;
-
-  votedAt?: Date;
-}
-
-interface TFeedDetailBase extends Omit<TFeed, 'id' | 'styleIds' | 'username'> {
-  username: string;
-  profileImageURL: string;
-
-  feedId: number;
+export interface TAllFashionFeedDTO extends TFeedDetailBaseDTO {}
+export interface TAllFashionFeed extends Omit<TAllFashionFeedDTO, 'styleIds'> {
   styleIds: number[];
-
-  isFAPFeed: boolean;
-  isSubscribed: boolean;
-  isBookmarked: boolean;
-  isMine: boolean;
-
-  votedAt?: Date;
 }
 
-interface TFeedDetailMineDTO extends TFeedDetailBaseDTO, TFeedAdittionalDetail {
+export interface TSubscribeFeedDTO extends TFeedDetailBaseDTO {
+  isSubscribed: true;
+}
+
+export interface TSubscribeFeed extends Omit<TSubscribeFeedDTO, 'styleIds'> {
+  styleIds: number[];
+}
+
+export interface TBookmarkFeedDTO extends TFeedDetailBaseDTO {
+  isBookmarked: true;
+}
+
+export interface TBookmarkFeed extends Omit<TBookmarkFeedDTO, 'styleIds'> {
+  styleIds: number[];
+}
+
+export interface TMyFeedDTO extends TFeedDetailBaseDTO, TFeedAdittionalDetail {
+  isMine: true;
+}
+
+interface TMyFeed extends Omit<TMyFeedDTO, 'styleIds'> {
+  styleIds: number[];
   isMine: true;
   isSubscribed: never;
 }
 
-interface TFeedDetailMine extends TFeedDetailBase, TFeedAdittionalDetail {
-  isMine: true;
-  isSubscribed: never;
+export interface TUserFeedDTO extends TFeedDetailBaseDTO {}
+export interface TUserFeed extends Omit<TUserFeedDTO, 'styleIds'> {
+  styleIds: number[];
 }
 
-export interface TFeedAdittionalDetail {
-  fadeInCount: number;
-  bookmarkCount: number;
-  reportCount: number;
-}
-
-interface TFeedDetailVoteDTO extends TFeedDetailBaseDTO {
-  votedAt: Date;
-}
-interface TFeedDetailVote extends TFeedDetailBase {
+export interface TVoteHistoryFeedDTO extends TFeedDetailBaseDTO {
+  voteType: 'FADE_IN' | 'FADE_OUT';
   votedAt: Date;
 }
 
-export type TFeedDetail = TFeedDetailBase | TFeedDetailMine | TFeedDetailVote;
-export type TFeedDetailAPI = TFeedDetailBaseDTO | TFeedDetailMineDTO | TFeedDetailVoteDTO;
+export interface TVoteHistoryFeed extends Omit<TVoteHistoryFeedDTO, 'styleIds'> {
+  styleIds: number[];
+}
 
-export function isTFeedDetailMine(feedDetail: TFeedDetail): feedDetail is TFeedDetailMine {
+export type TFeedDTO = TFeedDetailBaseDTO | TFAPArchivingFeedDTO | TAllFashionFeedDTO | TMyFeedDTO | TVoteHistoryFeedDTO;
+export type TFeed = TFeedDetailBase | TFAPArchivingFeed | TAllFashionFeed | TMyFeed | TVoteHistoryFeed;
+
+export function isTMyFeed(feedDetail: TFeed): feedDetail is TMyFeed {
   return feedDetail.isMine;
 }
 
-export function isTFeedDetailVote(feedDetail: TFeedDetail): feedDetail is TFeedDetailVote {
+export function isTVoteHistoryFeed(feedDetail: TFeed): feedDetail is TVoteHistoryFeed {
   return feedDetail.votedAt !== undefined;
 }
 
-export interface TSubscriberDTO {
-  id: number;
-  username: string;
-  profileImageURL: string;
-}
-
-export interface TSubscriber {
-  userId: number;
-  username: string;
-  profileImageURL: string;
-}
-
 /**
- * TFeed
+ * TFeedBase
  *  TVoteCandidate
  *    TVoteCandidateCard
  *  TFAPArchivingFeed
  */
-
-export interface TVoteHistoryItemDTO extends Omit<TFeedDetailBaseDTO, 'imageURL' | 'id'> {
-  feedId: number;
-  feedImageURL: string;
-  voteType: 'FADE_IN' | 'FADE_OUT';
-  votedAt: Date;
-}
-
-export interface TVoteHistoryItem extends Omit<TFeedDetailBase, 'imageURL'> {
-  feedImageURL: string;
-  voteType: 'FADE_IN' | 'FADE_OUT';
-  votedAt: Date;
-}

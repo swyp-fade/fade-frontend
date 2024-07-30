@@ -76,7 +76,7 @@ function SubscribeFeedList() {
   return (
     <div className="relative min-h-1 flex-1 snap-y snap-mandatory overflow-y-scroll">
       <div id="feedList" className="h-full">
-        {data && data.pages.map((page) => page.feeds.map((feedDetail) => <FeedDetailCard key={feedDetail.feedId} {...feedDetail} />))}
+        {data && data.pages.map((page) => page.feeds.map((feedDetail) => <FeedDetailCard key={feedDetail.id} {...feedDetail} />))}
       </div>
 
       {!isPending && !hasNextPage && <p className="text-detail text-gray-700">모든 페이더들의 패션을 불러왔어요.</p>}

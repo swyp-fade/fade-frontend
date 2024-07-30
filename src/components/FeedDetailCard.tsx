@@ -5,7 +5,7 @@ import { ReportButton } from '@Components/ReportButton';
 import { SubscribeButton } from '@Components/SubscribeButton';
 import { Avatar } from '@Components/ui/avatar';
 import { Image } from '@Components/ui/image';
-import { isTFeedDetailMine, isTFeedDetailVote, TFeedAdittionalDetail, TFeedDetail } from '@Types/model';
+import { isTMyFeed, isTVoteHistoryFeed, TFeed, TFeedAdittionalDetail } from '@Types/model';
 import { cn } from '@Utils/index';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -22,14 +22,14 @@ interface TFeedDetailCard {
   onUsernameClicked?: () => void;
 }
 
-type FeedDetailCardProps = TFeedDetailCard & TFeedDetail;
+type FeedDetailCardProps = TFeedDetailCard & TFeed;
 
 export function FeedDetailCard({ focus, onUsernameClicked, ...feedDetail }: FeedDetailCardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const isVoteType = isTFeedDetailVote(feedDetail);
-  const isMineType = isTFeedDetailMine(feedDetail);
+  const isVoteType = isTVoteHistoryFeed(feedDetail);
+  const isMineType = isTMyFeed(feedDetail);
 
-  const { feedId, imageURL, isFAPFeed, isMine, outfits, styleIds } = feedDetail;
+  const { id: feedId, imageURL, isFAPFeed, isMine, outfits, styleIds } = feedDetail;
 
   const haveStyleIds = styleIds.length !== 0;
 
@@ -93,7 +93,7 @@ function UsernameButton({ userId, username, onClicked, isMine }: { userId: numbe
   );
 }
 
-function StyleCard({ styleIds }: TFeedDetail) {
+function StyleCard({ styleIds }: TFeed) {
   return (
     <div>
       <ul className="flex flex-row gap-2 overflow-y-scroll whitespace-nowrap">
@@ -111,15 +111,15 @@ interface TMemberDetailCard {
   onUsernameClicked: () => void;
 }
 
-type MemberDetailCardProps = TMemberDetailCard & TFeedDetail;
+type MemberDetailCardProps = TMemberDetailCard & TFeed;
 
-function MemberDetailCard({ profileImageURL, memberId, isSubscribed, isBookmarked, feedId, username, isMine, onUsernameClicked }: MemberDetailCardProps) {
+function MemberDetailCard({ profileImageURL, memberId, isSubscribed, isBookmarked, id, username, isMine, onUsernameClicked }: MemberDetailCardProps) {
   return (
     <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white">
       <Avatar src={profileImageURL} size="32" />
       <UsernameButton userId={memberId} username={username} onClicked={onUsernameClicked} isMine={isMine} />
       <SubscribeButton userId={memberId} initialSubscribedStatus={isSubscribed} onToggle={() => {}} />
-      <BookmarkButton feedId={feedId} defaultBookmarkStatus={isBookmarked} />
+      <BookmarkButton feedId={id} defaultBookmarkStatus={isBookmarked} />
     </div>
   );
 }

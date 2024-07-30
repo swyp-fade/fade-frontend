@@ -146,7 +146,7 @@ function FAPFeeds({ index, firstDayOfWeek, feed, feeds }: TFAPFeeds) {
       onClick={handleClick}>
       <span className="ml-1">{index + 1}</span>
       <div className="group h-full w-full cursor-pointer overflow-hidden rounded-lg">
-        <Image src={feed.imageURL} className="transition-transform group-hover:scale-105" />
+        <Image src={feed.feedImageUrl} className="transition-transform group-hover:scale-105" />
       </div>
     </motion.div>
   );

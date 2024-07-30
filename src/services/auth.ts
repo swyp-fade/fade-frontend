@@ -48,5 +48,5 @@ export async function requestSignInWithCode({ authorizationCode }: SignInWithCod
 
 /** 로그아웃 요청 */
 export async function requestSignOut() {
-  return await axios.get<null>(`/auth/signout`);
+  return await axios.post<null>(`/auth/signout`);
 }

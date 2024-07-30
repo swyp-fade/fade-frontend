@@ -7,7 +7,7 @@ import { useHeader } from '@Hooks/useHeader';
 import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { requestGetBookmarkFeeds } from '@Services/feed';
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
-import { TFeedDetail } from '@Types/model';
+import { TFeed } from '@Types/model';
 import { Suspense, useEffect } from 'react';
 import { MdChevronLeft } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
@@ -63,7 +63,7 @@ function BookmarkFeeds({ userId }: { userId: number }) {
   return (
     <div className="p-1">
       <Grid id="feedList" cols={3}>
-        {data?.pages.map((page) => page.feeds.map((feed, index) => <FeedItem key={`feed-item-${feed.feedId}`} {...feed} feeds={page.feeds} index={index} />))}
+        {data?.pages.map((page) => page.feeds.map((feed, index) => <FeedItem key={`feed-item-${feed.id}`} {...feed} feeds={page.feeds} index={index} />))}
       </Grid>
 
       {isFetchingNextPage && <SpinLoading />}
@@ -73,11 +73,11 @@ function BookmarkFeeds({ userId }: { userId: number }) {
 }
 
 interface TFeedItem {
-  feeds: TFeedDetail[];
+  feeds: TFeed[];
   index: number;
 }
 
-type FeedItemProps = TFeedItem & TFeedDetail;
+type FeedItemProps = TFeedItem & TFeed;
 
 function FeedItem({ feeds, index, ...feed }: FeedItemProps) {
   const { showModal } = useModalActions();
@@ -87,7 +87,7 @@ function FeedItem({ feeds, index, ...feed }: FeedItemProps) {
   };
 
   return (
-    <div key={`item-${feed.feedId}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg" onClick={handleClick}>
+    <div key={`item-${feed.id}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg" onClick={handleClick}>
       <Image src={feed.imageURL} className="h-full w-full transition-transform group-hover:scale-105" />
     </div>
   );

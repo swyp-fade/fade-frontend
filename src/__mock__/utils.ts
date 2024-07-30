@@ -2,13 +2,13 @@ import {
   TAllFashionFeedDTO,
   TFAPArchivingFeedDTO,
   TFeedAdittionalDetail,
-  TFeedDetail,
+  TFeed,
   TFeedUserDetailDTO,
   TOutfitItem,
   TStyleId,
   TSubscriberDTO,
   TVoteCandidateDTO,
-  TVoteHistoryItemDTO,
+  TVoteHistoryFeedDTO,
   UserDetail,
 } from '@Types/model';
 import { addDays, addHours } from 'date-fns';
@@ -213,10 +213,10 @@ export function generateDummyFashionFeed(count: number = 10, startCursor: number
   };
 }
 
-function generateRandomFeedDetail(id: number): TFeedDetail {
+function generateRandomFeedDetail(id: number): TFeed {
   const baseFeed = generateRandomFeed(id);
   // @ts-expect-error 모킹은 타입 체크 안 할 겅미 ...
-  const baseDetail: TFeedDetail = {
+  const baseDetail: TFeed = {
     ...baseFeed,
     profileImageURL: testFahsionImages[getRandomNumber(0, testFahsionImages.length - 1)],
     feedId: baseFeed.id,
@@ -227,7 +227,7 @@ function generateRandomFeedDetail(id: number): TFeedDetail {
   };
 
   if (baseDetail.isMine) {
-    const mineDetail: TFeedDetail & TFeedAdittionalDetail = {
+    const mineDetail: TFeed & TFeedAdittionalDetail = {
       ...baseDetail,
       isMine: true,
       isSubscribed: undefined as never,
@@ -237,7 +237,7 @@ function generateRandomFeedDetail(id: number): TFeedDetail {
     };
     return mineDetail;
   } else if (Math.random() < 0.5) {
-    const voteDetail: TFeedDetail = {
+    const voteDetail: TFeed = {
       ...baseDetail,
       votedAt: generateRandomDate(new Date(2023, 0, 1), new Date()),
     };
@@ -247,7 +247,7 @@ function generateRandomFeedDetail(id: number): TFeedDetail {
   return baseDetail;
 }
 
-export function generateDummyFeedDetail(count: number = 10, startCursor: number = 0): InfiniteResponse<{ feeds: TFeedDetail[] }> {
+export function generateDummyFeedDetail(count: number = 10, startCursor: number = 0): InfiniteResponse<{ feeds: TFeed[] }> {
   const feeds = Array(count)
     .fill(null)
     .map((_, index) => generateRandomFeedDetail(startCursor + index + 1));
@@ -309,7 +309,7 @@ function generateRandomIntroduceContent(): string {
   return introductions[Math.floor(Math.random() * introductions.length)];
 }
 
-function generateRandomVoteHistoryItem(date: Date): TVoteHistoryItemDTO {
+function generateRandomVoteHistoryItem(date: Date): TVoteHistoryFeedDTO {
   const baseFeed = generateRandomFeed(Math.floor(Math.random() * 1000) + 1);
 
   return {
@@ -330,7 +330,7 @@ function generateRandomVoteHistoryItem(date: Date): TVoteHistoryItemDTO {
   };
 }
 
-function generateDailyVoteHistory(date: Date): TVoteHistoryItemDTO[] {
+function generateDailyVoteHistory(date: Date): TVoteHistoryFeedDTO[] {
   return Array(10)
     .fill(null)
     .map(() => generateRandomVoteHistoryItem(date));
@@ -342,13 +342,13 @@ export function generateDummyVoteHistory(
     direction?: 'up' | 'down' | 'both';
     baseDate?: Date | string;
   } = {}
-): VoteInfiniteResponse<{ feeds: TVoteHistoryItemDTO[] }> {
+): VoteInfiniteResponse<{ feeds: TVoteHistoryFeedDTO[] }> {
   const { limit = 3, direction = 'down', baseDate } = options;
 
   const baseDateObj = baseDate ? new Date(baseDate) : new Date();
   baseDateObj.setHours(0, 0, 0, 0); // Set to start of the day
 
-  let voteHistory: TVoteHistoryItemDTO[] = [];
+  let voteHistory: TVoteHistoryFeedDTO[] = [];
 
   if (direction === 'both') {
     const halfLimit = Math.floor(limit / 2);

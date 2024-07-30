@@ -1,10 +1,10 @@
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
-import { TFeedDetail } from '@Types/model';
+import { TFeed } from '@Types/model';
 import { FeedDetailCard } from './FeedDetailCard';
 import { BackButton } from './ui/button';
 
-type FeedDialogDialogProps = { feeds: TFeedDetail[]; defaultViewIndex: number };
+type FeedDialogDialogProps = { feeds: TFeed[]; defaultViewIndex: number };
 
 export function FeedDetailDialog({ feeds, defaultViewIndex, onClose }: DefaultModalProps<void, FeedDialogDialogProps>) {
   return (
@@ -23,11 +23,11 @@ export function FeedDetailDialog({ feeds, defaultViewIndex, onClose }: DefaultMo
   );
 }
 
-function Feeds({ feeds, defaultViewIndex, onUsernameClicked }: { feeds: TFeedDetail[]; defaultViewIndex: number; onUsernameClicked: () => void }) {
+function Feeds({ feeds, defaultViewIndex, onUsernameClicked }: { feeds: TFeed[]; defaultViewIndex: number; onUsernameClicked: () => void }) {
   return (
     <div id="feedList" className="h-full snap-y snap-mandatory overflow-y-scroll">
       {feeds.map((feedDetail, index) => (
-        <FeedDetailCard key={feedDetail.feedId} {...feedDetail} focus={index === defaultViewIndex} onUsernameClicked={onUsernameClicked} />
+        <FeedDetailCard key={feedDetail.id} {...feedDetail} focus={index === defaultViewIndex} onUsernameClicked={onUsernameClicked} />
       ))}
     </div>
   );

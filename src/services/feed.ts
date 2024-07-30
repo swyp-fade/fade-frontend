@@ -1,6 +1,17 @@
 import { axios } from '@Libs/axios';
 import { FilterType } from '@Pages/Root/archive/components/SelectFilterDialog';
-import { TAllFashionFeed, TAllFashionFeedDTO, TFAPArchivingFeed, TFAPArchivingFeedDTO, TFeedDetail, TFeedDetailAPI } from '@Types/model';
+import {
+  TAllFashionFeed,
+  TAllFashionFeedDTO,
+  TBookmarkFeed,
+  TBookmarkFeedDTO,
+  TFAPArchivingFeed,
+  TFAPArchivingFeedDTO,
+  TSubscribeFeed,
+  TSubscribeFeedDTO,
+  TUserFeed,
+  TUserFeedDTO,
+} from '@Types/model';
 import { InfiniteResponse } from '@Types/response';
 import { objectToQueryParam } from '@Utils/index';
 
@@ -36,8 +47,7 @@ export async function requestFAPArchiving({ selectedDate }: FAPArchivingPayload)
   return await axios.get<FAPArchivingResponseAPI>(`/archiving?selectedDate=${selectedDate}`).then(
     ({ data: { feeds } }) =>
       ({
-        feeds: feeds.map(({ id, styleIds, ...feed }) => ({
-          feedId: id,
+        feeds: feeds.map(({ styleIds, ...feed }) => ({
           styleIds: styleIds.map(({ id }) => id),
           ...feed,
         })),
@@ -50,30 +60,32 @@ type GetAllFashionFeedResponseAPI = InfiniteResponse<{ feeds: TAllFashionFeedDTO
 type GetAllFashionFeedResponse = InfiniteResponse<{ feeds: TAllFashionFeed[] }>;
 
 export async function requestGetAllFashionFeed({ filters, nextCursor }: GetAllFashionFeedPayload) {
-  return await axios.get<GetAllFashionFeedResponseAPI>(`/feeds?limit=12&nextCursor=${nextCursor}&${objectToQueryParam(filters)}`).then(
-    ({ data: { feeds, nextCursor } }) =>
-      ({
-        nextCursor,
-        feeds: feeds.map(({ id, styleIds, ...feed }) => ({
-          feedId: id,
-          styleIds: styleIds.map(({ id }) => id),
-          ...feed,
-        })),
-      }) as GetAllFashionFeedResponse
-  );
+  const filterQuerys = objectToQueryParam(filters);
+
+  return await axios
+    .get<GetAllFashionFeedResponseAPI>(`/feeds?limit=12&${nextCursor !== -1 ? `nextCursor=${nextCursor}` : ''}${filterQuerys !== '' ? `&${filterQuerys}` : ''}`)
+    .then(
+      ({ data: { feeds, nextCursor } }) =>
+        ({
+          nextCursor,
+          feeds: feeds.map(({ styleIds, ...feed }) => ({
+            styleIds: styleIds.map(({ id }) => id),
+            ...feed,
+          })),
+        }) as GetAllFashionFeedResponse
+    );
 }
 
 type GetSubscribeFeedsPayload = { nextCursor: number };
-type GetSubscribeFeedsResponseAPI = InfiniteResponse<{ feeds: TFeedDetailAPI[] }>;
-type GetSubscribeFeedsResponse = InfiniteResponse<{ feeds: TFeedDetail[] }>;
+type GetSubscribeFeedsResponseAPI = InfiniteResponse<{ feeds: TSubscribeFeedDTO[] }>;
+type GetSubscribeFeedsResponse = InfiniteResponse<{ feeds: TSubscribeFeed[] }>;
 
 export async function requestGetSubscribeFeeds({ nextCursor }: GetSubscribeFeedsPayload) {
-  return await axios.get<GetSubscribeFeedsResponseAPI>(`/feeds?fetchingType=SUBSCRIBE&limit=12&nextCursor=${nextCursor}`).then(
+  return await axios.get<GetSubscribeFeedsResponseAPI>(`/feeds?fetchingType=SUBSCRIBE&limit=12${nextCursor !== -1 ? `&nextCursor=${nextCursor}` : ''}`).then(
     ({ data: { feeds, nextCursor } }) =>
       ({
         nextCursor,
-        feeds: feeds.map(({ id, styleIds, ...feed }) => ({
-          feedId: id,
+        feeds: feeds.map(({ styleIds, ...feed }) => ({
           styleIds: styleIds.map(({ id }) => id),
           ...feed,
         })),
@@ -82,16 +94,15 @@ export async function requestGetSubscribeFeeds({ nextCursor }: GetSubscribeFeeds
 }
 
 type GetUserFeedsPayload = { userId: number; nextCursor: number };
-type GetUserFeedsResponseAPI = InfiniteResponse<{ feeds: TFeedDetailAPI[] }>;
-type GetUserFeedsResponse = InfiniteResponse<{ feeds: TFeedDetail[] }>;
+type GetUserFeedsResponseAPI = InfiniteResponse<{ feeds: TUserFeedDTO[] }>;
+type GetUserFeedsResponse = InfiniteResponse<{ feeds: TUserFeed[] }>;
 
 export async function requestGetUserFeeds({ userId, nextCursor }: GetUserFeedsPayload) {
-  return await axios.get<GetUserFeedsResponseAPI>(`/feeds?limit=12&nextCursor=${nextCursor}&memberId=${userId}`).then(
+  return await axios.get<GetUserFeedsResponseAPI>(`/feeds?limit=12&memberId=${userId}${nextCursor !== -1 ? `&nextCursor=${nextCursor}` : ''}`).then(
     ({ data: { feeds, nextCursor } }) =>
       ({
         nextCursor,
-        feeds: feeds.map(({ id, styleIds, ...feed }) => ({
-          feedId: id,
+        feeds: feeds.map(({ styleIds, ...feed }) => ({
           styleIds: styleIds.map(({ id }) => id),
           ...feed,
         })),
@@ -100,19 +111,20 @@ export async function requestGetUserFeeds({ userId, nextCursor }: GetUserFeedsPa
 }
 
 type GetBookmarkFeedsPayload = { userId: number; nextCursor: number };
-type GetBookmarkFeedsResponseAPI = InfiniteResponse<{ feeds: TFeedDetailAPI[] }>;
-type GetBookmarkFeedsResponse = InfiniteResponse<{ feeds: TFeedDetail[] }>;
+type GetBookmarkFeedsResponseAPI = InfiniteResponse<{ feeds: TBookmarkFeedDTO[] }>;
+type GetBookmarkFeedsResponse = InfiniteResponse<{ feeds: TBookmarkFeed[] }>;
 
 export async function requestGetBookmarkFeeds({ userId, nextCursor }: GetBookmarkFeedsPayload) {
-  return await axios.get<GetBookmarkFeedsResponseAPI>(`/feeds?fetchingType=BOOKMARK&limit=12&nextCursor=${nextCursor}&memberId=${userId}`).then(
-    ({ data: { feeds, nextCursor } }) =>
-      ({
-        nextCursor,
-        feeds: feeds.map(({ id, styleIds, ...feed }) => ({
-          feedId: id,
-          styleIds: styleIds.map(({ id }) => id),
-          ...feed,
-        })),
-      }) as GetBookmarkFeedsResponse
-  );
+  return await axios
+    .get<GetBookmarkFeedsResponseAPI>(`/feeds?fetchingType=BOOKMARK&limit=12&memberId=${userId}${nextCursor !== -1 ? `&nextCursor=${nextCursor}` : ''}`)
+    .then(
+      ({ data: { feeds, nextCursor } }) =>
+        ({
+          nextCursor,
+          feeds: feeds.map(({ styleIds, ...feed }) => ({
+            styleIds: styleIds.map(({ id }) => id),
+            ...feed,
+          })),
+        }) as GetBookmarkFeedsResponse
+    );
 }
