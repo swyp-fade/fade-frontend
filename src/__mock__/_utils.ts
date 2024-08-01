@@ -36,7 +36,7 @@ import {
   TVoteHistoryFeedDTO,
 } from '@Types/model';
 import { TNotification, TNotificationType } from '@Types/notification';
-import { addDays, addHours } from 'date-fns';
+import { addDays, addHours, addMinutes, format, setHours, setMinutes } from 'date-fns';
 
 const getRandomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const getRandomElement = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
@@ -194,12 +194,12 @@ export const createMyFeedDTODummies = (count: number): TMyFeedDTO[] =>
   }));
 
 // TVoteHistoryFeedDTO 더미 데이터 생성 함수
-export const createVoteHistoryFeedDTODummies = (count: number): TVoteHistoryFeedDTO[] =>
+export const createVoteHistoryFeedDTODummies = (count: number, baseDate: Date = new Date()): TVoteHistoryFeedDTO[] =>
   Array.from({ length: count }, () => ({
     ...createBaseDummyData(),
     isFAPFeed: Math.random() < 0.2, // 20% 확률로 FAP 피드
     voteType: Math.random() < 0.5 ? 'FADE_IN' : 'FADE_OUT',
-    votedAt: new Date(Date.now() - getRandomInt(0, 30 * 24 * 60 * 60 * 1000)),
+    votedAt: baseDate,
   }));
 
 // TSubscribeFeedDTO 더미 데이터 생성 함수
