@@ -35,6 +35,7 @@ import {
   TVoteCandidateDTO,
   TVoteHistoryFeedDTO,
 } from '@Types/model';
+import { TNotification, TNotificationType } from '@Types/notification';
 import { addDays, addHours } from 'date-fns';
 
 const getRandomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -45,6 +46,9 @@ const getRandomElements = <T>(arr: T[], count: number): T[] => {
 };
 const getRandomGender = (): GenderType => getRandomElement(['MALE', 'FEMALE']);
 const getRandomUsername = () => `user${getRandomInt(1000, 9999)}`;
+const getRandomNotificationType = (): TNotificationType => getRandomElement(['FEED_REPORTED', 'FEED_DELETED', 'FAP_SELECTED', 'FAP_DELETED']);
+
+const getRandomDate = (start: Date, end: Date) => new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 
 function encodeJWT(payload: TMyUserDetail, secret: string, exp: Date) {
   const header = {
@@ -256,3 +260,43 @@ export const createSubscriberDTODummies = (count: number): TSubscriberDTO[] =>
     username: getRandomUsername(),
     profileImageURL: testFahsionImages[getRandomInt(0, testFahsionImages.length - 1)],
   }));
+
+// TNotification 더미 데이터 생성 함수
+export const createNotificationDummies = (count: number): TNotification[] => {
+  const endDate = new Date();
+  const startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000); // 30일 전
+
+  const notifications: TNotification[] = Array.from({ length: count }, (_, index) => {
+    const type = getRandomNotificationType();
+    const baseNotification = {
+      id: count - index, // 최신 알림이 가장 큰 ID를 갖도록
+      type,
+      isRead: Math.random() < 0.7, // 70% 확률로 읽음 처리
+      createdAt: getRandomDate(startDate, endDate),
+    };
+
+    switch (type) {
+      case 'FEED_REPORTED':
+        return {
+          ...baseNotification,
+          feedId: getRandomInt(1, 1000),
+          reportCount: getRandomInt(1, 10),
+        };
+      case 'FEED_DELETED':
+        return baseNotification;
+      case 'FAP_SELECTED':
+        return {
+          ...baseNotification,
+          selectedDate: baseNotification.createdAt, // YYYY-MM-DD 형식
+        };
+      case 'FAP_DELETED':
+        return {
+          ...baseNotification,
+          deletedFAPCount: getRandomInt(1, 5),
+        };
+    }
+  });
+
+  // 생성된 알림을 createdAt 기준으로 최신순 정렬
+  return notifications.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+};
