@@ -15,7 +15,7 @@ export function ToastProvider() {
         ))}
       </AnimatePresence>
 
-      <RadixToast.Viewport className="absolute bottom-0 left-0 flex w-full flex-col gap-3 px-5 py-5" />
+      <RadixToast.Viewport className="absolute bottom-[4rem] left-0 flex w-full flex-col gap-3 px-5 py-5" />
     </RadixToast.Provider>
   );
 }
