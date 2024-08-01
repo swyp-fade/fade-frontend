@@ -112,8 +112,11 @@ function NotificationList() {
     !hasNextPage && disconnect();
   }, [hasNextPage]);
 
+  const hasNoNotification = data.pages.at(0)?.data.notifications.length === 0;
+
   return (
     <ul id="notificationList" className="flex flex-col gap-3">
+      {hasNoNotification && <p className="text-gray-700">표시할 알림이 없습니다.</p>}
       {data.pages.map((page) => page.data.notifications.map((notification) => <NotificationItem key={`noti-${notification.id}`} {...notification} />))}
       {isFetchingNextPage && <SpinLoading />}
     </ul>
