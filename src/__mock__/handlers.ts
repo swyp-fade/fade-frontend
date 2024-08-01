@@ -1,41 +1,36 @@
-import { ServiceErrorResponse } from '@Types/serviceError';
-import { HttpStatusCode } from 'axios';
-import { addDays } from 'date-fns';
-import { HttpResponse, delay, http } from 'msw';
-import { createAccessToken, createRefreshToken } from './utils';
-
 import testFashionImage1 from '@Assets/test_fashion_image.jpg';
-import testFashionImage10 from '@Assets/test_fashion_image_10.jpg';
-import testFashionImage2 from '@Assets/test_fashion_image_2.jpg';
-import testFashionImage3 from '@Assets/test_fashion_image_3.jpg';
-import testFashionImage4 from '@Assets/test_fashion_image_4.jpg';
-import testFashionImage5 from '@Assets/test_fashion_image_5.webp';
-import testFashionImage6 from '@Assets/test_fashion_image_6.jpg';
-import testFashionImage7 from '@Assets/test_fashion_image_7.jpg';
-import testFashionImage8 from '@Assets/test_fashion_image_8.jpg';
-import testFashionImage9 from '@Assets/test_fashion_image_9.jpg';
-
-const testFahsionImages = [
-  testFashionImage1,
-  testFashionImage2,
-  testFashionImage3,
-  testFashionImage4,
-  testFashionImage5,
-  testFashionImage6,
-  testFashionImage7,
-  testFashionImage8,
-  testFashionImage9,
-  testFashionImage10,
-];
+import { TMyUserDetail, TVoteCandidateDTO } from '@Types/model';
+import { ServiceErrorResponse } from '@Types/serviceError';
+import { generateRandomId } from '@Utils/index';
+import { HttpStatusCode } from 'axios';
+import { addDays, isBefore, subDays } from 'date-fns';
+import { HttpResponse, delay, http } from 'msw';
+import {
+  createAccessToken,
+  createAllFashionFeedDTODummies,
+  createBookmarkFeedDTODummies,
+  createFAPArchivingFeedDTODummies,
+  createFeedUserDetailDummies,
+  createMyUserDetailDummies,
+  createNotificationDummies,
+  createRefreshToken,
+  createSubscribeFeedDTODummies,
+  createSubscriberDTODummies,
+  createVoteCandidateDTODummies,
+  createVoteHistoryFeedDTODummies,
+} from './_utils';
 
 const NETWORK_DELAY = 1000;
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const userData = {
-  id: 'c7b3d8e0-5e0b-4b0f-8b3a-3b9f4b3d3b3d',
-  email: 'test_email@fadeapp.site',
-  // accountId: '',
-  accountId: 'test_accountId',
+const userData: TMyUserDetail = {
+  id: 0,
+  username: 'fade_1234',
+  genderType: 'MALE',
+  profileImageURL: testFashionImage1,
+  introduceContent: '안녕',
+  fapSelectedCount: 0,
+  subscribedCount: 0,
 };
 
 export const handlers = [
@@ -43,7 +38,7 @@ export const handlers = [
    * MSW는 fetch 정책 상 Header에 Set-Cookie를 지정해주는 대신
    * document.cookie로 지정해주기 때문에, HttpOnly 속성을 넣으면 안 된다(😇)
    */
-  http.post(`${BASE_URL}/auth/refresh`, async ({ cookies }) => {
+  http.post(`${BASE_URL}/auth/token`, async ({ cookies }) => {
     const { refreshToken } = cookies;
 
     await delay(NETWORK_DELAY);
@@ -98,10 +93,10 @@ export const handlers = [
   http.post(`${BASE_URL}/auth/social-login/KAKAO/signup`, async ({ request }) => {
     await delay(NETWORK_DELAY);
 
-    const requestPayload = (await request.json()) as { accountId: string };
-    const alreadyExistAccountId = requestPayload.accountId === 'asdf';
+    const requestPayload = (await request.json()) as { username: string };
+    const alreadyExistUsername = requestPayload.username === 'asdf';
 
-    if (alreadyExistAccountId) {
+    if (alreadyExistUsername) {
       return HttpResponse.json(
         {
           statusCode: HttpStatusCode.Unauthorized,
@@ -156,7 +151,7 @@ export const handlers = [
         message: '',
         result: {
           errorCode: 'NOT_MATCH_SOCIAL_MEMBER',
-          data: { accessToken: createAccessToken(userData) },
+          data: { socialAccessToken: createAccessToken(userData) },
         },
       } as ServiceErrorResponse<'NOT_MATCH_SOCIAL_MEMBER'>,
       {
@@ -222,18 +217,168 @@ export const handlers = [
   http.get(`${BASE_URL}/vote/candidates`, async () => {
     await delay(NETWORK_DELAY);
 
-    const voteCandidates = testFahsionImages.map((image) => ({
-      feedId: Math.floor(Math.random() * 100),
-      userId: Math.floor(Math.random() * 100),
-      imageURL: image,
-    }));
-
-    return HttpResponse.json({ voteCandidates }, { status: HttpStatusCode.Ok });
+    return HttpResponse.json({ feeds: createVoteCandidateDTODummies(10) }, { status: HttpStatusCode.Ok });
   }),
 
   http.post(`${BASE_URL}/vote/candidates`, async () => {
     await delay(NETWORK_DELAY);
 
     return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.post(`${BASE_URL}/subscribe/:toMemberId`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.delete(`${BASE_URL}/subscribe/:toMemberId`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.post(`${BASE_URL}/bookmark/:feedId`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.delete(`${BASE_URL}/bookmark/:feedId`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return new HttpResponse('', { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/archiving`, async ({ request }) => {
+    const { searchParams } = new URL(request.url);
+    const selectedDate = searchParams.get('selectedDate')!;
+
+    await delay(NETWORK_DELAY);
+
+    const feeds = createFAPArchivingFeedDTODummies(new Date(selectedDate));
+
+    return HttpResponse.json({ feeds }, { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/feeds`, async ({ request }) => {
+    const { searchParams } = new URL(request.url);
+    const fetchingType = searchParams.get('fetchingType')!;
+    const limit = searchParams.get('limit') || '12';
+
+    await delay(NETWORK_DELAY);
+
+    if (fetchingType === 'SUBSCRIBE') {
+      return HttpResponse.json({ feeds: createSubscribeFeedDTODummies(12), nextCursor: generateRandomId() }, { status: HttpStatusCode.Ok });
+    }
+
+    if (fetchingType === 'BOOKMARK') {
+      return HttpResponse.json({ feeds: createBookmarkFeedDTODummies(12), nextCursor: generateRandomId() }, { status: HttpStatusCode.Ok });
+    }
+
+    return HttpResponse.json({ feeds: createAllFashionFeedDTODummies(+limit), nextCursor: generateRandomId() }, { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/subscribe/subscribers`, async () => {
+    // const { searchParams } = new URL(request.url);
+
+    await delay(NETWORK_DELAY);
+
+    const subscribers = createSubscriberDTODummies(12);
+
+    return HttpResponse.json({ subscribers, nextCursor: generateRandomId(), totalSubscribers: 100 }, { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/members/me`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return HttpResponse.json(createMyUserDetailDummies(1)[0], { status: HttpStatusCode.Ok });
+  }),
+
+  http.put(`${BASE_URL}/members/me`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return HttpResponse.json({}, { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/members/search`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return HttpResponse.json({ matchedMembers: createMyUserDetailDummies(5) }, { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/members/:memberId`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return HttpResponse.json(createFeedUserDetailDummies(1)[0], { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/vote/history`, async ({ request }) => {
+    await delay(NETWORK_DELAY);
+
+    const { searchParams } = new URL(request.url);
+    // const limit = +(searchParams.get('limit') || 3);
+    const scrollType = searchParams.get('scrollType');
+    const baseDate = new Date(searchParams.get('nextCursor') || new Date());
+
+    let dummies = null;
+
+    if (scrollType === '0') {
+      dummies = [
+        ...createVoteHistoryFeedDTODummies(10, baseDate),
+        ...createVoteHistoryFeedDTODummies(10, subDays(baseDate, 1)),
+        ...createVoteHistoryFeedDTODummies(10, subDays(baseDate, 2)),
+      ];
+      console.log(dummies);
+    }
+
+    if (scrollType === '1') {
+      dummies = [
+        ...createVoteHistoryFeedDTODummies(10, addDays(baseDate, 2)),
+        ...createVoteHistoryFeedDTODummies(10, addDays(baseDate, 1)),
+        ...createVoteHistoryFeedDTODummies(10, baseDate),
+      ];
+    }
+
+    if (scrollType === '2') {
+      dummies = [
+        ...createVoteHistoryFeedDTODummies(10, subDays(baseDate, 3)),
+        ...createVoteHistoryFeedDTODummies(10, subDays(baseDate, 2)),
+        ...createVoteHistoryFeedDTODummies(10, subDays(baseDate, 1)),
+        ...createVoteHistoryFeedDTODummies(10, baseDate),
+        ...createVoteHistoryFeedDTODummies(10, addDays(baseDate, 1)),
+        ...createVoteHistoryFeedDTODummies(10, addDays(baseDate, 2)),
+        ...createVoteHistoryFeedDTODummies(10, addDays(baseDate, 3)),
+      ] as TVoteCandidateDTO[];
+    }
+
+    dummies!.sort(({ votedAt: a }, { votedAt: b }) => (isBefore(a!, b!) ? 1 : -1));
+
+    const result = {
+      feeds: dummies,
+      nextCursorToUpScroll: scrollType === '0' ? null : dummies!.at(0)!.votedAt,
+      nextCursorToDownScroll: scrollType === '1' ? null : dummies!.at(-1)!.votedAt,
+      direction: scrollType,
+    };
+
+    return HttpResponse.json(result, { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/notifications`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return HttpResponse.json({ nextCursor: generateRandomId(), notifications: createNotificationDummies(10) }, { status: HttpStatusCode.Ok });
+  }),
+
+  http.post(`${BASE_URL}/notifications/read`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return HttpResponse.json({}, { status: HttpStatusCode.Ok });
+  }),
+
+  http.post(`${BASE_URL}/reports`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return HttpResponse.json({}, { status: HttpStatusCode.Ok });
   }),
 ];

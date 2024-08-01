@@ -1,5 +1,5 @@
-import { AuthTokens } from '@Types/User';
 import { axios } from '@Libs/axios';
+import { AuthTokens } from '@Types/model';
 
 /**
  * 서비스 로직에서 응답 및 오류를 처리하는 방법:
@@ -16,19 +16,23 @@ type RefreshTokenResponse = AuthTokens;
 
 /** RefreshToken으로 AccessToken을 요청 */
 export async function requestRefreshToken() {
-  return await axios.post<RefreshTokenResponse>('/auth/refresh');
+  return await axios.post<RefreshTokenResponse>('/auth/token');
 }
 
 export const enum SignUpType {
-  KAKAO = 'kakao',
+  KAKAO = 'KAKAO',
 }
 
-type SignUpPayload = { signUpType: SignUpType; accessToken: string; accountId: string; gender: string };
+type SignUpPayload = { signUpType: SignUpType; accessToken: string; username: string; gender: string };
 type SignUpResponse = AuthTokens;
 
 /** 회원가입 요청 */
 export async function requestSignUp(payload: SignUpPayload) {
-  return await axios.post<SignUpResponse>(`/auth/social-login/KAKAO/signup`, payload);
+  return await axios.post<SignUpResponse>(`/auth/social-login/${payload.signUpType}/signup`, {
+    socialAccessToken: payload.accessToken,
+    username: payload.username,
+    genderType: payload.gender,
+  });
 }
 
 type SignInWithCodePayload = { authorizationCode: string };
@@ -36,10 +40,13 @@ type SignInWithCodeReponse = AuthTokens;
 
 /** 인가 코드로 로그인 요청 */
 export async function requestSignInWithCode({ authorizationCode }: SignInWithCodePayload) {
-  return await axios.post<SignInWithCodeReponse>(`/auth/social-login/KAKAO/signin`, { code: authorizationCode });
+  return await axios.post<SignInWithCodeReponse>(`/auth/social-login/KAKAO/signin`, {
+    code: authorizationCode,
+    redirectUri: import.meta.env.VITE_KAKAO_REDIRECT_URL,
+  });
 }
 
 /** 로그아웃 요청 */
 export async function requestSignOut() {
-  return await axios.get<null>(`/auth/signout`);
+  return await axios.post<null>(`/auth/signout`);
 }

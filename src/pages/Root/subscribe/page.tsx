@@ -1,52 +1,19 @@
-import { OUTFIT_CATEGORY_LIST, OUTFIT_STYLE_LIST } from '@/constants';
-import testImage from '@Assets/test_fashion_image.jpg';
-import { ItemBadge } from '@Components/ItemBadge';
-import { ReportButton } from '@Components/ReportButton';
+import { FeedDetailCard } from '@Components/FeedDetailCard';
 import { ShowNotificationButton } from '@Components/ShowNotificationButton';
-import { SubscribeButton } from '@Components/SubscribeButton';
+import { SpinLoading } from '@Components/SpinLoading';
 import { Avatar } from '@Components/ui/avatar';
-import { Image } from '@Components/ui/image';
 import { useHeader } from '@Hooks/useHeader';
+import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
+import { requestGetSubscribeFeeds } from '@Services/feed';
+import { requestGetSubscribers } from '@Services/member';
+import { useHeaderStore } from '@Stores/header';
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
+import { TSubscriber } from '@Types/model';
 import { cn } from '@Utils/index';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
-import { motion } from 'framer-motion';
-import { MdBookmark, MdChevronRight } from 'react-icons/md';
+import { Suspense, useEffect } from 'react';
+import { MdChevronRight } from 'react-icons/md';
+import { VscLoading } from 'react-icons/vsc';
 import { useNavigate } from 'react-router-dom';
-
-type SubscribeBadgeType = {
-  userId: number;
-  profileURL: string;
-  accountId: string;
-};
-
-const subscribeList: SubscribeBadgeType[] = [
-  {
-    userId: 0,
-    profileURL: testImage,
-    accountId: 'testaccount',
-  },
-  {
-    userId: 1,
-    profileURL: testImage,
-    accountId: 'testaccount',
-  },
-  {
-    userId: 2,
-    profileURL: testImage,
-    accountId: 'testaccount',
-  },
-  {
-    userId: 3,
-    profileURL: testImage,
-    accountId: 'testaccount',
-  },
-  {
-    userId: 4,
-    profileURL: testImage,
-    accountId: 'testaccount',
-  },
-];
 
 export default function Page() {
   useHeader({ title: '구독', rightSlot: () => <ShowNotificationButton /> });
@@ -54,85 +21,14 @@ export default function Page() {
   return (
     <div className="relative flex h-full flex-col">
       <div className="relative h-fit w-full px-5 py-4">
-        <div className="overflow-y-scroll">
-          <ul className="flex flex-row gap-3">
-            {subscribeList.map((subscribe) => (
-              <li
-                key={`subscribe-${subscribe.userId}`}
-                className={cn('boder-gray-200 flex h-full flex-row items-center gap-2 rounded-lg border p-2', {
-                  ['border-purple-100 bg-purple-50']: subscribe.userId === 0,
-                })}>
-                <Avatar src={subscribe.profileURL} size="32" />
-                <span>{subscribe.accountId}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <ShowSubscribeListViewButton />
+        <Suspense fallback={<SpinLoading />}>
+          <SubscriberList />
+        </Suspense>
       </div>
 
-      {/* croll-snap-type: y mandatory; */}
-      <div className="min-h-1 flex-1 snap-y snap-mandatory overflow-y-scroll">
-        <FeedCard />
-        <FeedCard />
-        <FeedCard />
-        <FeedCard />
-      </div>
-    </div>
-  );
-}
-
-function BookmarkButton() {
-  return (
-    <button className="rounded-lg border bg-white px-3 py-2">
-      <MdBookmark className="size-6 text-gray-500" />
-    </button>
-  );
-}
-
-// function OutfitBadge({ categoryType }: { categoryType: number }) {
-//   return (
-//     <div className="min-w-fit rounded-[1rem] bg-purple-50 px-4 py-2">
-//       <span>{OUTFIT_CATEGORY_LIST[categoryType]}</span>
-//     </div>
-//   );
-// }
-
-function FeedCard() {
-  return (
-    <div className="flex h-full snap-start border border-red-500">
-      <section className="flex h-full w-full flex-col gap-3 p-5">
-        <p className="text-h6">{format(new Date(), 'yyyy년 M월 dd일 eeee', { locale: ko })}</p>
-
-        <Image src={testImage} className="relative w-full flex-1 rounded-lg bg-gray-200" size="contain">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={cn('absolute right-4 top-4')}>
-            <ReportButton feedId={0} />
-          </motion.div>
-        </Image>
-
-        <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white">
-          <Avatar src={testImage} size="32" />
-          <AccountIdButton />
-          <SubscribeButton userId={0} initialSubscribedStatus={true} onToggle={() => {}} />
-          <BookmarkButton />
-        </div>
-
-        <div>
-          <ul className="flex flex-row gap-2 overflow-y-scroll whitespace-nowrap">
-            {OUTFIT_STYLE_LIST.slice(0, 6).map((value, index) => (
-              <ItemBadge key={`test-badge-${index}`} variants="primary">
-                {value}
-              </ItemBadge>
-            ))}
-          </ul>
-        </div>
-
-        <button type="button" className="flex w-full flex-row items-center gap-3 rounded-lg border border-purple-50 bg-white p-3">
-          <ItemBadge variants="primary">{OUTFIT_CATEGORY_LIST[0]}</ItemBadge>
-          <p className="text-left">나이키 조던</p>
-        </button>
-      </section>
+      <Suspense fallback={<SpinLoading />}>
+        <SubscribeFeedList />
+      </Suspense>
     </div>
   );
 }
@@ -147,12 +43,84 @@ function ShowSubscribeListViewButton() {
   );
 }
 
-function AccountIdButton() {
-  const navigate = useNavigate();
+function SubscribeFeedList() {
+  const setLeftSlot = useHeaderStore((state) => state.setLeftSlot);
+
+  const { data, fetchNextPage, isFetchingNextPage, isPending, hasNextPage } = useSuspenseInfiniteQuery({
+    queryKey: ['subscribe', 'list'],
+    queryFn: ({ pageParam }) => requestGetSubscribeFeeds({ nextCursor: pageParam }),
+    getNextPageParam({ nextCursor }) {
+      return nextCursor || undefined;
+    },
+    initialPageParam: -1,
+  });
+
+  useEffect(() => {
+    if (!isPending) {
+      resetObserve();
+    }
+
+    setLeftSlot(() => isFetchingNextPage && <VscLoading className="size-6 animate-spin" />);
+  }, [isPending, isFetchingNextPage]);
+
+  const { disconnect: disconnectObserver, resetObserve } = useInfiniteObserver({
+    parentNodeId: 'feedList',
+    onIntersection: fetchNextPage,
+  });
+
+  useEffect(() => {
+    !hasNextPage && disconnectObserver();
+  }, [hasNextPage]);
+
+  const hasNoFeed = data.pages.at(0)?.feeds.length === 0;
 
   return (
-    <button className="flex-1 text-left" onClick={() => navigate('/user', { state: { userId: 0 } })}>
-      katie63
-    </button>
+    <div className="relative min-h-1 flex-1 snap-y snap-mandatory overflow-y-scroll">
+      <div id="feedList" className="h-full">
+        {hasNoFeed && <p className="pl-5">아직 구독하는 페이더가 없으시군요? 첫 구독을 해보세요!</p>}
+        {data && data.pages.map((page) => page.feeds.map((feedDetail) => <FeedDetailCard key={feedDetail.id} {...feedDetail} />))}
+      </div>
+    </div>
+  );
+}
+
+export function SubscriberList() {
+  const { data } = useSuspenseInfiniteQuery({
+    queryKey: ['subscribe', 'subscribers'],
+    queryFn: ({ pageParam }) => requestGetSubscribers({ nextCursor: pageParam }),
+    getNextPageParam({ nextCursor }) {
+      return nextCursor || undefined;
+    },
+    initialPageParam: -1,
+  });
+
+  const hasNoSubscribe = data.pages.at(0)?.subscribers.length === 0;
+  const isOverFive = data.pages.at(0)?.subscribers.length || 0 > 5;
+
+  if (hasNoSubscribe) {
+    return;
+  }
+
+  return (
+    <div className="flex w-full overflow-y-scroll pr-10">
+      <ul className="flex flex-row gap-3">
+        {hasNoSubscribe && <p>첫 구독</p>}
+        {data?.pages.map((page) => page.subscribers.slice(0, 5).map((subscriber) => <SubscriberItem key={`subscriber-${subscriber.userId}`} {...subscriber} />))}
+      </ul>
+
+      {isOverFive && <ShowSubscribeListViewButton />}
+    </div>
+  );
+}
+
+function SubscriberItem({ username, profileImageURL, userId }: TSubscriber) {
+  return (
+    <li
+      className={cn('boder-gray-200 flex h-full flex-row items-center gap-2 rounded-lg border p-2', {
+        ['border-purple-100 bg-purple-50']: userId === 0,
+      })}>
+      <Avatar src={profileImageURL} size="32" />
+      <span>{username}</span>
+    </li>
   );
 }

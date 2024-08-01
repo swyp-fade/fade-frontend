@@ -1,16 +1,16 @@
+import { BookmarkButton } from '@Components/BookmarkButton';
 import { ReportButton } from '@Components/ReportButton';
 import { SubscribeButton } from '@Components/SubscribeButton';
-import { Image } from '@Components/ui/image';
 import { useToastActions } from '@Hooks/toast';
 import { requestGetVoteCandidates, requestSendVoteResult } from '@Services/vote';
-import { SwipeDirection, useVotingStore, VoteCandidateCardType } from '@Stores/vote';
+import { SwipeDirection, useVotingStore } from '@Stores/vote';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { TVoteCandidateCard } from '@Types/model';
 import { ServiceErrorResponse } from '@Types/serviceError';
 import { cn, generateAnonName, prefetchImages } from '@Utils/index';
 import { isAxiosError } from 'axios';
 import { AnimatePresence, motion, MotionValue, useMotionValue, useTransform, Variants } from 'framer-motion';
 import { useEffect, useLayoutEffect, useState, useTransition } from 'react';
-import { MdBookmark } from 'react-icons/md';
 import { RandomAvatar } from './RandomAvatar';
 
 import swipeFadeInImage from '@Assets/swipe_fade_in.png';
@@ -80,9 +80,9 @@ export function VotingView({ onSubmitDone }: { onSubmitDone: () => void }) {
     prefetchImages([swipeFadeInImage, swipeFadeOutImage, voteFadeInImage, voteFadeOutImage]);
 
     /** viewCards 설정 */
-    const { voteCandidates } = response.data;
+    const { voteCandidates } = response;
 
-    const voteCandidateCards: VoteCandidateCardType[] = voteCandidates.map((voteCandidate) => ({
+    const voteCandidateCards: TVoteCandidateCard[] = voteCandidates.map((voteCandidate) => ({
       ...voteCandidate,
       anonName: generateAnonName(),
     }));
@@ -272,7 +272,7 @@ function VoteCandidateCards() {
   );
 }
 
-type VoteCandidateCardProps = { isCurrentCard: boolean } & VoteCandidateCardType;
+type VoteCandidateCardProps = { isCurrentCard: boolean } & TVoteCandidateCard;
 
 function VoteCandidateCard({ feedId, imageURL, isCurrentCard }: VoteCandidateCardProps) {
   const handleSelect = useVotingStore((state) => state.handleSelect);
@@ -299,15 +299,8 @@ function VoteCandidateCard({ feedId, imageURL, isCurrentCard }: VoteCandidateCar
 
   return (
     <motion.div
-      style={{
-        x: computedX,
-        rotate: computedRotate,
-        backgroundImage: `url('${imageURL}')`,
-        backgroundSize: 'contain',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-      }}
-      className="relative flex-1 rounded-lg bg-gray-200 shadow-bento">
+      style={{ x: computedX, rotate: computedRotate, backgroundImage: `url('${imageURL}')` }}
+      className="relative flex-1 rounded-lg bg-gray-200 bg-contain bg-center bg-no-repeat shadow-bento">
       {isCurrentCard && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -320,8 +313,10 @@ function VoteCandidateCard({ feedId, imageURL, isCurrentCard }: VoteCandidateCar
       )}
 
       <motion.div style={{ opacity: computedOpacity }} className="absolute inset-0 grid place-items-center rounded-lg bg-purple-500">
-        {isLeftBoundary && <FadeOutCover />}
-        {isRightBoundary && <FadeInCover />}
+        <AnimatePresence>
+          {isLeftBoundary && <FadeOutCover />}
+          {isRightBoundary && <FadeInCover />}
+        </AnimatePresence>
       </motion.div>
 
       <DragController
@@ -335,11 +330,11 @@ function VoteCandidateCard({ feedId, imageURL, isCurrentCard }: VoteCandidateCar
 }
 
 function FadeOutCover() {
-  return <Image src={swipeFadeOutImage} className="h-[3.2725rem] w-[21.875rem]" />;
+  return <motion.img initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} src={swipeFadeOutImage} className="h-[3.2725rem] w-[21.875rem]" />;
 }
 
 function FadeInCover() {
-  return <Image src={swipeFadeInImage} className="h-[3.2725rem] w-[16.7719rem]" />;
+  return <motion.img initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} src={swipeFadeInImage} className="h-[3.2725rem] w-[16.7719rem]" />;
 }
 
 type DragControllerProps = {
@@ -363,8 +358,8 @@ function DragController({ x, onDragStart, onDragEnd, onDragOffBoundary }: DragCo
       dragTransition={{ bounceStiffness: 1000, bounceDamping: 50 }}
       onDragStart={onDragStart}
       onDrag={(_, { offset: { x } }) => {
-        const isLeftDirection = x < 0 && x < offsetBoundary * -1;
-        const isRightDirection = x > 0 && x > offsetBoundary;
+        const isLeftDirection = x < 0; // && x < offsetBoundary * -1;
+        const isRightDirection = x > 0; // && x > offsetBoundary;
         const hasNoDirection = !isLeftDirection && !isRightDirection;
 
         isLeftDirection && onDragOffBoundary('left');
@@ -386,13 +381,14 @@ function DragController({ x, onDragStart, onDragEnd, onDragOffBoundary }: DragCo
 
 function UserDetailCard() {
   const anonName = useVotingStore(({ viewCards }) => viewCards.at(-1)?.anonName || '');
+  const isSubscribed = useVotingStore(({ viewCards }) => viewCards.at(-1)?.isSubscribed || false);
+  const memberId = useVotingStore(({ viewCards }) => viewCards.at(-1)?.memberId || -1);
 
   return (
     <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white px-3 py-2 shadow-bento">
       <RandomAvatar />
       <AnimatedUsername name={anonName} />
-      {/* <button className="rounded-lg border border-gray-200 px-4 py-1">구독</button> */}
-      <SubscribeButton initialSubscribedStatus={false} userId={0} onToggle={(value) => console.log(value)} />
+      <SubscribeButton initialSubscribedStatus={isSubscribed} userId={memberId} onToggle={(value) => console.log(value)} />
     </div>
   );
 }
@@ -431,6 +427,8 @@ function AnimatedUsername({ name }: { name: string }) {
 
 function VotingTools() {
   const handleSelect = useVotingStore((state) => state.handleSelect);
+  const feedId = useVotingStore(({ viewCards }) => viewCards.at(-1)?.feedId || -1);
+  const isBookmarked = useVotingStore(({ viewCards }) => viewCards.at(-1)?.isBookmarked || false);
 
   return (
     <div className="flex w-full flex-col gap-3">
@@ -439,7 +437,7 @@ function VotingTools() {
       <div className="flex flex-row gap-3">
         <VoteButton type="fadeOut" onClick={() => handleSelect('left')} />
         <VoteButton type="fadeIn" onClick={() => handleSelect('right')} />
-        <BookmarkButton />
+        <BookmarkButton feedId={feedId} defaultBookmarkStatus={isBookmarked} />
       </div>
     </div>
   );
@@ -465,14 +463,6 @@ function VoteButton({ type, onClick }: VoteButtonProps) {
           ['touchdevice:group-active:-translate-y-[.125rem] pointerdevice:group-hover:-translate-y-[.125rem]']: isFadeIn,
         })}
       />
-    </button>
-  );
-}
-
-function BookmarkButton() {
-  return (
-    <button className="rounded-lg bg-white p-3 shadow-bento">
-      <MdBookmark className="size-6 text-gray-600" />
     </button>
   );
 }

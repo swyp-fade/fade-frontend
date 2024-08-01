@@ -1,7 +1,14 @@
-import testImage from '@Assets/test_fashion_image.jpg';
+import { FeedDetailDialog } from '@Components/FeedDetailDialog';
+import { SpinLoading } from '@Components/SpinLoading';
 import { Grid } from '@Components/ui/grid';
 import { Image } from '@Components/ui/image';
+import { useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
+import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
+import { requestGetBookmarkFeeds } from '@Services/feed';
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
+import { TFeed } from '@Types/model';
+import { Suspense, useEffect } from 'react';
 import { MdChevronLeft } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,17 +19,9 @@ export default function Page() {
   });
 
   return (
-    <div>
-      <Grid cols={3}>
-        {Array.from({ length: 13 })
-          .fill(0)
-          .map((_, index) => (
-            <div key={`item-${index}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg">
-              <Image src={testImage} className="h-full w-full transition-transform group-hover:scale-105" />
-            </div>
-          ))}
-      </Grid>
-    </div>
+    <Suspense fallback={<SpinLoading />}>
+      <BookmarkFeeds userId={0} />
+    </Suspense>
   );
 }
 
@@ -35,5 +34,61 @@ function BackButton() {
       onClick={() => navigate('/mypage', { replace: true })}>
       <MdChevronLeft className="size-6 transition-transform group-active:scale-95" />
     </button>
+  );
+}
+
+function BookmarkFeeds({ userId }: { userId: number }) {
+  const { data, isPending, fetchNextPage, hasNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery({
+    queryKey: ['user', userId, 'bookmark'],
+    queryFn: ({ pageParam }) => requestGetBookmarkFeeds({ nextCursor: pageParam }),
+    getNextPageParam({ nextCursor }) {
+      return nextCursor !== null ? nextCursor : undefined;
+    },
+    initialPageParam: -1,
+  });
+
+  const { disconnect: disconnectObserver, resetObserve } = useInfiniteObserver({
+    parentNodeId: 'feedList',
+    onIntersection: fetchNextPage,
+  });
+
+  useEffect(() => {
+    resetObserve();
+  }, [isPending, isFetchingNextPage]);
+
+  useEffect(() => {
+    !hasNextPage && disconnectObserver();
+  }, [hasNextPage]);
+
+  return (
+    <div className="space-y-10 p-1">
+      <Grid id="feedList" cols={3}>
+        {data?.pages.map((page) => page.feeds.map((feed, index) => <FeedItem key={`feed-item-${feed.id}`} {...feed} feeds={page.feeds} index={index} />))}
+      </Grid>
+
+      {isFetchingNextPage && <SpinLoading />}
+      {!isPending && !hasNextPage && <p className="text-detail text-gray-700">내 모든 북마크를 불러왔어요.</p>}
+    </div>
+  );
+}
+
+interface TFeedItem {
+  feeds: TFeed[];
+  index: number;
+}
+
+type FeedItemProps = TFeedItem & TFeed;
+
+function FeedItem({ feeds, index, ...feed }: FeedItemProps) {
+  const { showModal } = useModalActions();
+
+  const handleClick = async () => {
+    await showModal({ type: 'fullScreenDialog', animateType: 'slideInFromRight', Component: FeedDetailDialog, props: { feeds, defaultViewIndex: index } });
+  };
+
+  return (
+    <div key={`item-${feed.id}`} className="group aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-lg" onClick={handleClick}>
+      <Image src={feed.imageURL} className="h-full w-full transition-transform group-hover:scale-105" />
+    </div>
   );
 }

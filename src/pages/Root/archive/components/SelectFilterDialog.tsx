@@ -3,8 +3,8 @@ import { ItemBadge } from '@Components/ItemBadge';
 import { BackButton, Button } from '@Components/ui/button';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
+import { GenderType } from '@Types/model';
 import { OutfitStyle } from '@Types/outfitStyle';
-import { GenderType } from '@Types/User';
 import { PropsWithChildren, useState } from 'react';
 
 export type FilterType = { gender: GenderType | null; selectedStyles: OutfitStyle[] };
@@ -38,11 +38,11 @@ export function SelectFilterDialog({ defaultFilter, onClose }: DefaultModalProps
           <div className="space-y-3">
             <p className="text-h6 font-semibold">성별</p>
             <ul className="flex flex-row flex-wrap gap-x-2 gap-y-3">
-              {(['men', 'women'] as GenderType[]).map((gender) => (
+              {(['MALE', 'FEMALE'] as GenderType[]).map((gender) => (
                 <li key={gender}>
                   <ItemToggleButton isSelected={selectedGender === gender} onToggle={(isSelected) => setSelectedGender(isSelected ? gender : null)}>
-                    {gender === 'men' && '남자'}
-                    {gender === 'women' && '여자'}
+                    {gender === 'MALE' && '남자'}
+                    {gender === 'FEMALE' && '여자'}
                   </ItemToggleButton>
                 </li>
               ))}

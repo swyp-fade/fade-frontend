@@ -1,4 +1,5 @@
 import { LoaderResponse, LoaderResponseStatus } from '@Types/loaderResponse';
+import { GenderType } from '@Types/model';
 import { ServiceErrorResponse } from '@Types/serviceError';
 import { isAxiosError } from 'axios';
 import { type ClassValue, clsx } from 'clsx';
@@ -13,8 +14,8 @@ export function cn(...inputs: ClassValue[]) {
 export function getPayloadFromJWT(jwt: string) {
   return JSON.parse(atob(jwt.split('.')[1]).replaceAll('\\', '')) as {
     id: string;
-    accountId: string;
-    email: string;
+    username: string; // username
+    genderType: GenderType;
     exp: Date;
     iat: Date;
   };
@@ -268,4 +269,26 @@ export function getRelativeTimeLabel(date: Date) {
   } else {
     return rtf.format(diffMonths, 'month');
   }
+}
+
+export function objectToQueryParam(obj: object) {
+  const params = [];
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (value === 0 || (value && (!Array.isArray(value) || value.length > 0))) {
+      let paramValue;
+
+      if (Array.isArray(value)) {
+        paramValue = value.join(',');
+      } else if (typeof value === 'object') {
+        paramValue = JSON.stringify(value);
+      } else {
+        paramValue = value;
+      }
+
+      params.push(`${encodeURIComponent(key)}=${encodeURIComponent(paramValue)}`);
+    }
+  }
+
+  return params.length > 0 ? params.join('&') : '';
 }
