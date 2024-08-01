@@ -317,7 +317,7 @@ export const handlers = [
     await delay(NETWORK_DELAY);
 
     const { searchParams } = new URL(request.url);
-    const limit = +(searchParams.get('limit') || 3);
+    // const limit = +(searchParams.get('limit') || 3);
     const scrollType = searchParams.get('scrollType');
     const baseDate = new Date(searchParams.get('nextCursor') || new Date());
 

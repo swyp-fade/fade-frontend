@@ -36,7 +36,7 @@ import {
   TVoteHistoryFeedDTO,
 } from '@Types/model';
 import { TNotification, TNotificationType } from '@Types/notification';
-import { addDays, addHours, addMinutes, format, setHours, setMinutes } from 'date-fns';
+import { addDays, addHours } from 'date-fns';
 
 const getRandomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const getRandomElement = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
@@ -266,6 +266,7 @@ export const createNotificationDummies = (count: number): TNotification[] => {
   const endDate = new Date();
   const startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000); // 30일 전
 
+  // @ts-expect-error mock은 타입 체킹 안함
   const notifications: TNotification[] = Array.from({ length: count }, (_, index) => {
     const type = getRandomNotificationType();
     const baseNotification = {
