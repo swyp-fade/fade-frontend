@@ -12,7 +12,7 @@ export default function AppLayout() {
         <Header />
       </FlexibleLayout.Header>
 
-      <FlexibleLayout.Content className="relative">
+      <FlexibleLayout.Content>
         <Suspense fallback={<>페이지 로딩 중!</>}>
           <Outlet />
         </Suspense>
