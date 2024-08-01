@@ -34,17 +34,6 @@ const userData: TMyUserDetail = {
 };
 
 export const handlers = [
-  http.get(`${BASE_URL}/notifications`, async () => {
-    await delay(NETWORK_DELAY);
-
-    return HttpResponse.json({ nextCursor: generateRandomId(), notifications: createNotificationDummies(10) }, { status: HttpStatusCode.Ok });
-  }),
-
-  http.post(`${BASE_URL}/notifications/read`, async () => {
-    await delay(NETWORK_DELAY);
-
-    return HttpResponse.json({}, { status: HttpStatusCode.Ok });
-  }),
   /**
    * MSW는 fetch 정책 상 Header에 Set-Cookie를 지정해주는 대신
    * document.cookie로 지정해주기 때문에, HttpOnly 속성을 넣으면 안 된다(😇)
@@ -337,5 +326,23 @@ export const handlers = [
     };
 
     return HttpResponse.json(result, { status: HttpStatusCode.Ok });
+  }),
+
+  http.get(`${BASE_URL}/notifications`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return HttpResponse.json({ nextCursor: generateRandomId(), notifications: createNotificationDummies(10) }, { status: HttpStatusCode.Ok });
+  }),
+
+  http.post(`${BASE_URL}/notifications/read`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return HttpResponse.json({}, { status: HttpStatusCode.Ok });
+  }),
+
+  http.post(`${BASE_URL}/reports`, async () => {
+    await delay(NETWORK_DELAY);
+
+    return HttpResponse.json({}, { status: HttpStatusCode.Ok });
   }),
 ];
