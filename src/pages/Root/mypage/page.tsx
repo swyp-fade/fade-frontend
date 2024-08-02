@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 import { AccountSetting } from './_components/AccountSetting';
 import { ServicePolicyDialog } from './_components/ServicePolicyDialog';
 import { TMyUserDetail } from '@Types/model';
+import { useEffect } from 'react';
+import { useAuthStore } from '@Stores/auth';
 
 type MenuType = 'subpage' | 'dialog';
 
@@ -66,8 +68,9 @@ const mypageMenus: MyPageMenu[] = [
 
 export default function Page() {
   const { showModal } = useModalActions();
+  const updateUserDetails = useAuthStore((state) => state.updateUserDetails);
 
-  const { data } = useQuery({
+  const { data, isFetched } = useQuery({
     queryKey: ['user', 'me', 'detail'],
     queryFn: () => requestGetMyDetails(),
   });
@@ -75,6 +78,14 @@ export default function Page() {
   const navigate = useNavigate();
 
   useHeader({ title: '마이페이지', rightSlot: () => <ShowNotificationButton /> });
+
+  useEffect(() => {
+    if (!isFetched || !data) {
+      return;
+    }
+
+    updateUserDetails({ userDetails: { ...data.data } });
+  }, [isFetched]);
 
   const handleMenuClick = ({ path, type }: MyPageMenu) => {
     if (type === 'subpage') {
