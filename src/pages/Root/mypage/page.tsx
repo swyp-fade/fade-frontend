@@ -3,15 +3,15 @@ import { Avatar } from '@Components/ui/avatar';
 import { useConfirm, useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { requestGetMyDetails } from '@Services/member';
+import { useAuthStore } from '@Stores/auth';
 import { useQuery } from '@tanstack/react-query';
+import { TMyUserDetail } from '@Types/model';
+import { useEffect } from 'react';
 import { IconType } from 'react-icons/lib';
 import { MdBook, MdBookmark, MdHowToVote, MdPerson } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { AccountSetting } from './_components/AccountSetting';
 import { ServicePolicyDialog } from './_components/ServicePolicyDialog';
-import { TMyUserDetail } from '@Types/model';
-import { useEffect } from 'react';
-import { useAuthStore } from '@Stores/auth';
 
 type MenuType = 'subpage' | 'dialog';
 
