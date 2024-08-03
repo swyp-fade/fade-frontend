@@ -155,7 +155,7 @@ export interface TMyFeedDTO extends TFeedDetailBaseDTO, TFeedAdittionalDetail {
   isSubscribed: false;
 }
 
-interface TMyFeed extends Omit<TMyFeedDTO, 'styleIds'> {
+export interface TMyFeed extends Omit<TMyFeedDTO, 'styleIds'> {
   styleIds: number[];
 }
 
