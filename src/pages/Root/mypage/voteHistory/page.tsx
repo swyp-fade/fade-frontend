@@ -15,6 +15,7 @@ import { Suspense, useEffect, useRef, useState } from 'react';
 import { MdChevronLeft } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import './dateStyle.css';
+import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 
 export default function Page() {
   useHeader({ title: '투표 내역', leftSlot: () => <BackButton /> });
@@ -64,7 +65,7 @@ function VoteHistoryOnlyDownView({ selectedDateLabel, isFadeInMode }: VoteHistor
       return requestGetVoteHistory({ nextCursor, scrollType: '0' });
     },
     initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => lastPage.nextCursorToDownScroll || undefined,
+    getNextPageParam: (lastPage) => (lastPage.nextCursorToDownScroll !== null ? lastPage.nextCursorToDownScroll : undefined),
   });
 
   const voteHistoryFeeds = ([] as TVoteHistoryFeed[]).concat(...data.pages.map((page) => page.feeds));
@@ -72,16 +73,10 @@ function VoteHistoryOnlyDownView({ selectedDateLabel, isFadeInMode }: VoteHistor
 
   const hasNoVoteHistory = !hasNextPage && !hasPreviousPage && !isPending && data && data.pages.at(0)?.feeds.length === 0;
 
-  const lastChildObserver = useRef(new IntersectionObserver(([{ isIntersecting }]) => isIntersecting && fetchNextPage(), { threshold: 0.1 }));
-  const lastChildRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!lastChildRef.current) {
-      return;
-    }
-    lastChildObserver.current.observe(lastChildRef.current!);
-    return () => lastChildObserver.current.disconnect();
-  }, [lastChildRef.current]);
+  useInfiniteObserver({
+    parentNodeId: 'feedList',
+    onIntersection: fetchNextPage,
+  });
 
   if (hasNoVoteHistory) {
     return (
@@ -101,7 +96,6 @@ function VoteHistoryOnlyDownView({ selectedDateLabel, isFadeInMode }: VoteHistor
           .map(([votedAt, feeds]) => (
             <VoteHistoryItem key={`history-item-${0}-${votedAt}`} votedAt={votedAt} feeds={feeds} isFadeInMode={isFadeInMode} />
           ))}
-        {hasNextPage && <div ref={lastChildRef} className="mt-0" />}
         {isFetchingNextPage && <SpinLoading />}
       </div>
 

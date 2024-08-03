@@ -61,14 +61,10 @@ function BookmarkFeeds({ userId }: { userId: number }) {
     initialPageParam: -1,
   });
 
-  const { disconnect: disconnectObserver, resetObserve } = useInfiniteObserver({
+  const { disconnect: disconnectObserver } = useInfiniteObserver({
     parentNodeId: 'feedList',
     onIntersection: fetchNextPage,
   });
-
-  useEffect(() => {
-    resetObserve();
-  }, [isPending, isFetchingNextPage]);
 
   useEffect(() => {
     !hasNextPage && disconnectObserver();
