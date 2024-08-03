@@ -7,7 +7,7 @@ import { calculateFileHash, cn, getBase64Image, validateLocalImageFile } from '@
 import { isAxiosError } from 'axios';
 import { ChangeEvent, forwardRef, useEffect, useRef, useState } from 'react';
 import { MdAddPhotoAlternate } from 'react-icons/md';
-import { UploadGuideBottomSheet } from './UploadGuideBottomSheet';
+import { UploadGuideBottomSheet } from '../../../UploadGuideBottomSheet';
 
 export function InputImageFile(props: { value: number; onChange: (value: number) => void }) {
   const { showModal } = useModalActions();
