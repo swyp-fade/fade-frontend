@@ -97,19 +97,15 @@ function UserFeeds({ userId }: { userId: number }) {
     queryKey: ['user', userId, 'feed'],
     queryFn: ({ pageParam }) => requestGetUserFeeds({ userId, nextCursor: pageParam }),
     getNextPageParam({ nextCursor }) {
-      return nextCursor || undefined;
+      return nextCursor !== null ? nextCursor : undefined;
     },
     initialPageParam: -1,
   });
 
-  const { disconnect: disconnectObserver, resetObserve } = useInfiniteObserver({
+  const { disconnect: disconnectObserver } = useInfiniteObserver({
     parentNodeId: 'feedList',
     onIntersection: fetchNextPage,
   });
-
-  useEffect(() => {
-    resetObserve();
-  }, [isPending, isFetchingNextPage]);
 
   useEffect(() => {
     !hasNextPage && disconnectObserver();

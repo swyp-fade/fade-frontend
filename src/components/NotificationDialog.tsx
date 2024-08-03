@@ -95,16 +95,13 @@ function NotificationList() {
     mutationFn: requestReadAllNotifications,
   });
 
-  const { disconnect, startObserve } = useInfiniteObserver({
+  const { disconnect } = useInfiniteObserver({
     parentNodeId: 'notificationList',
     onIntersection: fetchNextPage,
   });
 
   useEffect(() => {
-    startObserve();
-
     readAllNotifications();
-
     return () => disconnect();
   }, []);
 
