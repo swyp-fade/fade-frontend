@@ -1,7 +1,7 @@
 import { Header } from '@Components/Header';
 import LockUI from '@Components/LockUI';
 import { NavBar } from '@Components/NavBar';
-import { ToastProvider } from '@Components/ToastProvider';
+// import { ToastProvider } from '@Components/ToastProvider';
 import { useVotingStore } from '@Stores/vote';
 import { Outlet, useLocation } from 'react-router-dom';
 import { FlexibleLayout } from './FlexibleLayout';
@@ -22,8 +22,6 @@ export default function AppLayout() {
       <FlexibleLayout.Content>
         {shouldShowLockUI && <LockUI />}
         {!shouldShowLockUI && <Outlet />}
-
-        <ToastProvider />
       </FlexibleLayout.Content>
 
       <FlexibleLayout.Footer>
