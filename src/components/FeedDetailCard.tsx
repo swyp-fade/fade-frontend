@@ -1,5 +1,4 @@
 import { OUTFIT_STYLE_LIST } from '@/constants';
-import fapBadgeImage from '@Assets/fap_badge.png';
 import { ItemBadge } from '@Components/ItemBadge';
 import { ReportButton } from '@Components/ReportButton';
 import { SubscribeButton } from '@Components/SubscribeButton';
@@ -50,7 +49,7 @@ export function FeedDetailCard({ focus, isStartAnimtionEnd, onUsernameClicked, .
   return (
     <div ref={containerRef} className="flex h-full snap-start">
       <section className="relative flex h-full w-full flex-col gap-3 p-5">
-        {isFAPFeed && <Image src={fapBadgeImage} className="absolute right-5 top-3 size-10" />}
+        {isFAPFeed && <Image src={'/assets/fap_badge.png'} className="absolute right-5 top-3 size-10" local />}
         {isVoteType && <p className="text-h6">{format(feedDetail.votedAt, 'yyyy년 M월 dd일 eeee', { locale: ko })}</p>}
         {!isVoteType && <p className="text-h6">{format(feedDetail.createdAt, 'yyyy년 M월 dd일 eeee', { locale: ko })}</p>}
 

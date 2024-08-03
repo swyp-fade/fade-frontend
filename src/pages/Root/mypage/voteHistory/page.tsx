@@ -1,10 +1,10 @@
-import fadeInImage from '@Assets/vote_fade_in.png';
 import { FeedDetailDialog } from '@Components/FeedDetailDialog';
 import { SpinLoading } from '@Components/SpinLoading';
 import { Grid } from '@Components/ui/grid';
 import { Image } from '@Components/ui/image';
 import { useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
+import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { requestGetVoteHistory } from '@Services/vote';
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { TVoteHistoryFeed } from '@Types/model';
@@ -15,7 +15,6 @@ import { Suspense, useEffect, useRef, useState } from 'react';
 import { MdChevronLeft } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import './dateStyle.css';
-import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 
 export default function Page() {
   useHeader({ title: '투표 내역', leftSlot: () => <BackButton /> });
@@ -272,7 +271,7 @@ function FadeInModeToggleButton({ isFadeInMode, onToggle }: { isFadeInMode: bool
       })}
       onClick={() => onToggle()}>
       <motion.div layout className="rounded-3xl bg-white px-3 py-2">
-        <Image src={fadeInImage} className="h-[.75rem] w-[3.875rem]" />
+        <Image src={'/assets/fade_in_btn.png'} className="h-[.75rem] w-[3.875rem]" local />
       </motion.div>
     </button>
   );

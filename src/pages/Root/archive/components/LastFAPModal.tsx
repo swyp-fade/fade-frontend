@@ -1,6 +1,3 @@
-import fapBadgeImage from '@Assets/fap_badge.png';
-import fapBgImage from '@Assets/fap_bg.jpg';
-import testImage from '@Assets/test_fashion_image.jpg';
 import { Avatar } from '@Components/ui/avatar';
 import { Button } from '@Components/ui/button';
 import { Image } from '@Components/ui/image';
@@ -31,7 +28,10 @@ export const LastFAPModal = forwardRef<HTMLDivElement, DefaultModalProps<void, L
     };
 
     return (
-      <FlexibleLayout.Root style={{ backgroundImage: `url('${fapBgImage}')` }} ref={ref} className="h-[32rem] rounded-2xl bg-cover bg-center bg-no-repeat">
+      <FlexibleLayout.Root
+        style={{ backgroundImage: `image-set(url('/assets/fap_bg.jpg') 1x, url('/assets/fap_bg@2.jpg') 2x, url('/assets/fap_bg@3.jpg') 3x)` }}
+        ref={ref}
+        className="h-[32rem] rounded-2xl bg-cover bg-center bg-no-repeat">
         <FlexibleLayout.Header>
           <header className="relative p-5">
             <p className="text-2xl font-semibold">어제의 FA:P</p>
@@ -41,13 +41,13 @@ export const LastFAPModal = forwardRef<HTMLDivElement, DefaultModalProps<void, L
 
         <FlexibleLayout.Content className="flex flex-col gap-8 p-5">
           <div className="relative mx-auto aspect-[3/4] h-full w-fit">
-            <Image src={testImage} className="rounded-lg border-2 border-purple-500 bg-gray-100 shadow-xl" />
-            <Image src={fapBadgeImage} className="absolute right-3 top-3 size-10" />
+            <Image src="/assets/test_fashion_image.jpg" className="rounded-lg border-2 border-purple-500 bg-gray-100 shadow-xl" />
+            <Image src="/assets/fap_badge.png" className="absolute right-3 top-3 size-10" local />
           </div>
 
           <div className="mx-auto flex flex-row items-center gap-3">
             <div className="relative">
-              <Avatar src={testImage} size="40" />
+              <Avatar src="/assets/test_fashion_image.jpg" size="40" />
               <FaCrown className="absolute -left-3 -top-4 size-6 -rotate-[25deg] text-yellow-700" />
             </div>
 

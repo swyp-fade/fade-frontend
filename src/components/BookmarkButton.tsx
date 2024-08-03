@@ -11,11 +11,12 @@ interface TBookmarkButton {
   feedId: number;
   defaultBookmarkStatus: boolean;
   size?: 'default' | 'lg';
+  shadow?: boolean;
 }
 
 type BookmarkButtonProps = TBookmarkButton;
 
-export function BookmarkButton({ feedId, defaultBookmarkStatus, size = 'default' }: BookmarkButtonProps) {
+export function BookmarkButton({ feedId, defaultBookmarkStatus, size = 'default', shadow = false }: BookmarkButtonProps) {
   const [isBookmarked, setIsBookmarked] = useState(defaultBookmarkStatus);
   const { showToast } = useToastActions();
 
@@ -52,6 +53,7 @@ export function BookmarkButton({ feedId, defaultBookmarkStatus, size = 'default'
       className={cn({
         ['bg-purple-500']: isBookmarked,
         ['border border-gray-100 py-1']: size === 'default',
+        ['shadow-bento']: shadow,
       })}
       disabled={isPending}
       onClick={handleClick}>

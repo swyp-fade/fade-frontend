@@ -1,13 +1,13 @@
-import testFashionImage1 from '@Assets/test_fashion_image.jpg';
-import testFashionImage10 from '@Assets/test_fashion_image_10.jpg';
-import testFashionImage2 from '@Assets/test_fashion_image_2.jpg';
-import testFashionImage3 from '@Assets/test_fashion_image_3.jpg';
-import testFashionImage4 from '@Assets/test_fashion_image_4.jpg';
-import testFashionImage5 from '@Assets/test_fashion_image_5.webp';
-import testFashionImage6 from '@Assets/test_fashion_image_6.jpg';
-import testFashionImage7 from '@Assets/test_fashion_image_7.jpg';
-import testFashionImage8 from '@Assets/test_fashion_image_8.jpg';
-import testFashionImage9 from '@Assets/test_fashion_image_9.jpg';
+const testFashionImage1 = '/assets/test_fashion_image.jpg';
+const testFashionImage10 = '/assets/test_fashion_image_10.jpg';
+const testFashionImage2 = '/assets/test_fashion_image_2.jpg';
+const testFashionImage3 = '/assets/test_fashion_image_3.jpg';
+const testFashionImage4 = '/assets/test_fashion_image_4.jpg';
+const testFashionImage5 = '/assets/test_fashion_image_5.webp';
+const testFashionImage6 = '/assets/test_fashion_image_6.jpg';
+const testFashionImage7 = '/assets/test_fashion_image_7.jpg';
+const testFashionImage8 = '/assets/test_fashion_image_8.jpg';
+const testFashionImage9 = '/assets/test_fashion_image_9.jpg';
 
 const testFahsionImages = [
   testFashionImage1,

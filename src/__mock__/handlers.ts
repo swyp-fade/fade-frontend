@@ -1,4 +1,5 @@
-import testFashionImage1 from '@Assets/test_fashion_image.jpg';
+const testFashionImage1 = '/assets/test_fashion_image.jpg';
+
 import { TMyUserDetail, TVoteCandidateDTO } from '@Types/model';
 import { ServiceErrorResponse } from '@Types/serviceError';
 import { generateRandomId } from '@Utils/index';

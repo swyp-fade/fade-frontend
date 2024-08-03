@@ -13,11 +13,10 @@ import { format } from 'date-fns';
 import { AnimatePresence, motion, MotionValue, useMotionValue, useTransform, Variants } from 'framer-motion';
 import { useEffect, useLayoutEffect, useState, useTransition } from 'react';
 import { RandomAvatar } from './RandomAvatar';
+import { Image } from '@Components/ui/image';
 
-import swipeFadeInImage from '@Assets/swipe_fade_in.png';
-import swipeFadeOutImage from '@Assets/swipe_fade_out.png';
-import voteFadeInImage from '@Assets/vote_fade_in.png';
-import voteFadeOutImage from '@Assets/vote_fade_out.png';
+const voteFadeInImage = '/assets/fade_in_btn.png';
+const voteFadeOutImage = '/assets/fade_out_btn.png';
 
 const viewVariants: Variants = {
   initial: { opacity: 0 },
@@ -76,9 +75,6 @@ export function VotingView({ onSubmitDone }: { onSubmitDone: () => void }) {
     if (isVotingInProgress || !response) {
       return;
     }
-
-    /** 투표에 필요한 기본 이미지 Prefetch */
-    prefetchImages([swipeFadeInImage, swipeFadeOutImage, voteFadeInImage, voteFadeOutImage]);
 
     /** viewCards 설정 */
     const { voteCandidates } = response;
@@ -332,11 +328,19 @@ function VoteCandidateCard({ feedId, imageURL, isCurrentCard }: VoteCandidateCar
 }
 
 function FadeOutCover() {
-  return <motion.img initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} src={swipeFadeOutImage} className="h-[3.2725rem] w-[21.875rem]" />;
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-[3.2725rem] w-[21.875rem]">
+      <Image src="/assets/fade_out_cover.png" local />
+    </motion.div>
+  );
 }
 
 function FadeInCover() {
-  return <motion.img initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} src={swipeFadeInImage} className="h-[3.2725rem] w-[16.7719rem]" />;
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-[3.2725rem] w-[16.7719rem]">
+      <Image src="/assets/fade_in_cover.png" local />
+    </motion.div>
+  );
 }
 
 type DragControllerProps = {
@@ -439,7 +443,7 @@ function VotingTools() {
       <div className="flex flex-row gap-3">
         <VoteButton type="fadeOut" onClick={() => handleSelect('left')} />
         <VoteButton type="fadeIn" onClick={() => handleSelect('right')} />
-        <BookmarkButton feedId={feedId} defaultBookmarkStatus={isBookmarked} />
+        <BookmarkButton feedId={feedId} defaultBookmarkStatus={isBookmarked} shadow />
       </div>
     </div>
   );
