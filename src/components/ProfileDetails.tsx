@@ -7,14 +7,14 @@ import { TFeed } from '@Types/model';
 import { Suspense, useEffect } from 'react';
 import { MdEditNote } from 'react-icons/md';
 import { FeedDetailDialog } from './FeedDetailDialog';
-import { ProfileIntroEditBottomSheet } from './ProfileIntroEditBottomSheet';
+import { IntroduceContentEditBottomSheet } from './IntroduceContentEditBottomSheet';
+import { UserDetailSkeletonUI, UserFeedsSkeletonUI } from './ProfileDetails.skeleton';
 import { SpinLoading } from './SpinLoading';
 import { SubscribeButton } from './SubscribeButton';
 import { Avatar } from './ui/avatar';
 import { Button } from './ui/button';
 import { Grid } from './ui/grid';
 import { Image } from './ui/image';
-import { UserDetailSkeletonUI, UserFeedsSkeletonUI } from './ProfileDetails.skeleton';
 
 export type ProfileViewType = 'owner' | 'user';
 
@@ -72,17 +72,23 @@ function UserDetail({ userId, viewType }: { userId: number; viewType: ProfileVie
       <div className="flex flex-col">
         <p className="whitespace-pre-line">{introduceContent}</p>
 
-        {isOwnerView && <EditProfileIntroButton />}
+        {isOwnerView && <EditIntroduceContentButton defaultIntroduceContent={introduceContent} />}
       </div>
     </div>
   );
 }
 
-function EditProfileIntroButton() {
+interface TEditIntroduceContentButton {
+  defaultIntroduceContent: string;
+}
+
+type EditIntroduceContentButtonProps = TEditIntroduceContentButton;
+
+function EditIntroduceContentButton({ defaultIntroduceContent }: EditIntroduceContentButtonProps) {
   const { showModal } = useModalActions();
 
   const handleClick = async () => {
-    await showModal({ type: 'bottomSheet', Component: ProfileIntroEditBottomSheet, props: { defaultProfileIntro: 'hihi' } });
+    await showModal({ type: 'bottomSheet', Component: IntroduceContentEditBottomSheet, props: { defaultIntroduceContent } });
   };
 
   return (

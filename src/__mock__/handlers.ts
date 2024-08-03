@@ -284,6 +284,14 @@ export const handlers = [
     return HttpResponse.json(...createAllFashionFeedDTODummies(1), { status: HttpStatusCode.Ok });
   }),
 
+  http.delete(`${BASE_URL}/feeds/:feedId`, async () => {
+    return HttpResponse.json({}, { status: HttpStatusCode.Ok });
+  }),
+
+  http.patch(`${BASE_URL}/feeds/:feedId`, async () => {
+    return HttpResponse.json({}, { status: HttpStatusCode.Ok });
+  }),
+
   http.get(`${BASE_URL}/subscribe/subscribers`, async () => {
     // const { searchParams } = new URL(request.url);
 

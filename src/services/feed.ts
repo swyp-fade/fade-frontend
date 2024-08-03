@@ -9,6 +9,7 @@ import {
   TFAPArchivingFeedDTO,
   TMyFeed,
   TMyFeedDTO,
+  TOutfitItem,
   TSubscribeFeed,
   TSubscribeFeedDTO,
   TUserFeed,
@@ -141,4 +142,16 @@ export async function requestGetFeedDetails({ feedId }: GetFeedDetailsPayload) {
         styleIds: response.data.styleIds.map(({ id }) => id),
       }) as GetFeedDetailsResponse
   );
+}
+
+type DeleteMyFeedPayload = { feedId: number };
+
+export async function requestDeleteMyFeed({ feedId }: DeleteMyFeedPayload) {
+  return await axios.delete(`/feeds/${feedId}`, {});
+}
+
+type UpdateMyFeedPayload = { feedId: number; outfits: Omit<TOutfitItem, 'id'>[]; styleIds: number[] };
+
+export async function requestUpdateMyFeed({ feedId, ...rest }: UpdateMyFeedPayload) {
+  return await axios.patch(`/feeds/${feedId}`, rest);
 }

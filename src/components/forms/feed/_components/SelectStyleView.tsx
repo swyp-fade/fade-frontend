@@ -3,13 +3,12 @@ import { ItemBadge } from '@Components/ItemBadge';
 import { BackButton, Button } from '@Components/ui/button';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
-import { OutfitStyle } from '@Types/outfitStyle';
 import { PropsWithChildren, useState } from 'react';
 
-type SelectStyleViewProp = { defaultStyles: OutfitStyle[] };
+type SelectStyleViewProp = { defaultStyles: number[] };
 
-export const SelectStyleView = ({ defaultStyles = [], onClose }: DefaultModalProps<OutfitStyle[], SelectStyleViewProp>) => {
-  const [selectedStyles, setSelectedStyles] = useState<OutfitStyle[]>(defaultStyles);
+export const SelectStyleView = ({ defaultStyles = [], onClose }: DefaultModalProps<number[], SelectStyleViewProp>) => {
+  const [selectedStyles, setSelectedStyles] = useState<number[]>(defaultStyles);
 
   return (
     <FlexibleLayout.Root className="border-l shadow-xl">

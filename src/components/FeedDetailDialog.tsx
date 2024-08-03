@@ -17,23 +17,31 @@ export function FeedDetailDialog({ feeds, defaultViewIndex, isStartAnimtionEnd, 
       </FlexibleLayout.Header>
 
       <FlexibleLayout.Content>
-        <Feeds feeds={feeds} defaultViewIndex={defaultViewIndex} onUsernameClicked={onClose} isStartAnimtionEnd={isStartAnimtionEnd} />
+        <Feeds
+          feeds={feeds}
+          defaultViewIndex={defaultViewIndex}
+          onUsernameClicked={onClose}
+          isStartAnimtionEnd={isStartAnimtionEnd}
+          onFeedEdited={onClose}
+          onFeedDeleted={onClose}
+        />
       </FlexibleLayout.Content>
     </FlexibleLayout.Root>
   );
 }
 
-function Feeds({
-  feeds,
-  defaultViewIndex,
-  isStartAnimtionEnd,
-  onUsernameClicked,
-}: {
+interface TFeeds {
   feeds: TFeed[];
   defaultViewIndex: number;
-  onUsernameClicked: () => void;
   isStartAnimtionEnd: boolean;
-}) {
+  onUsernameClicked: () => void;
+  onFeedEdited: () => void;
+  onFeedDeleted: () => void;
+}
+
+type FeedsProps = TFeeds;
+
+function Feeds({ feeds, defaultViewIndex, isStartAnimtionEnd, onUsernameClicked, onFeedEdited, onFeedDeleted }: FeedsProps) {
   return (
     <div id="feedList" className="h-full snap-y snap-mandatory overflow-y-scroll">
       {feeds.map((feedDetail, index) => (
@@ -43,6 +51,8 @@ function Feeds({
           focus={index === defaultViewIndex}
           isStartAnimtionEnd={isStartAnimtionEnd}
           onUsernameClicked={onUsernameClicked}
+          onFeedEdited={onFeedEdited}
+          onFeedDeleted={onFeedDeleted}
         />
       ))}
     </div>

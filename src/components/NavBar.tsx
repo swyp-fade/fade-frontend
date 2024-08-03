@@ -1,10 +1,10 @@
 import { useModalActions } from '@Hooks/modal';
-import { UploadViewDialog } from '@Pages/Root/_dialogs/UploadDialog/dialog';
 import { cn } from '@Utils/index';
 import { IconType } from 'react-icons/lib';
 import { MdAccountBox, MdAdd, MdHowToVote, MdOutlineGridOn, MdPerson } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Tooltip from './Tooltip';
+import { UploadFeedDialog } from './UploadFeedDialog';
 
 interface NavItem {
   link: string | null;
@@ -91,7 +91,7 @@ function UploadImageButton({ buttonClassName, IconComponent, hasVotedToday }: { 
   };
 
   const startUploadImageFlow = async () => {
-    return showModal({ type: 'fullScreenDialog', Component: UploadViewDialog });
+    return showModal({ type: 'fullScreenDialog', Component: UploadFeedDialog });
   };
 
   return (
