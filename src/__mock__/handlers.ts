@@ -280,6 +280,10 @@ export const handlers = [
     return HttpResponse.json({ feeds: createAllFashionFeedDTODummies(+limit), nextCursor: generateRandomId() }, { status: HttpStatusCode.Ok });
   }),
 
+  http.get(`${BASE_URL}/feeds/:feedId`, async () => {
+    return HttpResponse.json(...createAllFashionFeedDTODummies(1), { status: HttpStatusCode.Ok });
+  }),
+
   http.get(`${BASE_URL}/subscribe/subscribers`, async () => {
     // const { searchParams } = new URL(request.url);
 

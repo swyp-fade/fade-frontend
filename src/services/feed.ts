@@ -7,6 +7,8 @@ import {
   TBookmarkFeedDTO,
   TFAPArchivingFeed,
   TFAPArchivingFeedDTO,
+  TMyFeed,
+  TMyFeedDTO,
   TSubscribeFeed,
   TSubscribeFeedDTO,
   TUserFeed,
@@ -124,5 +126,19 @@ export async function requestGetBookmarkFeeds({ nextCursor }: GetBookmarkFeedsPa
           ...feed,
         })),
       }) as GetBookmarkFeedsResponse
+  );
+}
+
+type GetFeedDetailsPayload = { feedId: number };
+type GetFeedDetailsResponseAPI = TMyFeedDTO;
+type GetFeedDetailsResponse = TMyFeed;
+
+export async function requestGetFeedDetails({ feedId }: GetFeedDetailsPayload) {
+  return await axios.get<GetFeedDetailsResponseAPI>(`/feeds/${feedId}`).then(
+    (response) =>
+      ({
+        ...response.data,
+        styleIds: response.data.styleIds.map(({ id }) => id),
+      }) as GetFeedDetailsResponse
   );
 }
