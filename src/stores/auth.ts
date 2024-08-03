@@ -26,7 +26,7 @@ const initialUserDetail: TMyUserDetail = {
   username: '',
   genderType: 'MALE',
   profileImageURL: undefined,
-  fapSelectedCount: 0,
+  selectedFAPCount: 0,
   subscribedCount: 0,
   introduceContent: '',
 };
