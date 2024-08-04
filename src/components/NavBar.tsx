@@ -5,6 +5,7 @@ import { MdAccountBox, MdAdd, MdHowToVote, MdOutlineGridOn, MdPerson } from 'rea
 import { useLocation, useNavigate } from 'react-router-dom';
 import Tooltip from './Tooltip';
 import { UploadFeedDialog } from './UploadFeedDialog';
+import { useVotingStore } from '@Stores/vote';
 
 interface NavItem {
   link: string | null;
@@ -34,13 +35,12 @@ const navList: NavItem[] = [
   },
 ];
 
-interface NavBarProps {
-  hasVotedToday: boolean;
-  isVoteFAPPath: boolean;
-}
-
-export function NavBar({ hasVotedToday, isVoteFAPPath }: NavBarProps) {
+export function NavBar() {
   const location = useLocation();
+
+  const hasVotedToday = useVotingStore((state) => state.hasVotedToday);
+  const isVoteFAPPath = location.pathname === '/vote-fap';
+
   const createNavItem = (navItem: NavItem) => (
     <NavItem
       key={navItem.link}
@@ -63,6 +63,8 @@ type NavItemProps = { isActive: boolean; hasVotedToday: boolean; isVoteFAPPath: 
 function NavItem({ link, IconComponent, isActive, hasVotedToday, isVoteFAPPath }: NavItemProps) {
   const navigate = useNavigate();
 
+  const shouldShowTooltip = !hasVotedToday && link === '/vote-fap' && !isVoteFAPPath;
+
   const buttonClassName = cn('block h-full w-full py-5 group', {
     ['text-purple-700']: isActive,
   });
@@ -70,7 +72,7 @@ function NavItem({ link, IconComponent, isActive, hasVotedToday, isVoteFAPPath }
   if (link) {
     return (
       <li className="relative flex-1">
-        {link === '/vote-fap' && !hasVotedToday && !isVoteFAPPath && <Tooltip />}
+        {shouldShowTooltip && <Tooltip />}
         <button type="button" className={buttonClassName} onClick={() => navigate(link)}>
           <IconComponent className="mx-auto size-6 transition-transform touchdevice:group-active:rotate-3 touchdevice:group-active:scale-75 pointerdevice:group-hover:rotate-3 pointerdevice:group-hover:scale-125 pointerdevice:group-active:scale-95" />
         </button>
