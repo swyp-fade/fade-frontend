@@ -39,8 +39,9 @@ export const handlers = [
    * MSW는 fetch 정책 상 Header에 Set-Cookie를 지정해주는 대신
    * document.cookie로 지정해주기 때문에, HttpOnly 속성을 넣으면 안 된다(😇)
    */
-  http.post(`${BASE_URL}/auth/token`, async ({ cookies }) => {
-    const { refreshToken } = cookies;
+  http.post(`${BASE_URL}/auth/token`, async ({ request }) => {
+    // const { refreshToken } = cookies;
+    const { refreshToken } = (await request.json()) as { refreshToken: string };
 
     await delay(NETWORK_DELAY);
     /**
@@ -70,12 +71,12 @@ export const handlers = [
     return new HttpResponse(
       JSON.stringify({
         accessToken: createAccessToken(userData),
-        csrfToken: 'ctct',
+        refreshToken: createRefreshToken(userData),
       }),
       {
         headers: {
           'Content-Type': 'application/json',
-          'Set-Cookie': `refreshToken=${createRefreshToken(userData)}; Path=/; expires=${addDays(new Date(), 14).toUTCString()}, csrfToken=ctct; Path=/;`,
+          'Set-Cookie': `refreshToken=${createRefreshToken(userData)}; Path=/; expires=${addDays(new Date(), 14).toUTCString()};`,
         },
       }
     );
@@ -86,7 +87,7 @@ export const handlers = [
 
     return new HttpResponse(null, {
       headers: {
-        'Set-Cookie': `refreshToken=; Path=/; expires=${new Date(0).toUTCString()}, csrfToken=; Path=/; expires=${new Date(0).toUTCString()};`,
+        'Set-Cookie': `refreshToken=; Path=/; expires=${new Date(0).toUTCString()};`,
       },
     });
   }),
@@ -116,12 +117,12 @@ export const handlers = [
     return new HttpResponse(
       JSON.stringify({
         accessToken: createAccessToken(userData),
-        csrfToken: 'ctct',
+        refreshToken: createRefreshToken(userData),
       }),
       {
         headers: {
           'Content-Type': 'application/json',
-          'Set-Cookie': `refreshToken=${createRefreshToken(userData)}; Path=/; expires=${addDays(new Date(), 14).toUTCString()}, csrfToken=ctct; Path=/;`,
+          'Set-Cookie': `refreshToken=${createRefreshToken(userData)}; Path=/; expires=${addDays(new Date(), 14).toUTCString()};`,
         },
       }
     );
@@ -135,12 +136,12 @@ export const handlers = [
       return new HttpResponse(
         JSON.stringify({
           accessToken: createAccessToken(userData),
-          csrfToken: 'ctct',
+          refreshToken: createRefreshToken(userData),
         }),
         {
           headers: {
             'Content-Type': 'application/json',
-            'Set-Cookie': `refreshToken=${createRefreshToken(userData)}; Path=/; expires=${addDays(new Date(), 14).toUTCString()}, csrfToken=ctct; Path=/;`,
+            'Set-Cookie': `refreshToken=${createRefreshToken(userData)}; Path=/; expires=${addDays(new Date(), 14).toUTCString()};`,
           },
         }
       );

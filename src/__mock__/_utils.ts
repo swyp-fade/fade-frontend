@@ -50,7 +50,7 @@ const getRandomNotificationType = (): TNotificationType => getRandomElement(['FE
 
 const getRandomDate = (start: Date, end: Date) => new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 
-function encodeJWT(payload: TMyUserDetail, secret: string, exp: Date) {
+function encodeJWT(payload: TMyUserDetail, secret: string, exp: number) {
   const header = {
     alg: 'HS256',
     typ: 'JWT',
@@ -59,14 +59,14 @@ function encodeJWT(payload: TMyUserDetail, secret: string, exp: Date) {
   const { introduceContent, ...source } = payload;
 
   const encodedHeader = btoa(JSON.stringify(header)).replace(/=+$/, '');
-  const encodedPayload = btoa(JSON.stringify({ ...source, iat: new Date().toUTCString(), exp })).replace(/=+$/, '');
+  const encodedPayload = btoa(JSON.stringify({ ...source, iat: Number(new Date()) / 1000, exp })).replace(/=+$/, '');
 
   const signature = btoa(secret).replace(/=+$/, '');
 
   return `${encodedHeader}.${encodedPayload}.${signature}`;
 }
 
-const createJWT = (userData: TMyUserDetail, expiresIn: Date) => encodeJWT(userData, 'JWT_SECRET', expiresIn);
+const createJWT = (userData: TMyUserDetail, expiresIn: Date) => encodeJWT(userData, 'JWT_SECRET', Number(expiresIn) / 1000);
 
 export const createAccessToken = (userData: TMyUserDetail) => createJWT(userData, addHours(new Date(), 1));
 export const createRefreshToken = (userData: TMyUserDetail) => createJWT(userData, addDays(new Date(), 14));

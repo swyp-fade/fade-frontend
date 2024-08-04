@@ -46,7 +46,7 @@ export interface TMatchedUser extends Pick<TUserDetail, 'id' | 'username' | 'pro
 
 export interface AuthTokens {
   accessToken: string;
-  csrfToken?: string; // 보류
+  refreshToken: string;
 }
 
 /**
