@@ -49,7 +49,7 @@ function TokenHandler({ savedRefreshToken }: TokenHandlerProps) {
   const { signIn } = useAuthActions();
 
   const {
-    data: { data: authTokens } = {},
+    data: { data: authTokens },
     isSuccess,
     isError,
     error,
