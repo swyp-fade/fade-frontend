@@ -16,8 +16,8 @@ export function getPayloadFromJWT(jwt: string) {
     id: string;
     username: string; // username
     genderType: GenderType;
-    exp: Date;
-    iat: Date;
+    exp: number;
+    iat: number;
   };
 }
 
