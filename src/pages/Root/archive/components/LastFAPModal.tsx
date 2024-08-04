@@ -1,29 +1,25 @@
+import { FeedDetailDialog } from '@Components/FeedDetailDialog';
 import { Avatar } from '@Components/ui/avatar';
 import { Button } from '@Components/ui/button';
 import { Image } from '@Components/ui/image';
+import { useModalActions } from '@Hooks/modal';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { DefaultModalProps } from '@Stores/modal';
+import { TFeed } from '@Types/model';
 import { forwardRef } from 'react';
 import { FaCrown } from 'react-icons/fa6';
 import { MdClose } from 'react-icons/md';
 
 export type LastFAPModalProps = {
-  feed: {
-    id: number;
-    imageURL: string;
-  };
-  user: {
-    id: number;
-    profileURL: string;
-    username: string;
-  };
+  feed: TFeed;
 };
 
 export const LastFAPModal = forwardRef<HTMLDivElement, DefaultModalProps<void, LastFAPModalProps>>(
-  ({ feed, user, onClose }: DefaultModalProps<void, LastFAPModalProps>, ref) => {
+  ({ feed, onClose }: DefaultModalProps<void, LastFAPModalProps>, ref) => {
+    const { showModal } = useModalActions();
+
     const handleClick = () => {
-      /** TODO: 해당 피드 이동 */
-      console.log(feed);
+      showModal({ type: 'fullScreenDialog', animateType: 'slideInFromRight', Component: FeedDetailDialog, props: { feeds: [feed] } });
       onClose();
     };
 
@@ -40,8 +36,8 @@ export const LastFAPModal = forwardRef<HTMLDivElement, DefaultModalProps<void, L
         </FlexibleLayout.Header>
 
         <FlexibleLayout.Content className="flex flex-col gap-8 p-5">
-          <div className="relative mx-auto aspect-[3/4] h-full w-fit">
-            <Image src="/assets/test_fashion_image.jpg" className="rounded-lg border-2 border-purple-500 bg-gray-100 shadow-xl" />
+          <div className="relative mx-auto aspect-[3/4] h-full w-fit overflow-hidden rounded-lg border-2 border-purple-500 bg-gray-100 shadow-xl">
+            <Image src={feed.imageURL} />
             <Image src="/assets/fap_badge.png" className="absolute right-3 top-3 size-10" local />
           </div>
 
@@ -51,7 +47,7 @@ export const LastFAPModal = forwardRef<HTMLDivElement, DefaultModalProps<void, L
               <FaCrown className="absolute -left-3 -top-4 size-6 -rotate-[25deg] text-yellow-700" />
             </div>
 
-            <span className="text-h6 font-semibold">{user.username}</span>
+            <span className="text-h6 font-semibold">{feed.username}</span>
           </div>
 
           <Button variants="secondary" className="text-xl" onClick={handleClick}>

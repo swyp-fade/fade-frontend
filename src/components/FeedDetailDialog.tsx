@@ -6,7 +6,7 @@ import { BackButton } from './ui/button';
 
 type FeedDialogDialogProps = { feeds: TFeed[]; defaultViewIndex: number };
 
-export function FeedDetailDialog({ feeds, defaultViewIndex, isStartAnimtionEnd, onClose }: DefaultModalProps<void, FeedDialogDialogProps>) {
+export function FeedDetailDialog({ feeds, defaultViewIndex = 0, isStartAnimtionEnd, onClose }: DefaultModalProps<void, FeedDialogDialogProps>) {
   return (
     <FlexibleLayout.Root>
       <FlexibleLayout.Header>
