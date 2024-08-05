@@ -1,5 +1,6 @@
 import { Button } from '@Components/ui/button';
 import { useToastActions } from '@Hooks/toast';
+import { queryClient } from '@Libs/queryclient';
 import { requestBookmarkFeed } from '@Services/feed';
 import { useMutation } from '@tanstack/react-query';
 import { cn } from '@Utils/index';
@@ -38,6 +39,9 @@ export function BookmarkButton({ feedId, defaultBookmarkStatus, size = 'default'
         wouldBookmark: !defaultBookmarkStatus,
       },
       {
+        onSuccess() {
+          queryClient.invalidateQueries({ queryKey: ['user', 'me', 'bookmark'] });
+        },
         onError() {
           setIsBookmarked((prev) => !prev);
           showToast({ type: 'error', title: '북마크에 실패했어요.' });

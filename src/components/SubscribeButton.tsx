@@ -40,6 +40,7 @@ export function SubscribeButton({ size = 'default', userId, initialSubscribedSta
         onSuccess() {
           onToggle(!initialSubscribedStatus);
           queryClient.invalidateQueries({ queryKey: ['user', userId, 'detail'] });
+          queryClient.invalidateQueries({ queryKey: ['subscribe'] });
         },
         onError() {
           setIsSubscribed((prev) => !prev);
