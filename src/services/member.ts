@@ -7,7 +7,7 @@ type UpdateUserDetailsResponse = '';
 
 /** 유저 정보 변경 요청 */
 export async function requestUpdateUserDetails(payload: UpdateUserDetailsPayload) {
-  return await axios.put<UpdateUserDetailsResponse>(`/members/me`, payload);
+  return await axios.patch<UpdateUserDetailsResponse>(`/members/me`, payload);
 }
 
 type RequestSubscribeMemberPayload = { toMemberId: number; wouldSubscribe: boolean };
