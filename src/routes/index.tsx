@@ -17,6 +17,7 @@ const AppLayout = lazy(() => import('@Layouts/AppLayout').then((module) => ({ de
 import AppLayoutSkeletonUI from '@Layouts/AppLayout.skeleton';
 import ArchiveSkeletonUI from '@Pages/Root/archive/page.skeleton';
 import MyPageSkeletonUI from '@Pages/Root/mypage/page.skeleton';
+import MyPageFeedSkeletonUI from '@Pages/Root/mypage/feed/page.skeleton';
 import VoteHistorySkeletonUI from '@Pages/Root/mypage/voteHistory/page.skeleton';
 import BoomarkSkeltonUI from '@Pages/Root/mypage/bookmark/page.skeleton';
 import SubscribeListSkeletonUI from '@Pages/Root/subscribe/list/page.skeleton';
@@ -104,7 +105,7 @@ export const routesFromElements = createRoutesFromElements(
           <Route
             path="feed"
             element={
-              <Suspense>
+              <Suspense fallback={<MyPageFeedSkeletonUI />}>
                 <MyPageFeed />
               </Suspense>
             }
