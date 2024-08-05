@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 import { AnimatePresence, motion, MotionValue, useMotionValue, useTransform, Variants } from 'framer-motion';
 import { useEffect, useLayoutEffect, useState, useTransition } from 'react';
 import { RandomAvatar } from './RandomAvatar';
+import { queryClient } from '@Libs/queryclient';
 
 const voteFadeInImage = '/assets/fade_in_btn.png';
 const voteFadeOutImage = '/assets/fade_out_btn.png';
@@ -161,6 +162,8 @@ export function VotingView({ onSubmitDone }: { onSubmitDone: () => void }) {
   };
 
   const handleSubmitDone = () => {
+    queryClient.invalidateQueries({ queryKey: ['user', 'me', 'voteHistory'] });
+
     generateNewCycleId();
     onSubmitDone();
   };

@@ -8,6 +8,8 @@ import { UploadGuideBottomSheet } from './UploadGuideBottomSheet';
 import { PolicyView } from './UploadPolicyView';
 import { UploadFeedForm } from './forms/feed/UploadFeedForm';
 import { Button } from './ui/button';
+import { useAuthStore } from '@Stores/auth';
+import { queryClient } from '@Libs/queryclient';
 
 export function UploadFeedDialog({ setCloseHandler, onClose, onSubmitSuccess }: DefaultModalProps) {
   const dirtyRef = useRef(false);
@@ -57,6 +59,15 @@ interface TUploadFeedView {
 type UploadFeedView = TUploadFeedView;
 
 function UploadFeedView({ onClose, onSubmitSuccess, onValueChanged }: UploadFeedView) {
+  const myId = useAuthStore((state) => state.user.id);
+
+  const handleSubmitSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ['archiving', 'all'] });
+    queryClient.invalidateQueries({ queryKey: ['user', myId, 'detail'] });
+
+    onSubmitSuccess();
+  };
+
   return (
     <FlexibleLayout.Root>
       <FlexibleLayout.Header>
@@ -64,7 +75,7 @@ function UploadFeedView({ onClose, onSubmitSuccess, onValueChanged }: UploadFeed
       </FlexibleLayout.Header>
 
       <FlexibleLayout.Content className="space-y-8 p-5">
-        <UploadFeedForm onValueChanged={onValueChanged} onSubmitSuccess={onSubmitSuccess} />
+        <UploadFeedForm onValueChanged={onValueChanged} onSubmitSuccess={handleSubmitSuccess} />
       </FlexibleLayout.Content>
     </FlexibleLayout.Root>
   );
