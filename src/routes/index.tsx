@@ -23,6 +23,7 @@ import BoomarkSkeltonUI from '@Pages/Root/mypage/bookmark/page.skeleton';
 import SubscribeListSkeletonUI from '@Pages/Root/subscribe/list/page.skeleton';
 import SubscribeSkeletonUI from '@Pages/Root/subscribe/page.skeleton';
 import VoteFAPSkeletonUI from '@Pages/Root/voteFAP/page.skeleton';
+import UserFeedSkeletonUI from '@Pages/Root/user/page.skeleton';
 
 /** Root */
 const LoginPage = lazy(() => import('@Pages/Root/login/page').then((module) => ({ default: module.default })));
@@ -127,7 +128,14 @@ export const routesFromElements = createRoutesFromElements(
             }
           />
         </Route>
-        <Route path="user" element={<UserFeedPage />} />
+        <Route
+          path="user"
+          element={
+            <Suspense fallback={<UserFeedSkeletonUI />}>
+              <UserFeedPage />
+            </Suspense>
+          }
+        />
       </Route>
     </Route>
 
