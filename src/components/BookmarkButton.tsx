@@ -41,7 +41,7 @@ export function BookmarkButton({ feedId, defaultBookmarkStatus, size = 'default'
       },
       {
         onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ['user', 'me', 'bookmark'] });
+          queryClient.invalidateQueries({ queryKey: ['user', 'me', 'bookmark'], refetchType: 'all' });
           onToggle && onToggle(!defaultBookmarkStatus);
         },
         onError() {
