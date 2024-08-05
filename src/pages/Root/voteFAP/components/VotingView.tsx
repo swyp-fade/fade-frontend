@@ -150,7 +150,7 @@ export function VotingView({ onSubmitDone }: { onSubmitDone: () => void }) {
   };
 
   const handleSubmitDone = () => {
-    queryClient.invalidateQueries({ queryKey: ['user', 'me', 'voteHistory'] });
+    queryClient.invalidateQueries({ queryKey: ['user', 'me', 'voteHistory'], refetchType: 'all' });
     localStorage.setItem('FADE_LAST_VOTED_AT', format(new Date(), 'yyyy-MM-dd'));
 
     setHasVotedToday(true);
