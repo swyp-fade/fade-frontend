@@ -497,6 +497,16 @@ function VotingTools() {
   const feedId = useVotingStore(({ viewCards }) => viewCards.at(-1)?.feedId || -1);
   const isBookmarked = useVotingStore(({ viewCards }) => viewCards.at(-1)?.isBookmarked || false);
 
+  const handleBookmarkToggle = (value: boolean) => {
+    const voteData = JSON.parse(localStorage.getItem('FADE_VOTE_DATA')!) as TLocalVoteData;
+    const matchedItem = voteData.viewCards.at(-1)!; // 구독은 마지막 아이템에만 할 수 있음
+
+    localStorage.setItem(
+      'FADE_VOTE_DATA',
+      JSON.stringify({ ...voteData, viewCards: [...voteData.viewCards.slice(0, -1), { ...matchedItem, isBookmarked: value }] } as TLocalVoteData)
+    );
+  };
+
   return (
     <div className="flex w-full flex-col gap-3">
       <UserDetailCard />
@@ -504,7 +514,7 @@ function VotingTools() {
       <div className="flex flex-row gap-3">
         <VoteButton type="fadeOut" onClick={() => handleSelect('left')} />
         <VoteButton type="fadeIn" onClick={() => handleSelect('right')} />
-        <BookmarkButton feedId={feedId} defaultBookmarkStatus={isBookmarked} shadow />
+        <BookmarkButton feedId={feedId} defaultBookmarkStatus={isBookmarked} shadow onToggle={handleBookmarkToggle} />
       </div>
     </div>
   );
