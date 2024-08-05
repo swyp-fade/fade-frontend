@@ -441,11 +441,21 @@ function UserDetailCard() {
   const isSubscribed = useVotingStore(({ viewCards }) => viewCards.at(-1)?.isSubscribed || false);
   const memberId = useVotingStore(({ viewCards }) => viewCards.at(-1)?.memberId || -1);
 
+  const handleSubscribeToggle = (value: boolean) => {
+    const voteData = JSON.parse(localStorage.getItem('FADE_VOTE_DATA')!) as TLocalVoteData;
+    const matchedItem = voteData.viewCards.at(-1)!; // 구독은 마지막 아이템에만 할 수 있음
+
+    localStorage.setItem(
+      'FADE_VOTE_DATA',
+      JSON.stringify({ ...voteData, viewCards: [...voteData.viewCards.slice(0, -1), { ...matchedItem, isSubscribed: value }] } as TLocalVoteData)
+    );
+  };
+
   return (
     <div className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white px-3 py-2 shadow-bento">
       <RandomAvatar />
       <AnimatedUsername name={anonName} />
-      <SubscribeButton initialSubscribedStatus={isSubscribed} userId={memberId} onToggle={(value) => console.log(value)} />
+      <SubscribeButton initialSubscribedStatus={isSubscribed} userId={memberId} onToggle={handleSubscribeToggle} />
     </div>
   );
 }
