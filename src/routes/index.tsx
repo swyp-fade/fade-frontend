@@ -18,6 +18,7 @@ import AppLayoutSkeletonUI from '@Layouts/AppLayout.skeleton';
 import ArchiveSkeletonUI from '@Pages/Root/archive/page.skeleton';
 import MyPageSkeletonUI from '@Pages/Root/mypage/page.skeleton';
 import VoteHistorySkeletonUI from '@Pages/Root/mypage/voteHistory/page.skeleton';
+import BoomarkSkeltonUI from '@Pages/Root/mypage/bookmark/page.skeleton';
 import SubscribeListSkeletonUI from '@Pages/Root/subscribe/list/page.skeleton';
 import SubscribeSkeletonUI from '@Pages/Root/subscribe/page.skeleton';
 import VoteFAPSkeletonUI from '@Pages/Root/voteFAP/page.skeleton';
@@ -119,7 +120,7 @@ export const routesFromElements = createRoutesFromElements(
           <Route
             path="bookmark"
             element={
-              <Suspense>
+              <Suspense fallback={<BoomarkSkeltonUI />}>
                 <MyPageBookmark />
               </Suspense>
             }
