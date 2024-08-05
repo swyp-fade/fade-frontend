@@ -309,7 +309,7 @@ export const handlers = [
     return HttpResponse.json(createMyUserDetailDummies(1)[0], { status: HttpStatusCode.Ok });
   }),
 
-  http.put(`${BASE_URL}/members/me`, async () => {
+  http.patch(`${BASE_URL}/members/me`, async () => {
     await delay(NETWORK_DELAY);
 
     return HttpResponse.json({}, { status: HttpStatusCode.Ok });

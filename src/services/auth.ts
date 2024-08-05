@@ -12,7 +12,7 @@ import { AuthTokens } from '@Types/model';
  * 때문에 서비스 로직 내 함수는 axios를 호출하기만 합니다.
  */
 
-type RefreshTokenPayload = { refreshToken: AuthTokens['refreshToken'] };
+type RefreshTokenPayload = { refreshToken?: AuthTokens['refreshToken'] | null };
 type RefreshTokenResponse = AuthTokens;
 
 /** RefreshToken으로 AccessToken을 요청 */
