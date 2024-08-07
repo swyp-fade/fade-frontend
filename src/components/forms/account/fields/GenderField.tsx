@@ -1,7 +1,7 @@
 import { FormControl, FormField, FormItem, FormMessage } from '@Components/ui/form';
 import * as RadioGroup from '@radix-ui/react-radio-group';
-import { AccountSchema } from '../_accountSchema';
 import { Control } from 'react-hook-form';
+import { AccountSchema } from '../_accountSchema';
 
 interface TGenderField {
   control: Control<AccountSchema>;
@@ -13,7 +13,7 @@ export function GenderField({ control }: GenderFieldProps) {
   return (
     <FormField
       control={control}
-      name="gender"
+      name="genderType"
       render={({ field }) => (
         <FormItem className="space-y-1">
           <p className="text-h6 font-semibold">성별</p>
