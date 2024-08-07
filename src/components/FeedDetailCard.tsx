@@ -94,7 +94,7 @@ export function FeedDetailCard({ focus, viewType = 'default', isStartAnimtionEnd
         {isMineType && <FeedAdiitionalDetails {...feedDetail} />}
         {!isMineType && <MemberDetailCard {...feedDetail} onUsernameClicked={() => onUsernameClicked && onUsernameClicked()} />}
         {haveStyleIds && <StyleCard {...feedDetail} />}
-        {haveOutfits && <OutfitCard {...outfits.sort((a, b) => a.categoryId - b.categoryId).at(0)!} wouldShowDetail={false} />}
+        {haveOutfits && <OutfitCard {...outfits.sort((a, b) => a.categoryId - b.categoryId).at(0)!} />}
         {haveOutfitsMoreThanOwn && <ShowAllOutfitsButton />}
       </section>
     </div>
