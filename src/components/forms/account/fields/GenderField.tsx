@@ -19,7 +19,7 @@ export function GenderField({ control }: GenderFieldProps) {
           <p className="text-h6 font-semibold">성별</p>
 
           <FormControl>
-            <RadioGroup.Root defaultValue="men" className="flex w-full flex-row gap-5" value={field.value} onValueChange={field.onChange}>
+            <RadioGroup.Root className="flex w-full flex-row gap-5" value={field.value} onValueChange={field.onChange}>
               <RadioGroup.Item
                 value="MALE"
                 className="flex flex-1 items-center justify-center rounded-lg bg-gray-200 py-3 text-black transition-colors data-[state=checked]:bg-violet-500 data-[state=checked]:text-white">
