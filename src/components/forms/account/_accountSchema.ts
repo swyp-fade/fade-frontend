@@ -16,6 +16,7 @@ export const accountInitializeSchema = accountSchema.pick({
 export const accountEditSchema = accountSchema.pick({
   profileImageId: true,
   username: true,
+  gender: true,
 });
 
 export type AccountSchema = z.infer<typeof accountSchema>;
