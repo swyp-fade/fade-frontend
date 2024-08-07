@@ -43,14 +43,21 @@ export function AccountEditForm({ defaultUserDetails, onSubmited }: AccountEditF
   });
 
   const { profileImageId, username } = form.watch();
-  const isDirty = profileImageId !== -1 || username !== defaultUserDetails.username;
+  const isProfileImageDirty = profileImageId !== -1;
+  const isUsernameDirty = username !== defaultUserDetails.username;
+  const isDirty = isProfileImageDirty || isUsernameDirty;
 
   const { isValid, errors } = form.formState;
   const couldSubmit = isValid && isDirty;
 
   function handleSubmitAfterValidation(values: AccountEditSchema) {
+    const newValue = {
+      profileImageId: isProfileImageDirty ? values.profileImageId : undefined,
+      username: isUsernameDirty ? values.username : undefined,
+    };
+
     startTransition(() => {
-      updateUserDetails(values, {
+      updateUserDetails(newValue, {
         onSuccess() {
           onSubmited(values);
         },
