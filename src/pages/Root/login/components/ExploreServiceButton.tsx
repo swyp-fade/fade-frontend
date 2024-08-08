@@ -1,9 +1,9 @@
 import { Button } from '@Components/ui/button';
 import { useModalActions } from '@Hooks/modal';
-import { ExploreServiceModal } from './ExploreServiceModal';
-import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { VscLoading } from 'react-icons/vsc';
+import { useNavigate } from 'react-router-dom';
+import { ExploreServiceModal } from './ExploreServiceModal';
 
 const { VITE_KAKAO_API_KEY: apiKey, VITE_KAKAO_REDIRECT_URL: redirectURL } = import.meta.env;
 const kakaoLoginURL = `https://kauth.kakao.com/oauth/authorize?client_id=${apiKey}&redirect_uri=${redirectURL}&response_type=code`;
@@ -35,6 +35,7 @@ export function ExploreServiceButton() {
     await worker.start({ onUnhandledRequest: 'bypass' });
 
     window.dispatchEvent(new CustomEvent('mockingStart'));
+    document.querySelector('html')!.dataset.mockingEnabled = 'true';
 
     return navigate('/auth/callback/kakao?code=test', { replace: true });
   };

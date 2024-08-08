@@ -1,8 +1,9 @@
 import * as Popover from '@radix-ui/react-popover';
 import { useVotingStore } from '@Stores/vote';
+import { removeLocalData } from '@Utils/index';
+import { useEffect, useState } from 'react';
 import { MdSettings } from 'react-icons/md';
 import { Button } from './ui/button';
-import { useEffect, useState } from 'react';
 
 export function MockingButton() {
   const setHasVotedToday = useVotingStore((state) => state.setHasVotedToday);
@@ -16,6 +17,14 @@ export function MockingButton() {
       // MSW 중지
       const { worker } = await import('@/__mock__/instance');
       worker.stop();
+
+      // 로컬 데이터 삭제
+      removeLocalData('_fert');
+      removeLocalData('FADE_VOTE_COUNT');
+      removeLocalData('FADE_LAST_VOTED_AT');
+      removeLocalData('FADE_LAST_FAP_DATE');
+      removeLocalData('FADE_VOTE_DATA');
+      removeLocalData('FADE_SEARCH_HISTORY');
 
       location.reload();
     };
@@ -51,7 +60,7 @@ export function MockingButton() {
               </Button>
             </li>
             <li className="w-full">
-              <Button variants="ghost" className="w-full" onClick={() => localStorage.removeItem('FADE_LAST_FAP_DATE')}>
+              <Button variants="ghost" className="w-full" onClick={() => removeLocalData('FADE_LAST_FAP_DATE')}>
                 Reset yesterday's FA:P alerts
               </Button>
             </li>
