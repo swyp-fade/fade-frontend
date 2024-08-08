@@ -30,7 +30,7 @@ const userData: TMyUserDetail = {
   genderType: 'MALE',
   profileImageURL: testFashionImage1,
   introduceContent: '안녕',
-  selectedFAPCount: 0,
+  fapSelectedCount: 0,
   subscribedCount: 0,
 };
 

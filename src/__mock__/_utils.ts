@@ -244,7 +244,7 @@ export const createMyUserDetailDummies = (count: number): TMyUserDetail[] =>
     genderType: getRandomGender(),
     subscribedCount: getRandomInt(0, 1000),
     introduceContent: `안녕하세요. ${getRandomUsername()}입니다. 패션에 관심이 많습니다.`,
-    selectedFAPCount: getRandomInt(0, 50),
+    fapSelectedCount: getRandomInt(0, 50),
   }));
 
 // TFeedUserDetail 더미 데이터 생성 함수
