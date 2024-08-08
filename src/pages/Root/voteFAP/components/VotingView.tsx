@@ -9,7 +9,7 @@ import { SwipeDirection, TLocalVoteData, useVotingStore } from '@Stores/vote';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { TVoteCandidateCard } from '@Types/model';
 import { ServiceErrorResponse } from '@Types/serviceError';
-import { cn, generateAnonName, prefetchImages } from '@Utils/index';
+import { cn, generateAnonName, loadLocalData, prefetchImages, removeLocalData, saveLocalData } from '@Utils/index';
 import { isAxiosError } from 'axios';
 import { format } from 'date-fns';
 import { AnimatePresence, motion, MotionValue, useMotionValue, useTransform, Variants } from 'framer-motion';
@@ -73,7 +73,7 @@ export function VotingView({ onVoteFlowDone }: { onVoteFlowDone: () => void }) {
   const setHasVotedToday = useVotingStore((state) => state.setHasVotedToday);
   const setIsVotingInProgress = useVotingStore((state) => state.setIsVotingInProgress);
 
-  const localVoteData = localStorage.getItem('FADE_VOTE_DATA');
+  const localVoteData = loadLocalData('FADE_VOTE_DATA');
   const hasLocalVoteData = localVoteData !== null;
   const parsedVoteData = hasLocalVoteData ? (JSON.parse(localVoteData) as TLocalVoteData) : null;
 
@@ -99,11 +99,11 @@ export function VotingView({ onVoteFlowDone }: { onVoteFlowDone: () => void }) {
       showToast({ type: 'basic', title: '오늘 투표할 페이더들의 사진이 없습니다.' });
 
       /** 투표 진행 정보 제거 */
-      localStorage.removeItem('FADE_VOTE_DATA');
+      removeLocalData('FADE_VOTE_DATA');
 
       /** 오늘 투표 완료 설정 */
       setHasVotedToday(true);
-      localStorage.setItem('FADE_LAST_VOTED_AT', format(new Date(), 'yyyy-MM-dd'));
+      saveLocalData('FADE_LAST_VOTED_AT', format(new Date(), 'yyyy-MM-dd'));
 
       /** 투표 Flow 종료 */
       setIsVotingInProgress(false);
@@ -136,7 +136,7 @@ export function VotingView({ onVoteFlowDone }: { onVoteFlowDone: () => void }) {
       voteResults: [],
     };
 
-    localStorage.setItem('FADE_VOTE_DATA', JSON.stringify(newLocalVoteData));
+    saveLocalData('FADE_VOTE_DATA', JSON.stringify(newLocalVoteData));
   }, [isSuccess]);
 
   useEffect(() => {
@@ -200,8 +200,8 @@ function VoteFlowHandler({ onVoteFlowDone }: VoteFlowHandlerProps) {
       return onVoteFlowDone();
     }
 
-    localStorage.removeItem('FADE_VOTE_DATA');
-    localStorage.setItem('FADE_LAST_VOTED_AT', format(new Date(), 'yyyy-MM-dd'));
+    removeLocalData('FADE_VOTE_DATA');
+    saveLocalData('FADE_LAST_VOTED_AT', format(new Date(), 'yyyy-MM-dd'));
 
     queryClient.invalidateQueries({ queryKey: ['user', 'me', 'voteHistory'], refetchType: 'all' });
 
@@ -354,8 +354,8 @@ function AwaitedVotingView({ onVoteFinish }: { onVoteFinish: () => void }) {
       return;
     }
 
-    const voteData = JSON.parse(localStorage.getItem('FADE_VOTE_DATA')!) as TLocalVoteData;
-    localStorage.setItem('FADE_VOTE_DATA', JSON.stringify({ ...voteData, viewCards }));
+    const voteData = JSON.parse(loadLocalData('FADE_VOTE_DATA')!) as TLocalVoteData;
+    saveLocalData('FADE_VOTE_DATA', JSON.stringify({ ...voteData, viewCards }));
   }, [viewCards]);
 
   return (
@@ -517,10 +517,10 @@ function UserDetailCard() {
   const memberId = useVotingStore(({ viewCards }) => viewCards.at(-1)?.memberId || -1);
 
   const handleSubscribeToggle = (value: boolean) => {
-    const voteData = JSON.parse(localStorage.getItem('FADE_VOTE_DATA')!) as TLocalVoteData;
+    const voteData = JSON.parse(loadLocalData('FADE_VOTE_DATA')!) as TLocalVoteData;
     const matchedItem = voteData.viewCards.at(-1)!; // 구독은 마지막 아이템에만 할 수 있음
 
-    localStorage.setItem(
+    saveLocalData(
       'FADE_VOTE_DATA',
       JSON.stringify({ ...voteData, viewCards: [...voteData.viewCards.slice(0, -1), { ...matchedItem, isSubscribed: value }] } as TLocalVoteData)
     );
@@ -573,10 +573,10 @@ function VotingTools() {
   const isBookmarked = useVotingStore(({ viewCards }) => viewCards.at(-1)?.isBookmarked || false);
 
   const handleBookmarkToggle = (value: boolean) => {
-    const voteData = JSON.parse(localStorage.getItem('FADE_VOTE_DATA')!) as TLocalVoteData;
+    const voteData = JSON.parse(loadLocalData('FADE_VOTE_DATA')!) as TLocalVoteData;
     const matchedItem = voteData.viewCards.at(-1)!; // 구독은 마지막 아이템에만 할 수 있음
 
-    localStorage.setItem(
+    saveLocalData(
       'FADE_VOTE_DATA',
       JSON.stringify({ ...voteData, viewCards: [...voteData.viewCards.slice(0, -1), { ...matchedItem, isBookmarked: value }] } as TLocalVoteData)
     );
