@@ -14,6 +14,7 @@ import { isAxiosError } from 'axios';
 import { format } from 'date-fns';
 import { AnimatePresence, motion, MotionValue, useMotionValue, useTransform, Variants } from 'framer-motion';
 import { useEffect, useLayoutEffect, useState, useTransition } from 'react';
+import { VscLoading } from 'react-icons/vsc';
 import { RandomAvatar } from './RandomAvatar';
 
 const voteFadeInImage = '/assets/fade_in_btn.png';
@@ -206,6 +207,7 @@ function VoteFlowHandler({ onVoteFlowDone }: VoteFlowHandlerProps) {
 
     setHasVotedToday(true);
     setIsVotingInProgress(false);
+    setViewId('loading'); // 필요 없는 구분인데 fake progress의 동작을 위해!
     onVoteFlowDone();
   };
 
@@ -213,7 +215,7 @@ function VoteFlowHandler({ onVoteFlowDone }: VoteFlowHandlerProps) {
     <div className="flex h-full flex-col items-center justify-center">
       <AnimatePresence mode="wait">
         {isVotingView && (
-          <motion.div key="awaited-view" variants={viewVariants} {...baseAnimateProps} className="h-full w-full">
+          <motion.div key="awaited-data-view" variants={viewVariants} {...baseAnimateProps} className="h-full w-full">
             <AwaitedVotingView onVoteFinish={handleVoteFinish} />
           </motion.div>
         )}
@@ -274,11 +276,33 @@ function SubmittingView({ onSubmitDone }: SubmittingViewProps) {
     });
   }, []);
 
+  const [fakeProgress, setFakeProgress] = useState(10);
+
+  useEffect(() => {
+    const randomInterval = 500 + Math.floor(Math.random() * 500);
+
+    const timerId = setInterval(() => {
+      const randomProgressValue = Math.floor(Math.random() * 25);
+      setFakeProgress((prevValue) => prevValue + randomProgressValue);
+    }, randomInterval);
+
+    return () => clearInterval(timerId);
+  }, []);
+
   return (
-    <div className="flex h-full w-full items-center justify-center">
-      <div>
-        {/* TODO: Loading Indicator */}
-        <span className="block animate-spin text-center text-[6rem]">😇</span>
+    <div className="relative flex h-full w-full items-center justify-center">
+      <div className="absolute left-0 top-0 h-1 w-full">
+        <motion.div
+          key="fake-progress-2"
+          className="h-full bg-purple-500 shadow-bento"
+          initial={{ width: 0 }}
+          animate={{ width: `${fakeProgress > 90 ? 90 : fakeProgress}%` }}
+          exit={{ width: `100%` }}
+        />
+      </div>
+
+      <div className="space-y-4">
+        <VscLoading className="mx-auto animate-spin fill-purple-500 text-[4rem]" />
         <p className="text-center text-lg">투표 결과를 안전하게 전송 중이에요</p>
       </div>
     </div>
@@ -311,10 +335,9 @@ function LoadingVoteCandidatesView() {
         />
       </div>
 
-      <div>
-        {/* TODO: Loading Indicator */}
-        <span className="block animate-spin text-center text-[6rem]">😇</span>
-        <p className="text-center text-lg">투표 목록을 불러오는 중입니당</p>
+      <div className="space-y-4">
+        <VscLoading className="mx-auto animate-spin fill-purple-500 text-[4rem]" />
+        <p className="text-center text-lg">투표 목록을 불러오는 중입니다</p>
       </div>
     </div>
   );
