@@ -23,7 +23,7 @@ export interface TUserDetail {
 }
 
 export interface TMyUserDetail extends TUserDetail {
-  fapSelectedCount: number;
+  selectedFAPCount: number;
   genderType: GenderType;
   subscribedCount: number;
   introduceContent: string;
