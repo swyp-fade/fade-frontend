@@ -34,6 +34,8 @@ export default function Page() {
           id="datePicker"
           type="date"
           value={format(selectedDate, 'yyyy-MM-dd')}
+          min={'2024-07-30'}
+          max={format(new Date(), 'yyyy-MM-dd')}
           onInput={(e) => {
             setSelectedDate(e.currentTarget.valueAsDate || selectedDate);
             setSearchMode('bidirection');
@@ -44,7 +46,7 @@ export default function Page() {
       </div>
 
       <Suspense fallback={<VoteHistoryGridSkeleton />}>
-        {searchMode === 'bidirection' && <p>기능 준비중입니다...</p>}
+        {searchMode === 'bidirection' && <p className="ml-5">특정 투표 일자를 보는 기능은 준비중입니다! 빠른 시일 안에 구현하겠습니다 :)</p>}
         {searchMode === 'onlyDown' && <VoteHistoryOnlyDownView isFadeInMode={isFadeInMode} selectedDateLabel={selectedDateLabel} />}
       </Suspense>
     </div>
