@@ -45,7 +45,7 @@ export const LastFAPModal = forwardRef<HTMLDivElement, DefaultModalProps<void, L
 
           <div className="mx-auto flex flex-row items-center gap-3">
             <div className="relative">
-              <Avatar src="/assets/test_fashion_image.jpg" size="40" />
+              <Avatar src={feed.profileImageURL} size="40" />
               <FaCrown className="absolute -left-3 -top-4 size-6 -rotate-[25deg] text-yellow-700" />
             </div>
 
