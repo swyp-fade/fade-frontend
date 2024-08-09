@@ -34,9 +34,10 @@ export function ReportButton({ feedId, onReportEnd }: ReportButtonProps) {
         onSuccess() {
           showToast({ type: 'basic', title: `${feedId}번 피드를 신고하였습니다.` });
 
-          queryClient.invalidateQueries({ queryKey: ['archiving'] });
-          queryClient.invalidateQueries({ queryKey: ['subscribe', 'list'] });
-          queryClient.invalidateQueries({ queryKey: ['user', 'me', 'voteHistory'] });
+          queryClient.invalidateQueries({ queryKey: ['archiving'], refetchType: 'all' });
+          queryClient.invalidateQueries({ queryKey: ['subscribe', 'list'], refetchType: 'all' });
+          queryClient.invalidateQueries({ queryKey: ['user', 'me', 'voteHistory'], refetchType: 'all' });
+          queryClient.invalidateQueries({ queryKey: ['user', 'me', 'bookmark'], refetchType: 'all' });
 
           onReportEnd && onReportEnd(reportResult);
         },
