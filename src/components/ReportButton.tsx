@@ -1,10 +1,11 @@
 import { useModalActions } from '@Hooks/modal';
+import { useToastActions } from '@Hooks/toast';
+import { queryClient } from '@Libs/queryclient';
 import { ReportBottomSheet, ReportResult } from '@Pages/Root/voteFAP/components/ReportBottomSheet';
+import { requestReportFeed } from '@Services/report';
+import { useMutation } from '@tanstack/react-query';
 import { MdReport } from 'react-icons/md';
 import { Button } from './ui/button';
-import { useMutation } from '@tanstack/react-query';
-import { useToastActions } from '@Hooks/toast';
-import { requestReportFeed } from '@Services/report';
 
 interface ReportButtonProps {
   feedId: number;
@@ -32,6 +33,11 @@ export function ReportButton({ feedId, onReportEnd }: ReportButtonProps) {
       {
         onSuccess() {
           showToast({ type: 'basic', title: `${feedId}번 피드를 신고하였습니다.` });
+
+          queryClient.invalidateQueries({ queryKey: ['archiving'] });
+          queryClient.invalidateQueries({ queryKey: ['subscribe', 'list'] });
+          queryClient.invalidateQueries({ queryKey: ['user', 'me', 'voteHistory'] });
+
           onReportEnd && onReportEnd(reportResult);
         },
         onError() {
