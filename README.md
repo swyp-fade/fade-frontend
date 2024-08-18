@@ -117,20 +117,20 @@ FADE 서비스에서 활용한 기술은 아래와 같습니다.
   
   <tr>
     <th align="left">Form Valid.</th>
-    <td><img src="https://github.com/sangpok/sangpok/assets/48979587/d80d8071-0794-45d6-afcd-ebac53205712" width="12px" /> React Hook Form</td>
-    <td><img src="https://github.com/sangpok/sangpok/assets/48979587/9578a608-4ed3-48da-83ea-7438d8af09c6" width="12px" /> Zod</td>
+    <td><img src="https://github.com/user-attachments/assets/75a6faa1-9c98-464b-a5c6-fb7f8132d95c" width="12px" /> React Hook Form</td>
+    <td><img src="https://github.com/user-attachments/assets/2a2ba71b-ccd4-4bfb-9e9b-10e79b03a3ad" width="12px" /> Zod</td>
     <td colspan="1" />
   </tr>
   
   <tr>
     <th align="left">Network Lib</th>
-    <td><img src="https://github.com/sangpok/sangpok/assets/48979587/d80d8071-0794-45d6-afcd-ebac53205712" width="12px" /> Axios</td>
+    <td><img src="https://github.com/user-attachments/assets/fce53b70-1423-4e06-90bd-7daa78c6acb0" width="12px" /> Axios</td>
     <td colspan="2" />
   </tr>
-  
+
   <tr>
     <th align="left">Mocking</th>
-    <td><img src="https://github.com/sangpok/sangpok/assets/48979587/d80d8071-0794-45d6-afcd-ebac53205712" width="12px" /> MSW</td>
+    <td><img src="https://github.com/user-attachments/assets/a64f7990-8da5-4f9a-b45e-84579ceadbe7" width="12px" /> MSW</td>
     <td colspan="2" />
   </tr>
   
@@ -175,7 +175,7 @@ FADE가 제공하고 있는 서비스 기능들에 대해서 소개합니다.
 
 | ![image](https://github.com/user-attachments/assets/1a0febbc-3532-46b4-8e02-dfc98f7054b3) | ![image](https://github.com/user-attachments/assets/7eca25ea-e4f4-49a4-af84-e4944366fc0c) | ![image](https://github.com/user-attachments/assets/71fcd706-affb-4194-a04d-340dca994818) |
 | --- | --- | --- |
-| 둘러보기 클릭 시 노출되는 모달 | _서비스 둘러보기 모드 시, 환경을 제어할 수 있는 테스트 버튼이 오버레이됩니다._ | _테스트 버튼_ |
+| - | _서비스 둘러보기 모드 시, 환경을 제어할 수 있는 테스트 버튼이 오버레이됩니다._ | - |
 
 ## 로그인 및 회원가입
 FADE 서비스에 로그인 및 회원가입할 수 있는 기능입니다.
@@ -184,7 +184,7 @@ FADE 서비스에 로그인 및 회원가입할 수 있는 기능입니다.
 | --- | --- | --- | --- |
 
 ### 회원가입 약관 동의
-FADE 서비스에 가입하기 위해서는 서비스 약관 목록, 개인정보 수집 및 이용 동의서, 서비스 약관 동의서에 동의해야 합니다.
+FADE 서비스에 가입하기 위해서는 서비스 약관 동의서, 개인정보 수집 및 이용 동의서, 만 14세 이상에 동의해야 합니다.
 
 ### FADE 계정 기입
 FADE 서비스에서 이용할 정보를 기입합니다.
@@ -555,11 +555,26 @@ Promise-based로 작성하여 Imperative하게 호출할 수 있습니다. 덕�
   </tr>
 </table>
 
+### 이미지 업로드 로직
+1. 최초 이미지 업로드 시 업로드 가이드 바텀 시트 노출
+2. 이미지 선택 시 파일 해싱값을 Presigned URL 반환해주는 API에 담아 보냄
+  2-1. 해당 파일 해싱값이 존재 시(중복된 파일일 시), Toast 호출
+  2-2. 미존재 시 S3 Presigned URL과 attachmentId 응답 후 3번 진행.
+3. 받은 Presigned URL에 업로드
+   3-1. 실패 시 Toast 호출
+
+<table>
+  <tr>
+    <th align="left">관련 PR</th>
+    <td>✨ 사진 업로드 API 연동 (https://github.com/swyp-fade/fade-frontend/pull/99)</td>
+  </tr>
+</table>
+
 ### 무한 스크롤
 서비스 내에서 무한 스크롤 위주로 동작하는 기능이 많아 이에 대한 훅을 작성하였습니다.
 
 #### useInfiniteObserver Custom Hook
-Web API인 MutationObserver와 IntersectionObserver를 활용하였습니다.
+Web API MutationObserver와 IntersectionObserver를 활용하였습니다.
 
 <table>
   <tr>
