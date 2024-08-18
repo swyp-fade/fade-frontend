@@ -390,6 +390,47 @@ FADE 서비스의 화면은 보다 높은 웹접근성과 생산성을 위해 Ra
 디자인 단계에서 공통 UI 컴포넌트를 정의하지 않고 디자인하였으나, 프론트엔드 단에서 자주 쓰이는 UI 컴포넌트를 공통 UI 컴포넌트으로 빼내 서비스 내 공통감과 생산성을 높였습니다. 아래 외에도 여러 UI 컴포넌트가 있으나, 가장 많이 쓰인 주요 UI 컴포넌트를 소개합니다.
 
 #### Button
+FADE에서 사용하는 Button 컴포넌트입니다. 다양한 스타일과 인터랙션을 지원하는 유연한 UI 요소입니다. forwardRef를 사용하여 외부에서 ref를 통해 버튼 요소에 직접 접근할 수 있게 합니다.
+
+| ![image](https://github.com/user-attachments/assets/a0d0ac2a-2fab-4754-a606-46fbcea1b951) |
+| --- |
+
+##### 주요 기능 및 특징
+- 다양한 스타일 옵션: TButton 타입을 통해 버튼의 변형(variants), 크기(size), 인터랙션(interactive) 설정 가능
+- 변형(variants): primary, secondary, white, destructive, ghost, outline
+- 크기(size): default, icon
+- 인터랙션(interactive): default, onlyScale, onlyColor
+- 접근성 고려: aria-disabled 속성 사용
+- 반응형 디자인: 터치 및 포인터 디바이스에 대한 최적화
+
+##### Props
+- variants: 버튼의 시각적 스타일 (기본값: 'primary')
+- size: 버튼의 크기 (기본값: 'default')
+- interactive: 버튼의 상호작용 방식 (기본값: 'default')
+- className: 추가적인 CSS 클래스
+- children: 버튼 내부 컨텐츠
+- 기타 HTML 버튼 요소의 속성들 (ButtonHTMLAttributes<HTMLButtonElement>)
+
+##### 클래스 설정
+- 기본 클래스: 모든 버튼에 공통 적용
+- variants 기반 클래스: 배경색, 텍스트 색상 등 스타일 변경
+- 상태 기반 클래스: interactive prop과 variants prop에 따른 상태별 스타일
+- 크기 기반 클래스: size prop에 따른 패딩 조정
+
+##### 접근성 고려사항
+- aria-disabled 속성을 통한 버튼 상태 전달
+- 디바이스 유형별 최적화된 상호작용
+- 비활성화 상태에 대한 시각적 피드백
+
+```typescript
+<Button variants="primary" size="default" interactive="default">
+  Click me
+</Button>
+
+<Button variants="outline" size="icon" interactive="onlyScale">
+  <MdChevronLeft />
+</Button>
+```
 
 <table>
   <tr>
@@ -399,6 +440,37 @@ FADE 서비스의 화면은 보다 높은 웹접근성과 생산성을 위해 Ra
 </table>
 
 #### Image
+이미지 로딩 상태 관리, 에러 처리, 반응형 이미지 지원 등 다양한 기능을 제공합니다.
+
+##### 주요 기능 및 특징
+- 상태 관리
+  - 로딩 중(isPending)과 에러(isError) 상태를 관리합니다.
+  - 각 상태에 따라 적절한 UI를 렌더링합니다.
+- 애니메이션 효과
+  - Framer Motion을 사용하여 이미지 로드 시 부드러운 페이드인 효과를 적용합니다.
+- 반응형 이미지
+  - createSrcSet 함수를 사용하여 로컬 이미지에 대한 srcset을 생성합니다.
+  - 원격 이미지의 경우 쿼리 파라미터를 사용하여 이미지 크기와 품질을 조정합니다.
+- 이미지 크기 조정
+  - 'cover', 'contain', 'fit' 옵션을 통해 이미지 크기 조정 방식을 제어합니다.
+- 드래그 방지
+  - PreventImageDragging 컴포넌트를 사용하여 이미지 드래그를 방지합니다.
+- 에러 처리
+  - 이미지 로드 실패 시 에러 아이콘을 표시합니다.
+- 로딩 인디케이터
+  - 이미지 로드 중 스피너를 표시합니다.
+
+##### Props
+- src: 이미지 소스 URL (필수)
+- className: 추가 CSS 클래스 (선택적)
+- alt: 이미지 대체 텍스트 (선택적)
+- size: 이미지 크기 조정 방식 ('cover' | 'contain' | 'fit', 기본값: 'cover')
+- local: 로컬 이미지 여부 (boolean, 기본값: false)
+- children: 추가 컨텐츠 (선택적)
+
+##### 이미지 최적화
+- 로컬 이미지: createSrcSet 함수로 srcset 생성
+- 원격 이미지: 쿼리 파라미터로 크기와 품질 조정 (예: ?w=720&q=10)
 
 <table>
   <tr>
@@ -415,15 +487,10 @@ FADE 서비스의 화면은 보다 높은 웹접근성과 생산성을 위해 Ra
 ### 크로스 브라우징
 보다 다양한 환경에서 의도한 UI가 표시될 수 있도록 크로스 브라우징을 구현하고자 했습니다.
 
-#### 포인터에 따른 Interaction 구분
-<table>
-  <tr>
-    <th align="left">관련 PR</th>
-    <td>📱 모바일 환경 터치 피드백 개선 (https://github.com/swyp-fade/fade-frontend/pull/91)</td>
-  </tr>
-</table>
-
 #### DPR 대응 이미지 적용
+레티나 디스플레이 등 고해상도 디바이스에 대응하기 위한 이미지를 적용하였습니다.
+
+![image](https://github.com/user-attachments/assets/6bc1caee-1d6b-49c5-a45b-afc12d818088)
 
 <table>
   <tr>
@@ -435,8 +502,26 @@ FADE 서비스의 화면은 보다 높은 웹접근성과 생산성을 위해 Ra
 ### 애니메이션
 모바일 디바이스 환경에서의 애니메이션에 대한 UX 경험이 이어질 수 있도록 부드러운 애니메이션을 구현하였습니다. Expo 타입의 모션감을 차용하였습니다.
 
+| ![GIF 2024-08-18 오후 9-08-48](https://github.com/user-attachments/assets/00e91dde-1e3b-4a01-bf52-c3275a9d36fe) |
+| --- |
+
+```typescript
+/** Motion Config */
+const transitionConfig: Transition = {
+  ease: [0.16, 1, 0.3, 1],
+  duration: 0.5,
+};
+```
+
 #### 화면 전환
 화면 로드 시 등장 애니메이션을 구현하였습니다.
+
+<table>
+  <tr>
+    <th align="left">관련 PR</th>
+    <td>💫 페이지 로드 트렌지션 추가 (https://github.com/swyp-fade/fade-frontend/pull/214)</td>
+  </tr>
+</table>
 
 #### 마이크로인터렉션
 마이크로인터렉션을 통해 서비스의 완성도를 높였습니다.
@@ -475,6 +560,21 @@ Lazy Import 및 Data Pending 상태일 때 Skeleton UI를 적용하여 사용자
 #### Fake Progressbar
 네트워크 딜레이에 대해 진행되고 있다는 안정감을 위해 시각적 진행도를 표시했습니다.
 
+```typescript
+const [fakeProgress, setFakeProgress] = useState(10);
+
+useEffect(() => {
+  const randomInterval = 500 + Math.floor(Math.random() * 500);
+
+  const timerId = setInterval(() => {
+    const randomProgressValue = Math.floor(Math.random() * 25);
+    setFakeProgress((prevValue) => prevValue + randomProgressValue);
+  }, randomInterval);
+
+  return () => clearInterval(timerId);
+}, []);
+```
+
 ### 모달
 FADE 서비스 내에서 사용하고 있는 모달 종류는 Full Screen Dialog, Bottom Sheet, Component Modal, Confirm입니다. ModalProvider에서 모달 종류를 받아 AnimatedDialog에 넘겨주며, AnimatedDialog는 종류에 따라 적절하게 렌더링합니다.
 
@@ -495,6 +595,20 @@ Promise-based로 작성하여 Imperative하게 호출할 수 있습니다. 덕�
 
 #### 애니메이션
 모달 종류에 따라 적용할 수 있는 애니메이션을 지정하였습니다.
+
+| slideUp | slideInFromRight | showAtCenter |
+| --- | --- | --- |
+| 이미지 | 이미지 | 이미지 |
+
+```typescript
+export type AnimateType = 'slideUp' | 'slideInFromRight' | 'showAtCenter';
+
+const variantsMap: Record<AnimateType, Variants> = {
+  slideUp: slideUpVariants,
+  slideInFromRight: slideInFromRightVariants,
+  showAtCenter: showAtCenterVariants,
+};
+```
 
 ## 기능 관련 기술 포인트
 기능과 관련된 기술 포인트를 소개합니다.
