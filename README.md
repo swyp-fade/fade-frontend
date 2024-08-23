@@ -209,7 +209,39 @@ FADE 서비스에서 이용할 정보를 기입합니다.
 <table>
   <tr>
     <th align="left">관련 PR</th>
+    <td>✨ 투표 탭 기본 컴포넌트 구현 (https://github.com/swyp-fade/fade-frontend/pull/51)</td>
+  </tr>
+
+  <tr>
+    <td></td>
     <td>✨ 투표 탭 투표 기능 구현 (https://github.com/swyp-fade/fade-frontend/pull/71)</td>
+  </tr>
+  
+  <tr>
+    <td></td>
+    <td>✨ 투표 정보 Store 작성 (https://github.com/swyp-fade/fade-frontend/pull/77)</td>
+  </tr>
+  
+  <tr>
+    <td></td>
+    <td>✨ 투표 선택지 목록 조회 API 연동 (https://github.com/swyp-fade/fade-frontend/pull/101)</td>
+  </tr>
+  
+  <tr>
+    <td></td>
+    <td>✨ 변경된 Auth API 반영 & 투표 API 연동 & 구독 API 연동 & 북마크 API 연동 (https://github.com/swyp-fade/fade-frontend/pull/139)</td>
+  </tr>
+  </tr>
+  
+  <tr>
+    <td></td>
+    <td>🐛 투표 선택지 커버 FADE OUT 블링킹 이슈 (https://github.com/swyp-fade/fade-frontend/pull/180)</td>
+  </tr>
+  </tr>
+  
+  <tr>
+    <td></td>
+    <td>🐛 투표 후보군 목록 미존재 시 토스트 이슈 & S3 이미지 쿼리 파람 추가 (https://github.com/swyp-fade/fade-frontend/pull/248)</td>
   </tr>
 </table>
 
@@ -242,6 +274,13 @@ FADE 서비스에서 이용할 정보를 기입합니다.
 | ![image](https://github.com/user-attachments/assets/aed75950-bd94-491c-b937-84d17cea5569) | ![image](https://github.com/user-attachments/assets/a6b4018c-f399-41dd-9123-b1d8a7be4075) |
 | --- | --- |
 
+<table>
+  <tr>
+    <th align="left">관련 PR</th>
+    <td>✨ 신고 Bottom Sheet 구현 (https://github.com/swyp-fade/fade-frontend/pull/47)</td>
+  </tr>
+</table>
+
 ### 투표 결과 전송
 - 사용자가 투표한 결과를 서버에 전송합니다.
 
@@ -251,14 +290,44 @@ FA:P로 선정된 패션 사진들이나 FADE 서비스 내 업로드된 모든 
 | ![image](https://github.com/user-attachments/assets/b541f694-e732-417f-8884-9328d3bca40c) | ![image](https://github.com/user-attachments/assets/d0f7c99d-2bae-461f-a8c2-31885ef9691e) | ![image](https://github.com/user-attachments/assets/f0c72a6d-dd7a-41f6-b1d7-0d20f0ddbf1c) | ![image](https://github.com/user-attachments/assets/bb778060-e216-4c9c-9d89-1653b0977c47) | ![image](https://github.com/user-attachments/assets/456a77ec-d609-4db1-981a-845d518ed4fd) |
 | --- | --- | --- | --- | --- |
 
+<table>
+  <tr>
+    <th align="left">관련 PR</th>
+    <td>✨ 아카이브 탭 레이아웃 구현 (https://github.com/swyp-fade/fade-frontend/pull/103)</td>
+  </tr>
+</table>
+
 ### FA:P 아카이브
 월별로 FA:P에 선정된 패션 사진들을 조회할 수 있습니다.
 
 | ![image](https://github.com/user-attachments/assets/1195b26d-ce5b-4e6b-99f3-9cbfce9bfccc) | ![image](https://github.com/user-attachments/assets/96f8d0cd-ca48-489e-9d94-3f17e2561d46) |
 | --- | --- |
 
+<table>
+  <tr>
+    <th align="left">관련 PR</th>
+    <td>✨ FA:P 아카이브 조회 API 연동 (https://github.com/swyp-fade/fade-frontend/pull/141)</td>
+  </tr>
+  
+  <tr>
+    <td></td>
+    <td>🐛 FA:P 아카이브 달력 말일 오작동 이슈 (https://github.com/swyp-fade/fade-frontend/pull/178)</td>
+  </tr>
+</table>
+
 #### 어제의 FA:P
 오늘 하루 최초 아카이브 탭에 접속 시 어제 선정된 FA:P를 소개합니다.
+
+<table>
+  <tr>
+    <th align="left">관련 PR</th>
+    <td>✨ 어제의 FA:P 모달 구현 (https://github.com/swyp-fade/fade-frontend/pull/132)</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>✨ 어제의 FA:P 동작 구현 (https://github.com/swyp-fade/fade-frontend/pull/222)</td>
+  </tr>
+</table>
 
 ### 패션 전체보기
 FADE 서비스 내에 업로드된 모든 패션 사진을 조회할 수 있습니다.
@@ -266,11 +335,35 @@ FADE 서비스 내에 업로드된 모든 패션 사진을 조회할 수 있습�
 #### 필터
 성별 또는 스타일로 패션 사진을 필터링할 수 있습니다.
 
+<table>
+  <tr>
+    <th align="left">관련 PR</th>
+    <td>✨ 패션 전체보기 필터 Dialog 작성 (https://github.com/swyp-fade/fade-frontend/pull/114)</td>
+  </tr>
+  
+  <tr>
+    <td></td>
+    <td>✨ 패션 전체보기 조회 API 연동 (https://github.com/swyp-fade/fade-frontend/pull/143)</td>
+  </tr>
+</table>
+
 ### 계정 검색
 FADE 서비스에 가입한 페이더들을 계정명으로 검색할 수 있습니다. 선택 시 유저 피드 페이지로 이동합니다.
 
 | ![image](https://github.com/user-attachments/assets/71fdd1d1-c33a-4b50-8b3d-ec550eb1416a) |
 | --- |
+
+<table>
+  <tr>
+    <th align="left">관련 PR</th>
+    <td>✨ 계정 검색 UI 구현 (https://github.com/swyp-fade/fade-frontend/pull/116)</td>
+  </tr>
+  
+  <tr>
+    <td></td>
+    <td>✨ 계정 검색 > 최근 검색 로직 수정 (https://github.com/swyp-fade/fade-frontend/pull/207)</td>
+  </tr>
+</table>
 
 #### 최근 검색
 최근에 검색한 페이더 목록을 확인할 수 있습니다.
@@ -286,6 +379,11 @@ FADE 서비스에 가입한 페이더들을 계정명으로 검색할 수 있습
     <th align="left">관련 PR</th>
     <td>✨ 사진 업로드 화면(UI) 작성 (https://github.com/swyp-fade/fade-frontend/pull/33)</td>
   </tr>
+  
+  <tr>
+    <td></td>
+    <td>✨ 사진 업로드 API 연동 (https://github.com/swyp-fade/fade-frontend/pull/99)</td>
+  </tr>
 </table>
 
 ### 이미지 업로드
@@ -297,14 +395,35 @@ FADE 서비스에 가입한 페이더들을 계정명으로 검색할 수 있습
 ### 착장 정보 기입
 업로드할 패션 사진에 대한 착장 정보를 기입할 수 있습니다.
 
+<table>
+  <tr>
+    <th align="left">관련 PR</th>
+    <td>✨ 착장 정보 필드 디자인 변경 대응 (https://github.com/swyp-fade/fade-frontend/pull/55)</td>
+  </tr>
+</table>
+
 ## 구독
 본인이 구독한 페이더 목록을 확인하거나 그들의 피드를 최신순으로 모아볼 수 있습니다.
 
 | ![image](https://github.com/user-attachments/assets/73ee1e99-59be-4c35-8098-8d3aa7c16422) |  ![image](https://github.com/user-attachments/assets/fa8a3920-8e80-408f-ae48-2e40f4c34de8) |
 | --- | --- |
 
+<table>
+  <tr>
+    <th align="left">관련 PR</th>
+    <td>✨ 구독 탭 레이아웃 화면 작성 (https://github.com/swyp-fade/fade-frontend/pull/105)</td>
+  </tr>
+</table>
+
 ### 구독 목록
 본인이 구독한 페이더 목록을 확인할 수 있습니다.
+
+<table>
+  <tr>
+    <th align="left">관련 PR</th>
+    <td>✨ 구독 목록 UI 구현 (https://github.com/swyp-fade/fade-frontend/pull/118)</td>
+  </tr>
+</table>
 
 ### 구독 피드
 본인이 구독한 페이더들의 피드들을 최신순으로 모아볼 수 있습니다.
@@ -314,6 +433,13 @@ FADE 서비스에 가입한 페이더들을 계정명으로 검색할 수 있습
 
 | ![image](https://github.com/user-attachments/assets/59549871-0198-4f03-9b37-27d015b8a142) | ![image](https://github.com/user-attachments/assets/8f8955b9-e0f4-4d9d-9bb6-10b87fae61d0) | ![image](https://github.com/user-attachments/assets/af684086-2e1e-42fd-a596-8927ab3d379b) | ![image](https://github.com/user-attachments/assets/a7807041-c120-470c-a513-2af7e4b973ac) | ![image](https://github.com/user-attachments/assets/368a3fec-fc9f-49d8-b0f0-6b7b6a3670c4) | ![image](https://github.com/user-attachments/assets/76f10d53-4ebc-4161-9e40-a814716199f5) |
 | --- | --- | --- | --- | --- | --- |
+
+<table>
+  <tr>
+    <th align="left">관련 PR</th>
+    <td>✨ 마이페이지/계정 관리/회원 탈퇴 화면 작성 (https://github.com/swyp-fade/fade-frontend/pull/110)</td>
+  </tr>
+</table>
 
 ### 계정 관리
 본인에 대한 정보를 수정하거나 FADE 서비스에서 탈퇴할 수 있습니다.
@@ -351,6 +477,18 @@ FADE IN 갯수, 북마크 갯수, 신고 횟수를 확인할 수 있습니다.
 ### 투표 내역
 그동안 투표한 내역을 확인할 수 있고, FADE IN한 패션 사진만 확인할 수도 있습니다.
 
+<table>
+  <tr>
+    <th align="left">관련 PR</th>
+    <td>✨ 투표 내역 화면 작성 (https://github.com/swyp-fade/fade-frontend/pull/129)</td>
+  </tr>
+  
+  <tr>
+    <td></td>
+    <td>✨ 투표 내역 API 연동 (https://github.com/swyp-fade/fade-frontend/pull/154)</td>
+  </tr>
+</table>
+
 ### 북마크
 북마크한 패션 사진들을 확인할 수 있습니다.
 
@@ -365,6 +503,23 @@ FADE 서비스의 정체성 유지하고 유의미한 트렌드 데이터를 수
 
 | ![image](https://github.com/user-attachments/assets/53b0bfad-8ec3-4205-8af1-ded239495c61) |
 | --- |
+
+<table>
+  <tr>
+    <th align="left">관련 PR</th>
+    <td>✨ 서비스 lock 화면 구현 (https://github.com/swyp-fade/fade-frontend/pull/134)</td>
+  </tr>
+  
+  <tr>
+    <td></td>
+    <td>✨ Tooltip 위치 조정 & 투표 미진행 시 서비스 Lock 기능 구현 (https://github.com/swyp-fade/fade-frontend/pull/145)</td>
+  </tr>
+  
+  <tr>
+    <td></td>
+    <td>🐛 서비스 잠금 화면 Lock UI 수정 (https://github.com/swyp-fade/fade-frontend/pull/244)</td>
+  </tr>
+</table>
 
 ## 유저 피드 페이지
 해당 페이더에 대한 정보와 올린 피드를 확인할 수 있습니다.
