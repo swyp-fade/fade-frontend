@@ -3,9 +3,9 @@ import { cn } from '@Utils/index';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-const onboardingImage1 = '/assets/onboarding_image1.png';
-const onboardingImage2 = '/assets/onboarding_image2.png';
-const onboardingImage3 = '/assets/onboarding_image3.png';
+const onboardingImage1 = '/assets/onboarding_image1.webp';
+const onboardingImage2 = '/assets/onboarding_image2.webp';
+const onboardingImage3 = '/assets/onboarding_image3.webp';
 
 const onboardingImages = [onboardingImage1, onboardingImage2, onboardingImage3];
 
