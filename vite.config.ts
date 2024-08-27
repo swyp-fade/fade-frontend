@@ -9,16 +9,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks(id: string) {
-          if (id.includes('lottie')) {
-            return '@lottie-vendor';
-          }
-          if (id.includes('axios') || id.includes('date-fns') || id.includes('framer-motion')) {
-            return '@lib-vendor';
-          }
-          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
-            return '@react-vendor';
-          }
+        manualChunks: {
+          '@react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          '@lib-vendor': ['axios', 'date-fns', 'framer-motion'],
+          '@lottie-vendor': ['react-lottie-player'],
         },
       },
     },
