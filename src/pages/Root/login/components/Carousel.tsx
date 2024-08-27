@@ -47,7 +47,7 @@ export function Carousel() {
 function DissolveImages({ currentImageId }: { currentImageId: number }) {
   return onboardingImages.map((image, index) => (
     <motion.div key={image} initial={{ opacity: 0 }} animate={{ opacity: index === currentImageId ? 1 : 0 }} className={`absolute inset-0`}>
-      <Image src={image} local />
+      <Image src={image} alt={`onboarding image ${index + 1}`} local />
     </motion.div>
   ));
 }
