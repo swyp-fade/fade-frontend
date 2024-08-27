@@ -54,13 +54,12 @@ function DissolveImages({ currentImageId }: { currentImageId: number }) {
 
 function NavButtons({ currentImageId, onNavClicked }: { currentImageId: number; onNavClicked: (index: number) => void }) {
   return (
-    <ul className="flex flex-row justify-center gap-3">
+    <ul className="flex flex-row justify-center">
       {onboardingImages.map((_, index) => (
         <li key={`nav-${index}`}>
-          <button
-            className={cn('size-2 rounded-full bg-gray-200 transition-colors', { ['bg-purple-500']: index === currentImageId })}
-            onClick={() => onNavClicked(index)}
-          />
+          <button className="grid size-6 place-items-center" aria-label={`Carousel Nav Button${index + 1}`} onClick={() => onNavClicked(index)}>
+            <span className={cn('size-2 rounded-full bg-gray-200 transition-colors', { ['bg-purple-500']: index === currentImageId })} />
+          </button>
         </li>
       ))}
     </ul>
