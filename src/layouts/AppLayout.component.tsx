@@ -27,7 +27,7 @@ function ServiceFeatureLockHandler() {
   const location = useLocation();
 
   const hasVotedToday = useVotingStore((state) => state.hasVotedToday);
-  const isCurrentVoteFAPPath = location.pathname === '/vote-fap';
+  const isCurrentVoteFAPPath = location.pathname === '/vote/fap';
   const shouldShowLockUI = !hasVotedToday && !isCurrentVoteFAPPath;
 
   return (
