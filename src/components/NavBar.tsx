@@ -18,7 +18,7 @@ const navList: NavItem[] = [
     IconComponent: MdOutlineGridOn,
   },
   {
-    link: '/vote/fap',
+    link: '/vote',
     IconComponent: MdHowToVote,
   },
   {
