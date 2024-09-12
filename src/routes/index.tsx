@@ -31,7 +31,7 @@ const LoginPage = lazy(() => import('@Pages/Root/login/page').then((module) => (
 const SignUpPage = lazy(() => import('@Pages/Root/signup/page').then((module) => ({ default: module.default })));
 const ArchivePage = lazy(() => import('@Pages/Root/archive/page').then((module) => ({ default: module.default })));
 const VoteFAPPage = lazy(() => import('@Pages/Root/vote/fap/page').then((module) => ({ default: module.default })));
-const VoteBuyOrNotPage = lazy(() => import('@Pages/Root/vote/buyornot/page.skeleton').then((module) => ({ default: module.default })));
+const VoteBuyOrNotPage = lazy(() => import('@Pages/Root/vote/buyornot/page').then((module) => ({ default: module.default })));
 const SubscribePage = lazy(() => import('@Pages/Root/subscribe/page').then((module) => ({ default: module.default })));
 const SubscribeListPage = lazy(() => import('@Pages/Root/subscribe/list/page').then((module) => ({ default: module.default })));
 const MyPage = lazy(() => import('@Pages/Root/mypage/page').then((module) => ({ default: module.default })));
@@ -72,6 +72,7 @@ export const routesFromElements = createRoutesFromElements(
         />
         <Route path="vote">
           <Route
+            index
             path="fap"
             element={
               <Suspense fallback={<VoteFAPSkeletonUI />}>
