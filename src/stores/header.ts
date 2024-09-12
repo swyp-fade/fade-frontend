@@ -4,11 +4,11 @@ import { create } from 'zustand';
 type SlotType = () => ReactNode;
 
 export type HeaderStore = {
-  title: string | undefined;
+  title: string | SlotType | undefined;
   leftSlot: SlotType | undefined;
   rightSlot: SlotType | undefined;
 
-  setTitle: (title: string | undefined) => void;
+  setTitle: (title: string | SlotType | undefined) => void;
   setLeftSlot: (slot: SlotType | undefined) => void;
   setRightSlot: (slot: SlotType | undefined) => void;
 };
