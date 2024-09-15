@@ -18,7 +18,7 @@ const navList: NavItem[] = [
     IconComponent: MdOutlineGridOn,
   },
   {
-    link: '/vote',
+    link: '/vote/fap',
     IconComponent: MdHowToVote,
   },
   {
@@ -39,7 +39,7 @@ export function NavBar() {
   const location = useLocation();
 
   const hasVotedToday = useVotingStore((state) => state.hasVotedToday);
-  const isVoteFAPPath = location.pathname === '/vote/fap';
+  const isVoteFAPPath = location.pathname === '/vote';
 
   const createNavItem = (navItem: NavItem) => (
     <NavItem
