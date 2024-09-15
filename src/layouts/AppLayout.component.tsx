@@ -16,15 +16,13 @@ export default function AppLayoutComponent() {
         <Header />
       </FlexibleLayout.Header>
 
-      <div className={cn('flex h-full flex-col', { ['-z-10']: isSubSlotVisible })}>
-        <FlexibleLayout.Content>
-          <ServiceFeatureLockHandler />
-        </FlexibleLayout.Content>
+      <FlexibleLayout.Content className={cn({ ['-z-10']: isSubSlotVisible })}>
+        <ServiceFeatureLockHandler />
+      </FlexibleLayout.Content>
 
-        <FlexibleLayout.Footer>
-          <NavBar />
-        </FlexibleLayout.Footer>
-      </div>
+      <FlexibleLayout.Footer>
+        <NavBar />
+      </FlexibleLayout.Footer>
     </FlexibleLayout.Root>
   );
 }
