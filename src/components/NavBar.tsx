@@ -45,7 +45,7 @@ export function NavBar() {
     <NavItem
       key={navItem.link}
       {...navItem}
-      isActive={navItem.link ? location.pathname.startsWith(navItem.link) : false}
+      isActive={navItem.link ? location.pathname.startsWith(`/${navItem.link.split('/')[1]}`) : false}
       hasVotedToday={hasVotedToday}
       isVoteFAPPath={isVoteFAPPath}
     />
