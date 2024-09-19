@@ -25,16 +25,16 @@ export function InputImageFile(props: { value: number; onChange: (value: number)
   };
 
   const handleSelectImageClick = async () => {
-    if (hasNoImageData) {
-      await showUploadGuide();
-    }
+    // if (hasNoImageData) {
+    //   await showUploadGuide();
+    // }
 
     selectImageFile();
   };
 
-  const showUploadGuide = async () => {
-    return showModal({ type: 'bottomSheet', Component: UploadGuideBottomSheet });
-  };
+  // const showUploadGuide = async () => {
+  //   return showModal({ type: 'bottomSheet', Component: UploadGuideBottomSheet });
+  // };
 
   /**@param imageData Base64 이미지 데이터 */
   const handleUploadStart = (imageData: string) => {

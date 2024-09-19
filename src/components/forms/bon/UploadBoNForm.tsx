@@ -83,9 +83,6 @@ export function UploadBoNForm({ onValueChanged, onSubmitSuccess }: UploadBoNProp
             <TitleField control={form.control} />
             <ContentsField control={form.control} />
             <ImageField control={form.control} />
-            {/* <ImageField control={form.control} />
-            <StylesField selectedStyles={styleIds} control={form.control} />
-            <OutfitField control={form.control} /> */}
           </div>
 
           {/* 원래 isPending은 없어도 되는데 자세한건 Button 컴포넌트 주석 참고 */}

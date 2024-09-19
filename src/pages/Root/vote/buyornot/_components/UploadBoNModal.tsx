@@ -31,7 +31,7 @@ export function UploadBoNModal({ setCloseHandler, onClose, onSubmitSuccess }: De
         </header>
       </FlexibleLayout.Header>
 
-      <FlexibleLayout.Content className="space-y-2 bg-gray-100">
+      <FlexibleLayout.Content className="space-y-2 bg-white p-4">
         <UploadBoNForm onValueChanged={(value) => (dirtyRef.current = value)} onSubmitSuccess={onSubmitSuccess} />
       </FlexibleLayout.Content>
     </FlexibleLayout.Root>

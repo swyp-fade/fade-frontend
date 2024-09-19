@@ -16,7 +16,7 @@ export function ContentsField({ control }: ContentsFieldProps) {
       render={({ field }) => (
         <FormItem className="space-y-1">
           <FormControl>
-            <textarea placeholder="설명을 입력해주세요 (최대 200자)" {...field} className="peer" maxLength={200} />
+            <textarea placeholder="설명을 입력해주세요 (최대 200자)" {...field} className="peer h-[10.3125rem] w-full resize-none" maxLength={200} />
           </FormControl>
         </FormItem>
       )}
