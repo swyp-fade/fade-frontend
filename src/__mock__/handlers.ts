@@ -445,6 +445,18 @@ export const handlers = [
     );
   }),
 
+  http.delete(`${BASE_URL}/bon/:bonId`, async ({ params }) => {
+    await delay(NETWORK_DELAY);
+    const { bonId } = params;
+
+    return HttpResponse.json(
+      {
+        bonId,
+      },
+      { status: HttpStatusCode.Ok }
+    );
+  }),
+
   http.get(`${BASE_URL}/bon/:bonId/comment`, async ({ request }) => {
     await delay(NETWORK_DELAY);
 
