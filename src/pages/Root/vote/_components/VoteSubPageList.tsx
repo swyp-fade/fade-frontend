@@ -34,7 +34,7 @@ export function VoteSubPageList() {
 
   return (
     <>
-      <Button variants="ghost" interactive="onlyScale" onClick={handleClick}>
+      <Button variants="ghost" interactive="onlyScale" className="p-0 text-lg" onClick={handleClick}>
         {currentTitle}
         <MdChevronRight
           className={cn('rotate-90 transition-transform', {
@@ -44,7 +44,7 @@ export function VoteSubPageList() {
       </Button>
 
       {shouldShowBoNCoachMarks && (
-        <div className="absolute left-1/2 min-w-fit -translate-x-1/2">
+        <div className="absolute left-1/2 top-full min-w-fit -translate-x-1/2">
           <motion.div initial={{ opacity: 0, y: '24px' }} animate={{ opacity: 1, y: 0 }}>
             <BoNCoachMarks />
           </motion.div>

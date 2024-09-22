@@ -16,7 +16,7 @@ export function TitleField({ control }: TitleFieldProps) {
       render={({ field }) => (
         <FormItem className="space-y-1">
           <FormControl>
-            <input placeholder="제목 입력(최대 10자)" {...field} className="peer w-full text-h4 font-semibold" maxLength={10} />
+            <input placeholder="제목 입력(최대 10자)" {...field} className="peer w-full text-h5 font-semibold" maxLength={10} />
           </FormControl>
         </FormItem>
       )}

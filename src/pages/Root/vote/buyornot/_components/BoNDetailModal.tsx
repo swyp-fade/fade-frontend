@@ -38,7 +38,7 @@ export function BoNDetailModal({ bonId, onClose }: BoNDetailModalProps) {
       <FlexibleLayout.Header>
         <header className="relative flex items-center justify-center border-b border-b-gray-200 py-2">
           <BackButton onClick={() => onClose()} />
-          <span className="mx-auto text-h4 font-semibold">투표 상세</span>
+          <span className="mx-auto text-h5 font-semibold">투표 상세</span>
         </header>
       </FlexibleLayout.Header>
 
