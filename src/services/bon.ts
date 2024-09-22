@@ -70,3 +70,10 @@ type DeleteBoNResponse = { bonId: number };
 export async function requestDeleteBoN({ bonId }: DeleteBoNPayload) {
   return await axios.delete<DeleteBoNResponse>(`/bon/${bonId}`);
 }
+
+type DeleteBoNCommentPayload = { bonId: number; commentId: number };
+type DeleteBoNCommentResponse = { commentId: number };
+
+export async function requestDeleteBoNComment({ bonId, commentId }: DeleteBoNCommentPayload) {
+  return await axios.delete<DeleteBoNCommentResponse>(`/bon/${bonId}/comment/${commentId}`);
+}
