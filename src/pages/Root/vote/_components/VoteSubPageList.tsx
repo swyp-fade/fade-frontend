@@ -34,7 +34,7 @@ export function VoteSubPageList() {
 
   return (
     <>
-      <Button variants="ghost" interactive="onlyScale" onClick={handleClick}>
+      <Button variants="ghost" interactive="onlyScale" className="p-0 text-lg" onClick={handleClick}>
         {currentTitle}
         <MdChevronRight
           className={cn('rotate-90 transition-transform', {

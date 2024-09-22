@@ -19,7 +19,7 @@ export function Header() {
 
       <header className="relative bg-white py-2">
         {leftSlot && <div className="absolute left-3 top-1/2 -translate-y-1/2">{leftSlot()}</div>}
-        {isTitleString && <p className="text-center text-2xl font-semibold">{title}</p>}
+        {isTitleString && <p className="text-center text-lg font-semibold">{title}</p>}
         {isTitleSlot && <div className="mx-auto w-fit">{title()}</div>}
         {rightSlot && <div className="absolute right-3 top-1/2 -translate-y-1/2">{rightSlot()}</div>}
 
