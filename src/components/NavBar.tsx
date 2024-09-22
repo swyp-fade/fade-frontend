@@ -18,7 +18,7 @@ const navList: NavItem[] = [
     IconComponent: MdOutlineGridOn,
   },
   {
-    link: '/vote-fap',
+    link: '/vote/fap',
     IconComponent: MdHowToVote,
   },
   {
@@ -39,13 +39,13 @@ export function NavBar() {
   const location = useLocation();
 
   const hasVotedToday = useVotingStore((state) => state.hasVotedToday);
-  const isVoteFAPPath = location.pathname === '/vote-fap';
+  const isVoteFAPPath = location.pathname === '/vote';
 
   const createNavItem = (navItem: NavItem) => (
     <NavItem
       key={navItem.link}
       {...navItem}
-      isActive={navItem.link ? location.pathname.startsWith(navItem.link) : false}
+      isActive={navItem.link ? location.pathname.startsWith(`/${navItem.link.split('/')[1]}`) : false}
       hasVotedToday={hasVotedToday}
       isVoteFAPPath={isVoteFAPPath}
     />
@@ -63,7 +63,7 @@ type NavItemProps = { isActive: boolean; hasVotedToday: boolean; isVoteFAPPath: 
 function NavItem({ link, IconComponent, isActive, hasVotedToday, isVoteFAPPath }: NavItemProps) {
   const navigate = useNavigate();
 
-  const shouldShowTooltip = !hasVotedToday && link === '/vote-fap' && !isVoteFAPPath;
+  const shouldShowTooltip = !hasVotedToday && link === '/vote/fap' && !isVoteFAPPath;
 
   const buttonClassName = cn('block h-full w-full py-5 group', {
     ['text-purple-700']: isActive,
