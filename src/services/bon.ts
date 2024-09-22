@@ -63,3 +63,10 @@ export async function requestLikeBoNComment({ bonId, commentId, doesLike }: Like
 
   return await axios.delete<LikeBoNCommentResponse>(`/bon/${bonId}/comment/${commentId}`);
 }
+
+type DeleteBoNPayload = { bonId: number };
+type DeleteBoNResponse = { bonId: number };
+
+export async function requestDeleteBoN({ bonId }: DeleteBoNPayload) {
+  return await axios.delete<DeleteBoNResponse>(`/bon/${bonId}`);
+}
