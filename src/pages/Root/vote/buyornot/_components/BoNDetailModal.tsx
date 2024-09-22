@@ -1,20 +1,22 @@
 import { SpinLoading } from '@Components/SpinLoading';
 import { BackButton, Button } from '@Components/ui/button';
 import { Image } from '@Components/ui/image';
+import { useConfirm } from '@Hooks/modal';
+import { useToastActions } from '@Hooks/toast';
 import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { queryClient } from '@Libs/queryclient';
-import { requestAddBoNComment, requestGetBoNComment, requestGetBoNDetail, requestLikeBoNComment, requestVoteBoN } from '@Services/bon';
+import { requestAddBoNComment, requestDeleteBoN, requestGetBoNComment, requestGetBoNDetail, requestLikeBoNComment, requestVoteBoN } from '@Services/bon';
 import { DefaultModalProps } from '@Stores/modal';
 import { InfiniteData, useMutation, useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { BoNVotedValue, TBoNComment, TBoNDetail } from '@Types/model';
 import { cn } from '@Utils/index';
-import { AxiosResponse } from 'axios';
+import { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { motion } from 'framer-motion';
+import { produce, WritableDraft } from 'immer';
 import { ComponentProps, FormEvent, Suspense, useState } from 'react';
-import { MdCheck } from 'react-icons/md';
-import { produce } from 'immer';
-import { VscHeart, VscHeartFilled } from 'react-icons/vsc';
+import { MdCheck, MdDelete } from 'react-icons/md';
+import { VscHeart, VscHeartFilled, VscLoading } from 'react-icons/vsc';
 
 interface TBoNDetailModal {
   bonId: number;
@@ -34,7 +36,7 @@ export function BoNDetailModal({ bonId, onClose }: BoNDetailModalProps) {
 
       <Suspense fallback={<>로딩중 ...</>}>
         <FlexibleLayout.Content className="space-y-2 bg-gray-100">
-          <BoNContent bonId={bonId} />
+          <BoNContent bonId={bonId} onDelete={onClose} />
           <BestCommentList bonId={bonId} />
           <AllCommentList bonId={bonId} />
         </FlexibleLayout.Content>
@@ -67,8 +69,6 @@ function CommentBox({ bonId }: CommentBoxProps) {
     mutationKey: ['addBoNComment'],
     mutationFn: requestAddBoNComment,
     onMutate() {
-      const bonCommentRaw = queryClient.getQueryData<InfiniteData<AxiosResponse<{ comments: TBoNComment[] }>>>(['bon', 'detail', bonId, 'comment', 'default'])!;
-
       const newBoNComment: TBoNComment = {
         anonName: '-',
         contents,
@@ -82,21 +82,29 @@ function CommentBox({ bonId }: CommentBoxProps) {
       };
 
       /** 댓글 Optimistic Update */
-      queryClient.setQueryData<InfiniteData<AxiosResponse<{ comments: TBoNComment[] }>>>(['bon', 'detail', bonId, 'comment', 'default'], {
-        ...bonCommentRaw,
-        pages: [{ data: { comments: [{ ...newBoNComment }] }, status: 200, statusText: 'OK', headers: {}, config: {} }, ...bonCommentRaw.pages],
-      });
+      queryClient.setQueryData<InfiniteData<AxiosResponse<{ comments: TBoNComment[] }>>>(['bon', 'detail', bonId, 'comment', 'default'], (oldComments) =>
+        produce(oldComments, (draft) => {
+          if (draft) {
+            draft.pages.unshift({
+              data: { comments: [newBoNComment] },
+              status: 200,
+              statusText: 'OK',
+              headers: {},
+              config: {} as WritableDraft<InternalAxiosRequestConfig<unknown>>,
+            });
+          }
+        })
+      );
 
       /** 본문 댓글 수 Optimistic Update */
-      const bonDetailRaw = queryClient.getQueryData<AxiosResponse<TBoNDetail>>(['bon', 'detail', bonId])!;
-      queryClient.setQueryData<AxiosResponse<TBoNDetail>>(['bon', 'detail', bonId], {
-        ...bonDetailRaw,
-        data: {
-          ...bonDetailRaw.data,
-          commentCount: bonDetailRaw.data.commentCount + 1,
-          hasCommented: true,
-        },
-      });
+      queryClient.setQueryData<AxiosResponse<TBoNDetail>>(['bon', 'detail', bonId], (oldDetail) =>
+        produce(oldDetail, (draft) => {
+          if (draft?.data) {
+            draft.data.commentCount += 1;
+            draft.data.hasCommented = true;
+          }
+        })
+      );
     },
   });
 
@@ -158,11 +166,12 @@ function CommentSubmitButton({ className, disabled, ...props }: CommentSubmitPro
 
 interface TBoNContent {
   bonId: number;
+  onDelete: () => void;
 }
 
 type BoNContentProps = TBoNContent;
 
-function BoNContent({ bonId }: BoNContentProps) {
+function BoNContent({ bonId, onDelete }: BoNContentProps) {
   const {
     data: {
       data: {
@@ -185,7 +194,10 @@ function BoNContent({ bonId }: BoNContentProps) {
   return (
     <div className="space-y-3 bg-white p-5">
       <div className="space-y-2">
-        <p className="text-xl font-semibold">{title}</p>
+        <div className="flex flex-row justify-between">
+          <p className="text-xl font-semibold">{title}</p>
+          {isMine && <BoNDeleteButton bonId={bonId} onDelete={onDelete} />}
+        </div>
         <p className="whitespace-pre-line">
           {contents}
           {isMine && '내 게시글'}
@@ -197,7 +209,7 @@ function BoNContent({ bonId }: BoNContentProps) {
         <Image src={imageURL} className="" />
       </div>
 
-      <VoteButtonGroup bonId={bonId} initialVotedValue={myVotedValue} noCount={noCount} yesCount={yesCount} isMine={isMine} />
+      <VoteButtonGroup bonId={bonId} initialVotedValue={myVotedValue} noCount={noCount} yesCount={yesCount} isMine={isMine} hasCommented={hasCommented} />
 
       <div className="pt-4">
         <span className="text-sm text-gray-400">
@@ -208,18 +220,62 @@ function BoNContent({ bonId }: BoNContentProps) {
   );
 }
 
+interface TBoNDeleteButton {
+  bonId: number;
+  onDelete: () => void;
+}
+
+type BoNDeleteButtonProps = TBoNDeleteButton;
+
+function BoNDeleteButton({ bonId, onDelete }: BoNDeleteButtonProps) {
+  const confirm = useConfirm();
+  const { showToast } = useToastActions();
+
+  const { mutate: deleteBoN, isPending } = useMutation({
+    mutationKey: ['deleteBoN'],
+    mutationFn: requestDeleteBoN,
+  });
+
+  const handleClick = async () => {
+    const wouldDelete = await confirm({ title: '투표 삭제', description: '투표 삭제 시 복구가 불가능합니다.\n정말 삭제하시겠습니까?' });
+
+    if (wouldDelete) {
+      deleteBoN(
+        { bonId },
+        {
+          onSuccess() {
+            queryClient.invalidateQueries({ queryKey: ['bon'] });
+            showToast({ type: 'basic', title: '투표가 삭제되었습니다.' });
+            onDelete();
+          },
+        }
+      );
+    }
+  };
+
+  return (
+    <Button variants="ghost" className="-translate-y-2 text-grey-500" onClick={handleClick} disabled={isPending}>
+      {isPending && <VscLoading className="size-4 animate-spin" />}
+      {!isPending && <MdDelete />}
+    </Button>
+  );
+}
+
 interface TVoteButtonGroup {
   bonId: number;
   initialVotedValue: BoNVotedValue;
   yesCount: number;
   noCount: number;
   isMine: boolean;
+  hasCommented: boolean;
 }
 
 type TVoteButtonGroupProps = TVoteButtonGroup;
 
-function VoteButtonGroup({ bonId, initialVotedValue, noCount, yesCount, isMine }: TVoteButtonGroupProps) {
+function VoteButtonGroup({ bonId, initialVotedValue, noCount, yesCount, isMine, hasCommented }: TVoteButtonGroupProps) {
   const [currentVotedValue, setCurrentVotedValue] = useState<BoNVotedValue>(initialVotedValue);
+
+  const confirm = useConfirm();
 
   const hasVoted = currentVotedValue !== 'not';
 
@@ -227,7 +283,6 @@ function VoteButtonGroup({ bonId, initialVotedValue, noCount, yesCount, isMine }
     mutationKey: ['voteBoN'],
     mutationFn: requestVoteBoN,
     onMutate({ votedValue }) {
-      queryClient.ensureQueryData;
       const bonDetailResponse = queryClient.getQueryData<AxiosResponse<TBoNDetail>>(['bon', 'detail', bonId])!;
 
       const newBonDetailResponse: AxiosResponse<TBoNDetail> = {
@@ -292,6 +347,10 @@ function VoteButtonGroup({ bonId, initialVotedValue, noCount, yesCount, isMine }
   const handleClick = (value: BoNVotedValue) => {
     if (isMine) {
       return;
+    }
+
+    if (hasCommented) {
+      return confirm({ title: '댓글을 단 이후에는 투표를 수정할 수 없어요', description: '다른 투표를 하고 싶다면 댓글을 삭제해주세요.' });
     }
 
     if (hasVoted) {
@@ -364,8 +423,8 @@ function BoNVoteButton({ onClick, value, variants, bonCount: [noCount, yesCount]
   const isNo = value === 'no';
   const isYes = value === 'yes';
 
-  const noRatio = Math.floor((noCount / voteCount) * 100);
-  const yesRatio = Math.floor((yesCount / voteCount) * 100);
+  const noRatio = Math.floor((noCount / (voteCount || 1)) * 100);
+  const yesRatio = Math.floor((yesCount / (voteCount || 1)) * 100);
 
   const isLowerThenOther = (() => {
     if (isNo) {
@@ -424,7 +483,7 @@ function BestCommentList({ bonId }: { bonId: number }) {
     },
   });
 
-  const hasNoBestComment = isSuccess && data.pages.length === 0;
+  const hasNoBestComment = isSuccess && data.pages[0].data.comments.length === 0;
 
   if (hasNoBestComment) {
     return <></>;
@@ -456,12 +515,12 @@ function AllCommentList({ bonId }: { bonId: number }) {
     onIntersection: fetchNextPage,
   });
 
-  const hasNoComments = isSuccess && data.pages.length === 0;
+  const hasNoComments = isSuccess && data.pages[0].data.comments.length === 0;
 
   return (
     <div
       className={cn('bg-white py-5', {
-        ['aspect-square w-full']: hasNoComments,
+        ['aspect-[2/1] w-full']: hasNoComments,
       })}>
       <p className="pl-5 text-lg font-semibold">전체 댓글</p>
 
@@ -487,7 +546,7 @@ interface TCommentItem {
 type CommentItemProps = TBoNComment & TCommentItem;
 type CommentResponseType = InfiniteData<AxiosResponse<{ comments: TBoNComment[] }>>;
 
-function CommentItem({ bonId, anonName, createdAt, contents, hasLiked, id, isBestComment, isMine, likeCount, votedValue }: CommentItemProps) {
+function CommentItem({ bonId, anonName, contents, hasLiked, id, isBestComment, likeCount, votedValue }: CommentItemProps) {
   const { mutate: likeBoNComment } = useMutation({
     mutationKey: ['likeBoNComment'],
     mutationFn: requestLikeBoNComment,
