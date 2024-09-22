@@ -218,6 +218,7 @@ export interface TBoNDetail {
   myVotedValue: BoNVotedValue;
   bonCount: TBoNCount;
   hasCommented: boolean;
+  isMine: boolean;
 }
 
 export type BoNVotedValue = 'yes' | 'no' | 'not';
@@ -232,6 +233,7 @@ export interface TBoNComment {
   id: number;
   votedValue: BoNCommentVotedValue;
   anonName: string;
+  contents: string;
   likeCount: number;
   hasLiked: boolean;
   isBestComment: boolean;
