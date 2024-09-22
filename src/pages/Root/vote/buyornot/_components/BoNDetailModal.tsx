@@ -6,7 +6,15 @@ import { useToastActions } from '@Hooks/toast';
 import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
 import { queryClient } from '@Libs/queryclient';
-import { requestAddBoNComment, requestDeleteBoN, requestGetBoNComment, requestGetBoNDetail, requestLikeBoNComment, requestVoteBoN } from '@Services/bon';
+import {
+  requestAddBoNComment,
+  requestDeleteBoN,
+  requestDeleteBoNComment,
+  requestGetBoNComment,
+  requestGetBoNDetail,
+  requestLikeBoNComment,
+  requestVoteBoN,
+} from '@Services/bon';
 import { DefaultModalProps } from '@Stores/modal';
 import { InfiniteData, useMutation, useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { BoNVotedValue, TBoNComment, TBoNDetail } from '@Types/model';
@@ -546,7 +554,39 @@ interface TCommentItem {
 type CommentItemProps = TBoNComment & TCommentItem;
 type CommentResponseType = InfiniteData<AxiosResponse<{ comments: TBoNComment[] }>>;
 
-function CommentItem({ bonId, anonName, contents, hasLiked, id, isBestComment, likeCount, votedValue }: CommentItemProps) {
+function CommentItem({ bonId, anonName, contents, hasLiked, id, isBestComment, likeCount, votedValue, isMine }: CommentItemProps) {
+  return (
+    <div className="p-5">
+      <div className="flex flex-row items-center justify-between">
+        <div className="flex flex-row items-center gap-2">
+          <BoNBadge value={votedValue === 'yes' ? 'yes' : 'no'} />
+          <span className="font-semibold">익명의 {anonName}</span>
+          <div className="flex flex-row items-center gap-1 text-gray-400">
+            <VscHeart />
+            {likeCount}
+          </div>
+        </div>
+
+        {!isMine && <CommentLikeButton bonId={bonId} commentId={id} hasLiked={hasLiked} />}
+        {isMine && <CommentDeleteButton bonId={bonId} commentId={id} onDelete={() => {}} />}
+      </div>
+
+      <div className="flex flex-row gap-1">
+        {isBestComment && <div>👑</div>}
+        <p>{contents}</p>
+      </div>
+    </div>
+  );
+}
+interface TCommentLikeButton {
+  bonId: number;
+  commentId: number;
+  hasLiked: boolean;
+}
+
+type CommentLikeButtonProps = TCommentLikeButton;
+
+function CommentLikeButton({ bonId, commentId, hasLiked }: CommentLikeButtonProps) {
   const { mutate: likeBoNComment } = useMutation({
     mutationKey: ['likeBoNComment'],
     mutationFn: requestLikeBoNComment,
@@ -564,10 +604,10 @@ function CommentItem({ bonId, anonName, contents, hasLiked, id, isBestComment, l
 
   const updateCommentOptimistic = (oldComments: CommentResponseType | undefined, doesLike: boolean) =>
     produce(oldComments, (draft) => {
-      const pageIndex = draft!.pages.findIndex((page) => page.data.comments.some(({ id: targetId }) => targetId === id));
+      const pageIndex = draft!.pages.findIndex((page) => page.data.comments.some(({ id: targetId }) => targetId === commentId));
 
       if (pageIndex !== -1) {
-        const commentIndex = draft!.pages[pageIndex].data.comments.findIndex(({ id: targetId }) => targetId === id);
+        const commentIndex = draft!.pages[pageIndex].data.comments.findIndex(({ id: targetId }) => targetId === commentId);
 
         if (commentIndex !== -1) {
           draft!.pages[pageIndex].data.comments[commentIndex].hasLiked = doesLike;
@@ -581,35 +621,81 @@ function CommentItem({ bonId, anonName, contents, hasLiked, id, isBestComment, l
   const handleClick = () => {
     likeBoNComment({
       bonId,
-      commentId: id,
+      commentId,
       doesLike: !hasLiked,
     });
   };
 
   return (
-    <div className="p-5">
-      <div className="flex flex-row items-center justify-between">
-        <div className="flex flex-row items-center gap-2">
-          <BoNBadge value={votedValue === 'yes' ? 'yes' : 'no'} />
-          <span className="font-semibold">익명의 {anonName}</span>
-          <div className="flex flex-row items-center gap-1 text-gray-400">
-            <VscHeart />
+    <Button variants="ghost" onClick={handleClick}>
+      {hasLiked && <VscHeartFilled className="size-4 fill-gray-900" />}
+      {!hasLiked && <VscHeart className="size-4 fill-gray-900" />}
+    </Button>
+  );
+}
 
-            {likeCount}
-          </div>
-        </div>
+interface TCommentDeleteButton {
+  bonId: number;
+  commentId: number;
+  onDelete: () => void;
+}
 
-        <Button variants="ghost" onClick={handleClick}>
-          {hasLiked && <VscHeartFilled className="size-4 fill-gray-900" />}
-          {!hasLiked && <VscHeart className="size-4 fill-gray-900" />}
-        </Button>
-      </div>
+type CommentDeleteButtonProps = TCommentDeleteButton;
 
-      <div className="flex flex-row gap-1">
-        {isBestComment && <div>👑</div>}
-        <p>{contents}</p>
-      </div>
-    </div>
+function CommentDeleteButton({ bonId, commentId, onDelete }: CommentDeleteButtonProps) {
+  const confirm = useConfirm();
+  const { showToast } = useToastActions();
+
+  const { mutate: deleteBoNComment, isPending } = useMutation({
+    mutationKey: ['deleteBoNComment'],
+    mutationFn: requestDeleteBoNComment,
+    async onMutate() {
+      const commentQueryKey = ['bon', 'detail', bonId, 'comment', 'default'];
+      const bestCommentQueryKey = ['bon', 'detail', bonId, 'comment', 'best'];
+
+      await queryClient.cancelQueries({ queryKey: commentQueryKey });
+      await queryClient.cancelQueries({ queryKey: bestCommentQueryKey });
+
+      queryClient.setQueryData<CommentResponseType>(commentQueryKey, (oldComments) => updateCommentOptimistic(oldComments));
+      queryClient.setQueryData<CommentResponseType>(bestCommentQueryKey, (oldComments) => updateCommentOptimistic(oldComments));
+    },
+  });
+
+  const updateCommentOptimistic = (oldComments: CommentResponseType | undefined) =>
+    produce(oldComments, (draft) => {
+      const pageIndex = draft!.pages.findIndex((page) => page.data.comments.some(({ id: targetId }) => targetId === commentId));
+
+      if (pageIndex !== -1) {
+        const commentIndex = draft!.pages[pageIndex].data.comments.findIndex(({ id: targetId }) => targetId === commentId);
+
+        if (commentIndex !== -1) {
+          draft!.pages[pageIndex].data.comments.splice(commentIndex, 1);
+        }
+      }
+    });
+
+  const handleClick = async () => {
+    const wouldDelete = await confirm({ title: '투표 삭제', description: '투표 삭제 시 복구가 불가능합니다.\n정말 삭제하시겠습니까?' });
+
+    if (wouldDelete) {
+      deleteBoNComment(
+        { bonId, commentId },
+        {
+          onSuccess() {
+            queryClient.invalidateQueries({ queryKey: ['bon', 'detail', bonId], refetchType: 'all' });
+            showToast({ type: 'basic', title: '댓글이 삭제되었습니다.' });
+            onDelete();
+          },
+        }
+      );
+    }
+  };
+
+  return (
+    <Button variants="ghost" className="-translate-y-2 text-grey-500" onClick={handleClick} disabled={isPending}>
+      {isPending && <VscLoading className="size-4 animate-spin" />}
+      {!isPending && <MdDelete />}
+    </Button>
   );
 }
 
