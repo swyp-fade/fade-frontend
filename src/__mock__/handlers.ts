@@ -425,7 +425,7 @@ export const handlers = [
   http.get(`${BASE_URL}/bon/:bonId`, async () => {
     await delay(NETWORK_DELAY);
 
-    return HttpResponse.json(createBoNDetailDummies(0)[0], { status: HttpStatusCode.Ok });
+    return HttpResponse.json(createBoNDetailDummies(1)[0], { status: HttpStatusCode.Ok });
   }),
 
   http.post(`${BASE_URL}/bon/:bonId`, async () => {
@@ -445,12 +445,15 @@ export const handlers = [
     );
   }),
 
-  http.get(`${BASE_URL}/bon/:bonId/comment`, async () => {
+  http.get(`${BASE_URL}/bon/:bonId/comment`, async ({ request }) => {
     await delay(NETWORK_DELAY);
+
+    const { searchParams } = new URL(request.url);
+    const limit = +(searchParams.get('limit') || 10);
 
     return HttpResponse.json(
       {
-        comments: createBoNCommentDummies(5),
+        comments: createBoNCommentDummies(limit),
         nextCursor: Math.random() > 0.9 ? 'null' : 10,
       },
       { status: HttpStatusCode.Ok }

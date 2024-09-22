@@ -345,6 +345,7 @@ export const createBoNDetailDummies = (count: number): TBoNDetail[] => {
       no: noCount,
     },
     hasCommented: Math.random() > 0.5,
+    isMine: Math.random() > 0.5,
   }));
 };
 
@@ -354,6 +355,7 @@ export const createBoNCommentDummies = (count: number): TBoNComment[] => {
     id: getRandomInt(0, 1000),
     votedValue: ['yes', 'no'][getRandomInt(0, 1)] as BoNCommentVotedValue,
     anonName: generateAnonName(),
+    contents: `이건 댓글이구요 익명의 작성자가 작성한 ${getRandomInt(0, 1000)} 댓글입니다.`,
     likeCount: getRandomInt(0, 1000),
     hasLiked: Math.random() > 0.5,
     isBestComment: Math.random() > 0.5,
