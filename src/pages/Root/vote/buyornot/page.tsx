@@ -102,7 +102,7 @@ function BoNPostList({ searchTypeFilter, sortFilter }: BoNPostListProps) {
   const { data, fetchNextPage, isFetching } = useSuspenseInfiniteQuery({
     queryKey: ['bon', { sort: sortFilter, searchType: searchTypeFilter }],
     queryFn: ({ pageParam }) => requestGetBoNList({ nextCursor: pageParam, size: 10, sort: sortFilter, searchType: searchTypeFilter }),
-    initialPageParam: 0,
+    initialPageParam: -1,
     getNextPageParam({ data: { nextCursor } }) {
       return nextCursor !== null ? nextCursor : undefined;
     },
@@ -151,7 +151,7 @@ function BoNPostItem({ id, commentCount, hasVoted, imageURL, isHot, title, voteC
         <Image src={imageURL} size="cover" />
       </div>
       <span className="ml-2 text-gray-400">
-        투표 {voteCount}회 / 댓글 {commentCount}개
+        투표 {voteCount}회 ・ 댓글 {commentCount}개
       </span>
     </div>
   );
