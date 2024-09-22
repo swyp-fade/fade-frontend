@@ -1,4 +1,3 @@
-import { useModalActions } from '@Hooks/modal';
 import { useToastActions } from '@Hooks/toast';
 import { requestGetPresignedURL, requestUploadImageToPresignedURL } from '@Services/upload';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -7,11 +6,9 @@ import { calculateFileHash, cn, getBase64Image, validateLocalImageFile } from '@
 import { isAxiosError } from 'axios';
 import { ChangeEvent, forwardRef, useEffect, useRef, useState } from 'react';
 import { MdAddPhotoAlternate } from 'react-icons/md';
-import { UploadGuideBottomSheet } from '../../../UploadGuideBottomSheet';
 import { VscLoading } from 'react-icons/vsc';
 
 export function InputImageFile(props: { value: number; onChange: (value: number) => void }) {
-  const { showModal } = useModalActions();
   const [isPending, setIsPending] = useState(false);
 
   const [imageData, setImageData] = useState<string | null>(null); // base64 data
