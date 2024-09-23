@@ -206,11 +206,7 @@ function BoNContent({ bonId, onDelete }: BoNContentProps) {
           <p className="text-xl font-semibold">{title}</p>
           {isMine && <BoNDeleteButton bonId={bonId} onDelete={onDelete} />}
         </div>
-        <p className="whitespace-pre-line">
-          {contents}
-          {isMine && '내 게시글'}
-          {myVotedValue}
-        </p>
+        <p className="whitespace-pre-line">{contents}</p>
       </div>
 
       <div className="aspect-square overflow-hidden rounded-md">
