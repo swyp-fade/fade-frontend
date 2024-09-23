@@ -113,6 +113,11 @@ function CommentBox({ bonId }: CommentBoxProps) {
           }
         })
       );
+
+      setContents('');
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['bon', 'detail', bonId, 'comment'], refetchType: 'all' });
     },
   });
 
@@ -124,8 +129,6 @@ function CommentBox({ bonId }: CommentBoxProps) {
     e.preventDefault();
 
     addBoNComment({ bonId, contents });
-    queryClient.invalidateQueries({ queryKey: ['bon', 'detail', bonId, 'comment', 'default'] });
-    setContents('');
   };
 
   if (isMine) {
@@ -248,7 +251,7 @@ function BoNDeleteButton({ bonId, onDelete }: BoNDeleteButtonProps) {
         { bonId },
         {
           onSuccess() {
-            queryClient.invalidateQueries({ queryKey: ['bon'] });
+            queryClient.invalidateQueries({ queryKey: ['bon'], refetchType: 'all' });
             showToast({ type: 'basic', title: '투표가 삭제되었습니다.' });
             onDelete();
           },
@@ -653,6 +656,12 @@ function CommentDeleteButton({ bonId, commentId, onDelete }: CommentDeleteButton
 
       queryClient.setQueryData<CommentResponseType>(commentQueryKey, (oldComments) => updateCommentOptimistic(oldComments));
       queryClient.setQueryData<CommentResponseType>(bestCommentQueryKey, (oldComments) => updateCommentOptimistic(oldComments));
+      queryClient.setQueryData<AxiosResponse<TBoNDetail>>(['bon', 'detail', bonId], (oldDetail) =>
+        produce(oldDetail, (draft) => {
+          draft!.data.commentCount--;
+          draft!.data.hasCommented = false;
+        })
+      );
     },
   });
 
@@ -677,7 +686,7 @@ function CommentDeleteButton({ bonId, commentId, onDelete }: CommentDeleteButton
         { bonId, commentId },
         {
           onSuccess() {
-            queryClient.invalidateQueries({ queryKey: ['bon', 'detail', bonId], refetchType: 'all' });
+            queryClient.invalidateQueries({ queryKey: ['bon', 'detail', bonId, 'comment'], refetchType: 'all' });
             showToast({ type: 'basic', title: '댓글이 삭제되었습니다.' });
             onDelete();
           },
