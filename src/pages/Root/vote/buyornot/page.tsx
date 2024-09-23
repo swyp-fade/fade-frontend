@@ -14,6 +14,7 @@ import { VoteSubPageList } from '../_components/VoteSubPageList';
 import { BoNDetailModal } from './_components/BoNDetailModal';
 import { SelectBox } from './_components/SelectBox';
 import { UploadBoNModal } from './_components/UploadBoNModal';
+import { queryClient } from '@Libs/queryclient';
 
 export default function Page() {
   useHeader({ title: () => <VoteSubPageList /> });
@@ -46,12 +47,25 @@ export default function Page() {
 function CreateBoNPostButton() {
   const { showModal } = useModalActions();
 
-  const handleClick = () => {
-    showModal({
+  const handleClick = async () => {
+    const bonId = await showModal({
       type: 'fullScreenDialog',
       animateType: 'slideUp',
       Component: UploadBoNModal,
     });
+
+    console.log({ bonId });
+
+    if (typeof bonId === 'number') {
+      showModal({
+        type: 'fullScreenDialog',
+        animateType: 'slideInFromRight',
+        props: { bonId },
+        Component: BoNDetailModal,
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['bon'], refetchType: 'all' });
+    }
   };
 
   return (
