@@ -322,10 +322,10 @@ function VoteButtonGroup({ bonId, initialVotedValue, noCount, yesCount, isMine, 
             }
 
             // 투표 취소
-            if (currentVotedValue === votedValue) {
+            if (votedValue === 'NOT') {
               return {
-                yes: votedValue === 'YES' ? bonDetailResponse.data.bonCount.yes - 1 : bonDetailResponse.data.bonCount.yes,
-                no: votedValue === 'NO' ? bonDetailResponse.data.bonCount.no - 1 : bonDetailResponse.data.bonCount.no,
+                yes: currentVotedValue === 'YES' ? bonDetailResponse.data.bonCount.yes - 1 : bonDetailResponse.data.bonCount.yes,
+                no: currentVotedValue === 'NO' ? bonDetailResponse.data.bonCount.no - 1 : bonDetailResponse.data.bonCount.no,
               };
             }
 
@@ -347,6 +347,7 @@ function VoteButtonGroup({ bonId, initialVotedValue, noCount, yesCount, isMine, 
       };
 
       queryClient.setQueryData(['bon', 'detail', bonId], newBonDetailResponse);
+      setCurrentVotedValue(votedValue);
 
       return bonDetailResponse;
     },
@@ -366,8 +367,6 @@ function VoteButtonGroup({ bonId, initialVotedValue, noCount, yesCount, isMine, 
     } else {
       voteBoN({ bonId, votedValue: value });
     }
-
-    setCurrentVotedValue(currentVotedValue === value ? 'NOT' : value);
   };
 
   return (
