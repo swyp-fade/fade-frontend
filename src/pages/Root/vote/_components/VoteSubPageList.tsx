@@ -44,7 +44,7 @@ export function VoteSubPageList() {
       </Button>
 
       {shouldShowBoNCoachMarks && (
-        <div className="absolute left-1/2 top-full min-w-max -translate-x-1/2">
+        <div className="absolute left-1/2 top-full z-10 min-w-max -translate-x-1/2">
           <motion.div initial={{ opacity: 0, y: '24px' }} animate={{ opacity: 1, y: 0 }}>
             <BoNCoachMarks />
           </motion.div>
