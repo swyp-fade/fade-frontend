@@ -5,26 +5,15 @@ import { useConfirm } from '@Hooks/modal';
 import { useToastActions } from '@Hooks/toast';
 import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
-import { queryClient } from '@Libs/queryclient';
-import {
-  requestAddBoNComment,
-  requestDeleteBoN,
-  requestDeleteBoNComment,
-  requestGetBoNComment,
-  requestGetBoNDetail,
-  requestLikeBoNComment,
-  requestVoteBoN,
-} from '@Services/bon';
 import { DefaultModalProps } from '@Stores/modal';
-import { InfiniteData, useMutation, useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { BoNVotedValue, TBoNComment, TBoNDetail } from '@Types/model';
+import { useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { BoNVotedValue, TBoNComment } from '@Types/model';
 import { cn } from '@Utils/index';
-import { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { motion } from 'framer-motion';
-import { produce, WritableDraft } from 'immer';
 import { ComponentProps, FormEvent, Suspense, useState } from 'react';
 import { MdCheck, MdDelete } from 'react-icons/md';
 import { VscHeart, VscHeartFilled, VscLoading } from 'react-icons/vsc';
+import { bonQueries, useAddBoNComment, useDeleteBoN, useDeleteBoNComment, useLikeBoNComment, useVoteBoN } from './BoNDetailModal.service';
 
 interface TBoNDetailModal {
   bonId: number;
@@ -68,58 +57,9 @@ function CommentBox({ bonId }: CommentBoxProps) {
     data: {
       data: { hasCommented, isMine, myVotedValue },
     },
-  } = useSuspenseQuery({
-    queryKey: ['bon', 'detail', bonId],
-    queryFn: () => requestGetBoNDetail({ bonId }),
-  });
+  } = useSuspenseQuery(bonQueries.detail({ bonId }));
 
-  const { mutate: addBoNComment } = useMutation({
-    mutationKey: ['addBoNComment'],
-    mutationFn: requestAddBoNComment,
-    onMutate() {
-      const newBoNComment: TBoNComment = {
-        anonName: '-',
-        contents,
-        createdAt: new Date(),
-        hasLiked: false,
-        id: Math.floor(Math.random() * 1000000),
-        isBestComment: false,
-        isMine: true,
-        likeCount: 0,
-        votedValue: myVotedValue,
-      };
-
-      /** 댓글 Optimistic Update */
-      queryClient.setQueryData<InfiniteData<AxiosResponse<{ comments: TBoNComment[] }>>>(['bon', 'detail', bonId, 'comment', 'default'], (oldComments) =>
-        produce(oldComments, (draft) => {
-          if (draft) {
-            draft.pages.unshift({
-              data: { comments: [newBoNComment] },
-              status: 200,
-              statusText: 'OK',
-              headers: {},
-              config: {} as WritableDraft<InternalAxiosRequestConfig<unknown>>,
-            });
-          }
-        })
-      );
-
-      /** 본문 댓글 수 Optimistic Update */
-      queryClient.setQueryData<AxiosResponse<TBoNDetail>>(['bon', 'detail', bonId], (oldDetail) =>
-        produce(oldDetail, (draft) => {
-          if (draft?.data) {
-            draft.data.commentCount += 1;
-            draft.data.hasCommented = true;
-          }
-        })
-      );
-
-      setContents('');
-    },
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['bon', 'detail', bonId, 'comment'], refetchType: 'all' });
-    },
-  });
+  const { mutate: addBoNComment } = useAddBoNComment({ votedValue: myVotedValue });
 
   const [contents, setContents] = useState('');
 
@@ -129,6 +69,7 @@ function CommentBox({ bonId }: CommentBoxProps) {
     e.preventDefault();
 
     addBoNComment({ bonId, contents });
+    setContents('');
   };
 
   if (isMine) {
@@ -197,10 +138,7 @@ function BoNContent({ bonId, onDelete }: BoNContentProps) {
         voteCount,
       },
     },
-  } = useSuspenseQuery({
-    queryKey: ['bon', 'detail', bonId],
-    queryFn: () => requestGetBoNDetail({ bonId }),
-  });
+  } = useSuspenseQuery(bonQueries.detail({ bonId }));
 
   return (
     <div className="space-y-3 bg-white p-5">
@@ -237,11 +175,7 @@ type BoNDeleteButtonProps = TBoNDeleteButton;
 function BoNDeleteButton({ bonId, onDelete }: BoNDeleteButtonProps) {
   const confirm = useConfirm();
   const { showToast } = useToastActions();
-
-  const { mutate: deleteBoN, isPending } = useMutation({
-    mutationKey: ['deleteBoN'],
-    mutationFn: requestDeleteBoN,
-  });
+  const { mutate: deleteBoN, isPending } = useDeleteBoN();
 
   const handleClick = async () => {
     const wouldDelete = await confirm({ title: '투표 삭제', description: '투표 삭제 시 복구가 불가능합니다.\n정말 삭제하시겠습니까?' });
@@ -251,7 +185,6 @@ function BoNDeleteButton({ bonId, onDelete }: BoNDeleteButtonProps) {
         { bonId },
         {
           onSuccess() {
-            queryClient.invalidateQueries({ queryKey: ['bon'], refetchType: 'all' });
             showToast({ type: 'basic', title: '투표가 삭제되었습니다.' });
             onDelete();
           },
@@ -280,77 +213,12 @@ interface TVoteButtonGroup {
 type TVoteButtonGroupProps = TVoteButtonGroup;
 
 function VoteButtonGroup({ bonId, initialVotedValue, noCount, yesCount, isMine, hasCommented }: TVoteButtonGroupProps) {
-  const [currentVotedValue, setCurrentVotedValue] = useState<BoNVotedValue>(initialVotedValue);
-
   const confirm = useConfirm();
 
+  const [currentVotedValue, setCurrentVotedValue] = useState<BoNVotedValue>(initialVotedValue);
   const hasVoted = currentVotedValue !== 'NOT';
 
-  const { mutate: voteBoN } = useMutation({
-    mutationKey: ['voteBoN'],
-    mutationFn: requestVoteBoN,
-    onMutate({ votedValue }) {
-      const bonDetailResponse = queryClient.getQueryData<AxiosResponse<TBoNDetail>>(['bon', 'detail', bonId])!;
-
-      const newBonDetailResponse: AxiosResponse<TBoNDetail> = {
-        ...bonDetailResponse,
-        data: {
-          ...bonDetailResponse.data,
-          myVotedValue: votedValue,
-          voteCount: (() => {
-            // 투표 처음 할 때
-            if (!hasVoted) {
-              return bonDetailResponse.data.voteCount + 1;
-            }
-
-            // 투표 취소
-            if (votedValue === 'NOT') {
-              return bonDetailResponse.data.voteCount - 1;
-            }
-
-            // 이전과 다른 투표
-            return bonDetailResponse.data.voteCount;
-          })(),
-          bonCount: (() => {
-            // 투표 처음 할 때
-            if (!hasVoted) {
-              return {
-                yes: votedValue === 'YES' ? bonDetailResponse.data.bonCount.yes + 1 : bonDetailResponse.data.bonCount.yes,
-                no: votedValue === 'NO' ? bonDetailResponse.data.bonCount.no + 1 : bonDetailResponse.data.bonCount.no,
-              };
-            }
-
-            // 투표 취소
-            if (votedValue === 'NOT') {
-              return {
-                yes: currentVotedValue === 'YES' ? bonDetailResponse.data.bonCount.yes - 1 : bonDetailResponse.data.bonCount.yes,
-                no: currentVotedValue === 'NO' ? bonDetailResponse.data.bonCount.no - 1 : bonDetailResponse.data.bonCount.no,
-              };
-            }
-
-            // 다른 거 투표 (YES -> NO)
-            if (votedValue === 'NO') {
-              return {
-                yes: bonDetailResponse.data.bonCount.yes - 1,
-                no: bonDetailResponse.data.bonCount.no + 1,
-              };
-            }
-
-            // 다른 거 투표 (NO -> YES)
-            return {
-              yes: bonDetailResponse.data.bonCount.yes + 1,
-              no: bonDetailResponse.data.bonCount.no - 1,
-            };
-          })(),
-        },
-      };
-
-      queryClient.setQueryData(['bon', 'detail', bonId], newBonDetailResponse);
-      setCurrentVotedValue(votedValue);
-
-      return bonDetailResponse;
-    },
-  });
+  const { mutate: voteBoN } = useVoteBoN({ currentVotedValue, hasVoted });
 
   const handleClick = (value: BoNVotedValue) => {
     if (isMine) {
@@ -361,11 +229,10 @@ function VoteButtonGroup({ bonId, initialVotedValue, noCount, yesCount, isMine, 
       return confirm({ title: '댓글을 단 이후에는 투표를 수정할 수 없어요', description: '다른 투표를 하고 싶다면 댓글을 삭제해주세요.' });
     }
 
-    if (hasVoted) {
-      voteBoN({ bonId, votedValue: currentVotedValue === value ? 'NOT' : value });
-    } else {
-      voteBoN({ bonId, votedValue: value });
-    }
+    const newVotedValue = hasVoted && currentVotedValue === value ? 'NOT' : value;
+
+    voteBoN({ bonId, votedValue: newVotedValue });
+    setCurrentVotedValue(newVotedValue);
   };
 
   return (
@@ -480,14 +347,7 @@ function BoNVoteButton({ onClick, value, variants, bonCount: [noCount, yesCount]
 }
 
 function BestCommentList({ bonId }: { bonId: number }) {
-  const { data, isSuccess } = useSuspenseInfiniteQuery({
-    queryKey: ['bon', 'detail', bonId, 'comment', 'best'],
-    queryFn: ({ pageParam }) => requestGetBoNComment({ bonId, nextCursor: pageParam, limit: 3, searchType: 'best' }),
-    initialPageParam: -1,
-    getNextPageParam({ data: { nextCursor } }) {
-      return nextCursor !== null ? nextCursor : undefined;
-    },
-  });
+  const { data, isSuccess } = useSuspenseInfiniteQuery(bonQueries.comment({ bonId, searchType: 'best' }));
 
   const hasNoBestComment = isSuccess && data.pages[0].data.comments.length === 0;
 
@@ -507,14 +367,7 @@ function BestCommentList({ bonId }: { bonId: number }) {
 }
 
 function AllCommentList({ bonId }: { bonId: number }) {
-  const { data, fetchNextPage, isFetching, isSuccess } = useSuspenseInfiniteQuery({
-    queryKey: ['bon', 'detail', bonId, 'comment', 'default'],
-    queryFn: ({ pageParam }) => requestGetBoNComment({ bonId, nextCursor: pageParam, limit: 10, searchType: 'all' }),
-    initialPageParam: -1,
-    getNextPageParam({ data: { nextCursor } }) {
-      return nextCursor !== null ? nextCursor : undefined;
-    },
-  });
+  const { data, fetchNextPage, isFetching, isSuccess } = useSuspenseInfiniteQuery(bonQueries.comment({ bonId, searchType: 'all' }));
 
   useInfiniteObserver({
     parentNodeId: 'defaultCommentList',
@@ -550,7 +403,6 @@ interface TCommentItem {
 }
 
 type CommentItemProps = TBoNComment & TCommentItem;
-type CommentResponseType = InfiniteData<AxiosResponse<{ comments: TBoNComment[] }>>;
 
 function CommentItem({ bonId, anonName, contents, hasLiked, id, isBestComment, likeCount, votedValue, isMine }: CommentItemProps) {
   return (
@@ -585,36 +437,7 @@ interface TCommentLikeButton {
 type CommentLikeButtonProps = TCommentLikeButton;
 
 function CommentLikeButton({ bonId, commentId, hasLiked }: CommentLikeButtonProps) {
-  const { mutate: likeBoNComment } = useMutation({
-    mutationKey: ['likeBoNComment'],
-    mutationFn: requestLikeBoNComment,
-    async onMutate({ doesLike }) {
-      const commentQueryKey = ['bon', 'detail', bonId, 'comment', 'default'];
-      const bestCommentQueryKey = ['bon', 'detail', bonId, 'comment', 'best'];
-
-      await queryClient.cancelQueries({ queryKey: commentQueryKey });
-      await queryClient.cancelQueries({ queryKey: bestCommentQueryKey });
-
-      queryClient.setQueryData<CommentResponseType>(commentQueryKey, (oldComments) => updateCommentOptimistic(oldComments, doesLike));
-      queryClient.setQueryData<CommentResponseType>(bestCommentQueryKey, (oldComments) => updateCommentOptimistic(oldComments, doesLike));
-    },
-  });
-
-  const updateCommentOptimistic = (oldComments: CommentResponseType | undefined, doesLike: boolean) =>
-    produce(oldComments, (draft) => {
-      const pageIndex = draft!.pages.findIndex((page) => page.data.comments.some(({ id: targetId }) => targetId === commentId));
-
-      if (pageIndex !== -1) {
-        const commentIndex = draft!.pages[pageIndex].data.comments.findIndex(({ id: targetId }) => targetId === commentId);
-
-        if (commentIndex !== -1) {
-          draft!.pages[pageIndex].data.comments[commentIndex].hasLiked = doesLike;
-          draft!.pages[pageIndex].data.comments[commentIndex].likeCount = doesLike
-            ? draft!.pages[pageIndex].data.comments[commentIndex].likeCount + 1
-            : draft!.pages[pageIndex].data.comments[commentIndex].likeCount - 1;
-        }
-      }
-    });
+  const { mutate: likeBoNComment } = useLikeBoNComment();
 
   const handleClick = () => {
     likeBoNComment({
@@ -642,41 +465,9 @@ type CommentDeleteButtonProps = TCommentDeleteButton;
 
 function CommentDeleteButton({ bonId, commentId, onDelete }: CommentDeleteButtonProps) {
   const confirm = useConfirm();
+
   const { showToast } = useToastActions();
-
-  const { mutate: deleteBoNComment, isPending } = useMutation({
-    mutationKey: ['deleteBoNComment'],
-    mutationFn: requestDeleteBoNComment,
-    async onMutate() {
-      const commentQueryKey = ['bon', 'detail', bonId, 'comment', 'default'];
-      const bestCommentQueryKey = ['bon', 'detail', bonId, 'comment', 'best'];
-
-      await queryClient.cancelQueries({ queryKey: commentQueryKey });
-      await queryClient.cancelQueries({ queryKey: bestCommentQueryKey });
-
-      queryClient.setQueryData<CommentResponseType>(commentQueryKey, (oldComments) => updateCommentOptimistic(oldComments));
-      queryClient.setQueryData<CommentResponseType>(bestCommentQueryKey, (oldComments) => updateCommentOptimistic(oldComments));
-      queryClient.setQueryData<AxiosResponse<TBoNDetail>>(['bon', 'detail', bonId], (oldDetail) =>
-        produce(oldDetail, (draft) => {
-          draft!.data.commentCount--;
-          draft!.data.hasCommented = false;
-        })
-      );
-    },
-  });
-
-  const updateCommentOptimistic = (oldComments: CommentResponseType | undefined) =>
-    produce(oldComments, (draft) => {
-      const pageIndex = draft!.pages.findIndex((page) => page.data.comments.some(({ id: targetId }) => targetId === commentId));
-
-      if (pageIndex !== -1) {
-        const commentIndex = draft!.pages[pageIndex].data.comments.findIndex(({ id: targetId }) => targetId === commentId);
-
-        if (commentIndex !== -1) {
-          draft!.pages[pageIndex].data.comments.splice(commentIndex, 1);
-        }
-      }
-    });
+  const { mutate: deleteBoNComment, isPending } = useDeleteBoNComment();
 
   const handleClick = async () => {
     const wouldDelete = await confirm({ title: '투표 삭제', description: '투표 삭제 시 복구가 불가능합니다.\n정말 삭제하시겠습니까?' });
@@ -686,7 +477,6 @@ function CommentDeleteButton({ bonId, commentId, onDelete }: CommentDeleteButton
         { bonId, commentId },
         {
           onSuccess() {
-            queryClient.invalidateQueries({ queryKey: ['bon', 'detail', bonId, 'comment'], refetchType: 'all' });
             showToast({ type: 'basic', title: '댓글이 삭제되었습니다.' });
             onDelete();
           },

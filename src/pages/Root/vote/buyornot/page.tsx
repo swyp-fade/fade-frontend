@@ -4,7 +4,7 @@ import { useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
-import { requestGetBoNList } from '@Services/bon';
+import { queryClient } from '@Libs/queryclient';
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { TBoNItem } from '@Types/model';
 import { cn } from '@Utils/index';
@@ -12,20 +12,20 @@ import { Suspense, useState } from 'react';
 import { MdEdit, MdWhatshot } from 'react-icons/md';
 import { VoteSubPageList } from '../_components/VoteSubPageList';
 import { BoNDetailModal } from './_components/BoNDetailModal';
+import { bonQueries, bonQueryKeys } from './_components/BoNDetailModal.service';
 import { SelectBox } from './_components/SelectBox';
 import { UploadBoNModal } from './_components/UploadBoNModal';
-import { queryClient } from '@Libs/queryclient';
 
 export default function Page() {
   useHeader({ title: () => <VoteSubPageList /> });
 
-  const [sortTypeFilter, setSortTypeFilter] = useState('recent');
-  const [searchTypeFilter, setSearchTypeFilter] = useState('all');
+  const [sortType, setSortType] = useState('recent');
+  const [searchType, setSearchType] = useState('all');
 
   return (
     <>
       <FlexibleLayout.Root className="relative flex flex-col gap-3 bg-gray-50 p-5">
-        <PostFilter onSortChange={(value) => setSortTypeFilter(value)} onSearchTypeChange={(value) => setSearchTypeFilter(value)} />
+        <PostFilter onSortChange={(value) => setSortType(value)} onSearchTypeChange={(value) => setSearchType(value)} />
         <Suspense
           fallback={
             <div id="bonList" className="grid grid-cols-2 gap-4">
@@ -35,7 +35,7 @@ export default function Page() {
               <div className="aspect-square w-full animate-pulse rounded-sm bg-gray-200" />
             </div>
           }>
-          <BoNPostList sortTypeFilter={sortTypeFilter} searchTypeFilter={searchTypeFilter} />
+          <BoNPostList sortType={sortType} searchType={searchType} />
         </Suspense>
       </FlexibleLayout.Root>
 
@@ -54,8 +54,6 @@ function CreateBoNPostButton() {
       Component: UploadBoNModal,
     });
 
-    console.log({ bonId });
-
     if (typeof bonId === 'number') {
       showModal({
         type: 'fullScreenDialog',
@@ -64,7 +62,7 @@ function CreateBoNPostButton() {
         Component: BoNDetailModal,
       });
 
-      queryClient.invalidateQueries({ queryKey: ['bon'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: bonQueryKeys.all(), refetchType: 'all' });
     }
   };
 
@@ -106,21 +104,14 @@ function PostFilter({ onSearchTypeChange, onSortChange }: PostFilterProps) {
 }
 
 interface TBoNPostList {
-  sortTypeFilter: string;
-  searchTypeFilter: string;
+  sortType: string;
+  searchType: string;
 }
 
 type BoNPostListProps = TBoNPostList;
 
-function BoNPostList({ searchTypeFilter, sortTypeFilter }: BoNPostListProps) {
-  const { data, fetchNextPage, isFetching, isSuccess } = useSuspenseInfiniteQuery({
-    queryKey: ['bon', { sort: sortTypeFilter, searchType: searchTypeFilter }],
-    queryFn: ({ pageParam }) => requestGetBoNList({ nextCursor: pageParam, limit: 10, sortType: sortTypeFilter, searchType: searchTypeFilter }),
-    initialPageParam: -1,
-    getNextPageParam({ data: { nextCursor } }) {
-      return nextCursor !== null ? nextCursor : undefined;
-    },
-  });
+function BoNPostList({ searchType, sortType }: BoNPostListProps) {
+  const { data, fetchNextPage, isFetching, isSuccess } = useSuspenseInfiniteQuery(bonQueries.list({ searchType, sortType }));
 
   useInfiniteObserver({
     parentNodeId: 'bonList',
@@ -136,7 +127,6 @@ function BoNPostList({ searchTypeFilter, sortTypeFilter }: BoNPostListProps) {
       </div>
       {isFetching && <SpinLoading />}
       {hasNoPost && <p className="text-sm text-gray-600">표시할 Buy or Not 투표가 없습니다.</p>}
-      {/* <p className="text-sm text-gray-600">모든 Buy or Not 투표를 불러왔습니다.</p> */}
     </div>
   );
 }
