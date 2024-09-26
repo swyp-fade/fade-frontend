@@ -1,15 +1,10 @@
-import { useModalActions } from '@Hooks/modal';
 import { useHeader } from '@Hooks/useHeader';
 import { FlexibleLayout } from '@Layouts/FlexibleLayout';
-import { queryClient } from '@Libs/queryclient';
 import { Suspense, useState } from 'react';
-import { MdEdit } from 'react-icons/md';
 import { VoteSubPageList } from '../_components/VoteSubPageList';
-import { BoNDetailModal } from './_components/BonDetailModal/modal';
-import { bonQueryKeys } from './service';
 import { BoNPostList } from './_components/BoNPostList';
 import { PostFilter } from './_components/PostFilter';
-import { UploadBoNModal } from './_components/UploadBoNModal';
+import { CreateBoNPostButton } from './_components/CreateBoNPostButton';
 
 export default function Page() {
   useHeader({ title: () => <VoteSubPageList /> });
@@ -38,40 +33,6 @@ function BoNPostListSkeleton() {
       <div className="aspect-square w-full animate-pulse rounded-sm bg-gray-200" />
       <div className="aspect-square w-full animate-pulse rounded-sm bg-gray-200" />
       <div className="aspect-square w-full animate-pulse rounded-sm bg-gray-200" />
-    </div>
-  );
-}
-
-function CreateBoNPostButton() {
-  const { showModal } = useModalActions();
-
-  const handleClick = async () => {
-    const bonId = await showModal({
-      type: 'fullScreenDialog',
-      animateType: 'slideUp',
-      Component: UploadBoNModal,
-    });
-
-    if (typeof bonId === 'number') {
-      showModal({
-        type: 'fullScreenDialog',
-        animateType: 'slideInFromRight',
-        props: { bonId },
-        Component: BoNDetailModal,
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: bonQueryKeys.all(),
-        refetchType: 'all',
-      });
-    }
-  };
-
-  return (
-    <div className="absolute bottom-20 right-5">
-      <button type="button" className="block rounded-full bg-gray-900 p-4 shadow-bento" onClick={handleClick}>
-        <MdEdit className="size-6 text-white" />
-      </button>
     </div>
   );
 }
