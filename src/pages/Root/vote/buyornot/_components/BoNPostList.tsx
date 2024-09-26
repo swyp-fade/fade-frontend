@@ -1,5 +1,5 @@
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
-import { bonQueries } from './BonDetailModal/service';
+import { bonQueries } from '../service';
 import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { SpinLoading } from '@Components/SpinLoading';
 import { TBoNItem } from '@Types/model';

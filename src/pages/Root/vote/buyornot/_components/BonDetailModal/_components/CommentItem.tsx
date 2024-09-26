@@ -5,7 +5,7 @@ import { BoNVotedValue, TBoNComment } from '@Types/model';
 import { cn } from '@Utils/index';
 import { MdDelete } from 'react-icons/md';
 import { VscHeart, VscHeartFilled, VscLoading } from 'react-icons/vsc';
-import { useDeleteBoNComment, useLikeBoNComment } from '../service';
+import { useDeleteBoNComment, useLikeBoNComment } from '../../../service';
 
 interface TCommentItem {
   bonId: number;

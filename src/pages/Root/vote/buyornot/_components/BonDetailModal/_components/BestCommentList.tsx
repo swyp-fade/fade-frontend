@@ -1,6 +1,6 @@
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { CommentItem } from '../_components/CommentItem';
-import { bonQueries } from '../service';
+import { bonQueries } from '../../../service';
 
 export function BestCommentList({ bonId }: { bonId: number }) {
   const { data, isSuccess } = useSuspenseInfiniteQuery(

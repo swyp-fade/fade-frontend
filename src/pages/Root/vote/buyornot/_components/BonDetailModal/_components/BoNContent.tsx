@@ -5,7 +5,7 @@ import { useToastActions } from '@Hooks/toast';
 import { TBoNDetail } from '@Types/model';
 import { MdDelete } from 'react-icons/md';
 import { VscLoading } from 'react-icons/vsc';
-import { useDeleteBoN } from '../service';
+import { useDeleteBoN } from '../../../service';
 import { VoteButtonGroup } from './VoteButtonGroup';
 
 interface TBoNContent {

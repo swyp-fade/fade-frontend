@@ -1,7 +1,7 @@
 import { useConfirm } from '@Hooks/modal';
 import { BoNVotedValue, TBoNDetail } from '@Types/model';
 import { useState } from 'react';
-import { useVoteBoN } from '../service';
+import { useVoteBoN } from '../../../service';
 import { cn } from '@Utils/index';
 import { motion } from 'framer-motion';
 import { MdCheck } from 'react-icons/md';

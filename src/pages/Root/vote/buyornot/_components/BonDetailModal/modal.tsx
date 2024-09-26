@@ -6,7 +6,7 @@ import { TBoNDetail } from '@Types/model';
 import { ReactNode, Suspense } from 'react';
 import { BoNContent } from './_components/BoNContent';
 import { CommentBox } from './_components/CommentBox';
-import { bonQueries } from './service';
+import { bonQueries } from '../../service';
 import { BestCommentList } from './_components/BestCommentList';
 import { AllCommentList } from './_components/AllCommentList';
 

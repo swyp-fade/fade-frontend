@@ -3,7 +3,7 @@ import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { cn } from '@Utils/index';
 import { CommentItem } from '../_components/CommentItem';
-import { bonQueries } from '../service';
+import { bonQueries } from '../../../service';
 
 export function AllCommentList({ bonId }: { bonId: number }) {
   const { data, fetchNextPage, isFetching, isSuccess } = useSuspenseInfiniteQuery(bonQueries.comment({ bonId, searchType: 'all' }));

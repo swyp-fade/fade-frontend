@@ -1,7 +1,7 @@
 import { TBoNDetail } from '@Types/model';
 import { cn } from '@Utils/index';
 import { ComponentProps, FormEvent, useState } from 'react';
-import { useAddBoNComment } from '../service';
+import { useAddBoNComment } from '../../../service';
 
 interface TCommentBox {
   bonId: number;

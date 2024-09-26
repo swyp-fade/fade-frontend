@@ -6,7 +6,7 @@ import { Suspense, useState } from 'react';
 import { MdEdit } from 'react-icons/md';
 import { VoteSubPageList } from '../_components/VoteSubPageList';
 import { BoNDetailModal } from './_components/BonDetailModal/modal';
-import { bonQueryKeys } from './_components/BonDetailModal/service';
+import { bonQueryKeys } from './service';
 import { BoNPostList } from './_components/BoNPostList';
 import { PostFilter } from './_components/PostFilter';
 import { UploadBoNModal } from './_components/UploadBoNModal';
