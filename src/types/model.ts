@@ -231,7 +231,7 @@ export interface TBoNCount {
 /** Buy or Not 댓글 */
 export interface TBoNComment {
   id: number;
-  votedValue: BoNCommentVotedValue;
+  votedValue: BoNVotedValue;
   anonName: string;
   contents: string;
   likeCount: number;
@@ -240,5 +240,3 @@ export interface TBoNComment {
   isMine: boolean;
   createdAt: Date;
 }
-
-export type BoNCommentVotedValue = Omit<BoNVotedValue, 'NOT'>;

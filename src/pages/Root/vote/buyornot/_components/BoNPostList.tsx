@@ -1,10 +1,10 @@
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
-import { bonQueries } from './BoNDetailModal.service';
+import { bonQueries } from './BonDetailModal/service';
 import { useInfiniteObserver } from '@Hooks/useInfiniteObserver';
 import { SpinLoading } from '@Components/SpinLoading';
 import { TBoNItem } from '@Types/model';
 import { useModalActions } from '@Hooks/modal';
-import { BoNDetailModal } from './BoNDetailModal';
+import { BoNDetailModal } from './BonDetailModal/modal';
 import { MdWhatshot } from 'react-icons/md';
 import { cn } from '@Utils/index';
 import { Image } from '@Components/ui/image';
